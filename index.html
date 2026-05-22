@@ -25,6 +25,9 @@
   --blue:         #29b6f6;
   --blue-dim:     rgba(41,182,246,0.12);
   --blue-border:  rgba(41,182,246,0.35);
+  --purple:       #ce93d8;
+  --purple-dim:   rgba(206,147,216,0.10);
+  --purple-border:rgba(206,147,216,0.30);
   --text-primary:   #e8f5e9;
   --text-secondary: #78909c;
   --text-muted:     #37474f;
@@ -50,13 +53,11 @@ body {
 }
 body::before {
   content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,
-    rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);
 }
 body::after {
   content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-  background-image:linear-gradient(rgba(0,230,118,0.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,230,118,0.03) 1px,transparent 1px);
+  background-image:linear-gradient(rgba(0,230,118,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,230,118,0.03) 1px,transparent 1px);
   background-size:40px 40px;
 }
 #app { display:flex; flex-direction:column; height:100dvh; position:relative; z-index:1; }
@@ -71,59 +72,23 @@ body::after {
 .logo-wrap { display:flex; align-items:center; gap:10px; flex-shrink:0; }
 .logo-icon { width:28px; height:28px; }
 .logo-icon svg { width:100%; height:100%; }
-.logo-text {
-  font-family:var(--font-cond); font-size:18px; font-weight:800;
-  letter-spacing:.15em; text-transform:uppercase;
-  color:var(--green-bright); text-shadow:var(--glow-sm); line-height:1;
-}
-.logo-sub {
-  font-family:var(--font-mono); font-size:9px; letter-spacing:.2em;
-  color:var(--text-secondary); text-transform:uppercase; line-height:1; margin-top:2px;
-}
-.live-badge {
-  display:flex; align-items:center; gap:6px; padding:3px 9px;
-  background:rgba(0,230,118,0.08); border:1px solid rgba(0,230,118,0.2);
-  border-radius:2px; font-family:var(--font-mono); font-size:9px;
-  letter-spacing:.15em; color:var(--green-bright); text-transform:uppercase;
-}
-.live-dot {
-  width:6px; height:6px; border-radius:50%;
-  background:var(--green-bright); box-shadow:0 0 6px var(--green-bright);
-  animation:pulse 2s ease-in-out infinite;
-}
+.logo-text { font-family:var(--font-cond); font-size:18px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; color:var(--green-bright); text-shadow:var(--glow-sm); line-height:1; }
+.logo-sub  { font-family:var(--font-mono); font-size:9px; letter-spacing:.2em; color:var(--text-secondary); text-transform:uppercase; line-height:1; margin-top:2px; }
+.live-badge { display:flex; align-items:center; gap:6px; padding:3px 9px; background:rgba(0,230,118,0.08); border:1px solid rgba(0,230,118,0.2); border-radius:2px; font-family:var(--font-mono); font-size:9px; letter-spacing:.15em; color:var(--green-bright); text-transform:uppercase; }
+.live-dot  { width:6px; height:6px; border-radius:50%; background:var(--green-bright); box-shadow:0 0 6px var(--green-bright); animation:pulse 2s ease-in-out infinite; }
 @keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 6px var(--green-bright)} 50%{opacity:.5;box-shadow:0 0 2px var(--green-bright)} }
 .topbar-actions { display:flex; align-items:center; gap:8px; }
-.btn-icon {
-  display:flex; align-items:center; justify-content:center;
-  width:34px; height:34px; background:var(--bg-elevated);
-  border:1px solid var(--border-base); border-radius:var(--radius-sm);
-  color:var(--text-secondary); cursor:pointer; font-size:15px; transition:var(--transition);
-}
+.btn-icon { display:flex; align-items:center; justify-content:center; width:34px; height:34px; background:var(--bg-elevated); border:1px solid var(--border-base); border-radius:var(--radius-sm); color:var(--text-secondary); cursor:pointer; font-size:15px; transition:var(--transition); }
 .btn-icon:hover { border-color:var(--border-dim); color:var(--green-bright); background:var(--green-deep); box-shadow:var(--glow-sm); }
 
 /* ── TAB NAV ── */
-#tab-nav {
-  display:flex; background:var(--bg-base);
-  border-bottom:1px solid var(--border-dim); padding:0 8px; flex-shrink:0; z-index:90;
-}
-.tab-btn {
-  display:flex; align-items:center; gap:7px; padding:10px 18px;
-  background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-1px;
-  color:var(--text-secondary); font-family:var(--font-cond); font-size:14px;
-  font-weight:600; letter-spacing:.1em; text-transform:uppercase;
-  cursor:pointer; transition:var(--transition); white-space:nowrap;
-}
+#tab-nav { display:flex; background:var(--bg-base); border-bottom:1px solid var(--border-dim); padding:0 8px; flex-shrink:0; z-index:90; }
+.tab-btn { display:flex; align-items:center; gap:7px; padding:10px 18px; background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-1px; color:var(--text-secondary); font-family:var(--font-cond); font-size:14px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:var(--transition); white-space:nowrap; }
 .tab-btn .tab-icon { font-size:14px; opacity:.7; transition:var(--transition); }
 .tab-btn:hover { color:var(--text-primary); }
 .tab-btn.active { color:var(--green-bright); border-bottom-color:var(--green-bright); text-shadow:var(--glow-sm); }
 .tab-btn.active .tab-icon { opacity:1; filter:drop-shadow(0 0 4px var(--green-bright)); }
-.tab-badge {
-  display:inline-flex; align-items:center; justify-content:center;
-  min-width:18px; height:16px; padding:0 4px;
-  background:var(--green-mid); border:1px solid var(--green-bright); border-radius:2px;
-  font-family:var(--font-mono); font-size:9px; font-weight:700;
-  color:var(--green-bright); box-shadow:0 0 6px rgba(0,230,118,.3);
-}
+.tab-badge { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:16px; padding:0 4px; background:var(--green-mid); border:1px solid var(--green-bright); border-radius:2px; font-family:var(--font-mono); font-size:9px; font-weight:700; color:var(--green-bright); box-shadow:0 0 6px rgba(0,230,118,.3); }
 
 /* ── CONTENT ── */
 #content { flex:1; overflow:hidden; position:relative; }
@@ -131,152 +96,161 @@ body::after {
 .tab-panel.active { display:flex; flex-direction:column; }
 
 /* ── PANEL HEADER ── */
-.panel-header {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:8px 16px; background:var(--bg-surface);
-  border-bottom:1px solid var(--border-base); flex-shrink:0; gap:12px;
-}
-.panel-title {
-  font-family:var(--font-cond); font-size:13px; font-weight:600;
-  letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary);
-}
+.panel-header { display:flex; align-items:center; justify-content:space-between; padding:8px 16px; background:var(--bg-surface); border-bottom:1px solid var(--border-base); flex-shrink:0; gap:12px; }
+.panel-title { font-family:var(--font-cond); font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary); }
 .panel-title span { color:var(--green-bright); margin-right:6px; }
 
-/* ── SCREENER LAUNCHER ── */
-.screener-body {
-  flex:1; overflow-y:auto; padding:24px 20px;
-  display:flex; flex-direction:column; gap:24px;
-  align-items:stretch;
-}
+/* ── SCREENER BODY (scrollable) ── */
+.screener-body { flex:1; overflow-y:auto; padding:24px 20px; display:flex; flex-direction:column; gap:24px; }
 .screener-body::-webkit-scrollbar { width:4px; }
 .screener-body::-webkit-scrollbar-track { background:transparent; }
 .screener-body::-webkit-scrollbar-thumb { background:var(--green-mid); border-radius:2px; }
+.screener-body::-webkit-scrollbar-thumb:hover { background:var(--green-bright); }
 
-.section-label {
-  font-family:var(--font-mono); font-size:9px; letter-spacing:.2em;
-  text-transform:uppercase; color:var(--green-bright);
-  padding-bottom:10px; border-bottom:1px solid var(--border-dim);
-  text-shadow:var(--glow-sm);
-}
+.section-label { font-family:var(--font-mono); font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--green-bright); padding-bottom:10px; border-bottom:1px solid var(--border-dim); text-shadow:var(--glow-sm); }
 
-/* 大きなランチャーカード */
-.launcher-grid {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px;
-}
-
-.launcher-card {
-  display:flex; flex-direction:column; gap:10px;
-  padding:20px; background:var(--bg-card);
-  border:1px solid var(--border-base); border-radius:var(--radius-lg);
-  text-decoration:none; cursor:pointer;
-  transition:var(--transition); position:relative; overflow:hidden;
-}
-.launcher-card::before {
-  content:''; position:absolute; inset:0; opacity:0; transition:var(--transition);
-  background:radial-gradient(ellipse at 50% 0%,rgba(0,230,118,0.06) 0%,transparent 70%);
-}
+/* ── LAUNCHER CARDS ── */
+.launcher-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; }
+.launcher-card { display:flex; flex-direction:column; gap:10px; padding:20px; background:var(--bg-card); border:1px solid var(--border-base); border-radius:var(--radius-lg); text-decoration:none; cursor:pointer; transition:var(--transition); position:relative; overflow:hidden; }
+.launcher-card::before { content:''; position:absolute; inset:0; opacity:0; transition:var(--transition); background:radial-gradient(ellipse at 50% 0%,rgba(0,230,118,0.06) 0%,transparent 70%); }
 .launcher-card:hover { border-color:var(--border-dim); transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,0,0,.4); }
 .launcher-card:hover::before { opacity:1; }
 .launcher-card:active { transform:translateY(0); }
-
 .launcher-card.amber { border-color:rgba(255,179,0,0.15); }
 .launcher-card.amber:hover { border-color:rgba(255,179,0,0.35); box-shadow:0 8px 30px rgba(255,179,0,.08); }
 .launcher-card.amber::before { background:radial-gradient(ellipse at 50% 0%,rgba(255,179,0,0.06) 0%,transparent 70%); }
-
-.launcher-card.blue { border-color:var(--blue-border); opacity:.8; }
+.launcher-card.blue { border-color:var(--blue-border); opacity:.9; }
 .launcher-card.blue:hover { border-color:rgba(41,182,246,0.5); box-shadow:0 8px 30px rgba(41,182,246,.08); opacity:1; }
 .launcher-card.blue::before { background:radial-gradient(ellipse at 50% 0%,rgba(41,182,246,0.06) 0%,transparent 70%); }
-
-.lc-icon { font-size:28px; line-height:1; }
-.lc-title {
-  font-family:var(--font-cond); font-size:18px; font-weight:700;
-  letter-spacing:.08em; color:var(--text-bright); line-height:1.2;
-}
-.lc-sub {
-  font-family:var(--font-mono); font-size:10px; color:var(--text-secondary);
-  letter-spacing:.04em; line-height:1.5;
-}
-.lc-badge {
-  display:inline-flex; align-items:center; gap:4px;
-  padding:3px 8px; border-radius:2px;
-  font-family:var(--font-mono); font-size:9px; font-weight:700;
-  letter-spacing:.1em; text-transform:uppercase; width:fit-content; margin-top:4px;
-}
-.lc-badge.green { background:rgba(0,230,118,.1); border:1px solid rgba(0,230,118,.25); color:var(--green-bright); }
-.lc-badge.amber { background:rgba(255,179,0,.1); border:1px solid rgba(255,179,0,.25); color:var(--amber); }
-.lc-badge.blue  { background:var(--blue-dim);    border:1px solid var(--blue-border);  color:var(--blue); }
-.lc-arrow {
-  position:absolute; top:16px; right:16px;
-  font-size:16px; color:var(--text-muted); transition:var(--transition);
-}
+.lc-icon  { font-size:28px; line-height:1; }
+.lc-title { font-family:var(--font-cond); font-size:18px; font-weight:700; letter-spacing:.08em; color:var(--text-bright); line-height:1.2; }
+.lc-sub   { font-family:var(--font-mono); font-size:10px; color:var(--text-secondary); letter-spacing:.04em; line-height:1.5; }
+.lc-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:2px; font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; width:fit-content; margin-top:4px; }
+.lc-badge.green  { background:rgba(0,230,118,.1);  border:1px solid rgba(0,230,118,.25);   color:var(--green-bright); }
+.lc-badge.amber  { background:rgba(255,179,0,.1);  border:1px solid rgba(255,179,0,.25);   color:var(--amber); }
+.lc-badge.blue   { background:var(--blue-dim);     border:1px solid var(--blue-border);    color:var(--blue); }
+.lc-badge.purple { background:var(--purple-dim);   border:1px solid var(--purple-border);  color:var(--purple); }
+.lc-arrow { position:absolute; top:16px; right:16px; font-size:16px; color:var(--text-muted); transition:var(--transition); }
 .launcher-card:hover .lc-arrow { color:var(--green-bright); transform:translate(2px,-2px); }
 .launcher-card.amber:hover .lc-arrow { color:var(--amber); }
 .launcher-card.blue:hover  .lc-arrow { color:var(--blue); }
 
-/* ── WIDGET SHELL (heatmap) ── */
-.widget-shell {
-  flex:1; position:relative; overflow:hidden; background:var(--bg-base);
+/* ════════════════════════════════════════════════════
+   ★ QUICK MEMO SECTION（ファンダメンタルズメモ）
+════════════════════════════════════════════════════ */
+.memo-section { display:flex; flex-direction:column; gap:16px; }
+
+/* 入力フォームカード */
+.memo-form-card {
+  background:var(--bg-card); border:1px solid var(--border-base);
+  border-radius:var(--radius-lg); padding:18px; display:flex; flex-direction:column; gap:14px;
 }
+.memo-form-row { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; }
+.memo-form-field { display:flex; flex-direction:column; gap:5px; }
+.memo-form-field label { font-family:var(--font-mono); font-size:9px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-muted); }
+.memo-form-field input,
+.memo-form-field textarea {
+  background:var(--bg-elevated); border:1px solid var(--border-base); border-radius:var(--radius-sm);
+  color:var(--text-primary); font-family:var(--font-mono); font-size:12px; letter-spacing:.04em;
+  padding:7px 10px; outline:none; transition:var(--transition); width:100%;
+}
+.memo-form-field input:focus,
+.memo-form-field textarea:focus { border-color:var(--border-glow); box-shadow:0 0 0 2px rgba(0,230,118,.07); background:var(--bg-surface); }
+.memo-form-field input::placeholder,
+.memo-form-field textarea::placeholder { color:var(--text-muted); font-size:11px; }
+.memo-form-field textarea { resize:vertical; min-height:60px; line-height:1.5; }
+.memo-form-actions { display:flex; align-items:center; gap:10px; justify-content:flex-end; }
+.memo-add-btn {
+  display:flex; align-items:center; gap:6px; padding:8px 20px;
+  background:var(--green-bright); border:none; border-radius:var(--radius-sm);
+  color:var(--bg-void); font-family:var(--font-cond); font-size:14px; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:var(--transition);
+  box-shadow:0 0 16px rgba(0,230,118,.25);
+}
+.memo-add-btn:hover { background:var(--green-glow); box-shadow:0 0 24px rgba(0,255,136,.35); transform:translateY(-1px); }
+.memo-clear-btn {
+  padding:8px 14px; background:none; border:1px solid var(--border-base);
+  border-radius:var(--radius-sm); color:var(--text-secondary);
+  font-family:var(--font-cond); font-size:12px; font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase; cursor:pointer; transition:var(--transition);
+}
+.memo-clear-btn:hover { border-color:var(--red-dim); color:var(--red); background:rgba(255,61,90,.06); }
+
+/* メモカードグリッド */
+.memo-cards-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:10px;
+}
+.memo-card {
+  background:var(--bg-card); border:1px solid var(--border-base);
+  border-radius:var(--radius-md); padding:14px;
+  display:flex; flex-direction:column; gap:10px;
+  position:relative; overflow:hidden;
+  animation:card-in .3s cubic-bezier(.4,0,.2,1) forwards;
+  transition:var(--transition);
+}
+.memo-card::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+  border-radius:var(--radius-sm) 0 0 var(--radius-sm);
+  background:var(--purple-border); transition:var(--transition);
+}
+.memo-card:hover { border-color:var(--purple-border); background:var(--bg-elevated); transform:translateY(-1px); box-shadow:0 4px 20px rgba(0,0,0,.4); }
+.memo-card:hover::before { background:var(--purple); box-shadow:0 0 8px rgba(206,147,216,.4); }
+@keyframes card-in { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.memo-card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+.memo-card-ticker { font-family:var(--font-cond); font-size:22px; font-weight:800; letter-spacing:.05em; color:var(--text-bright); line-height:1; }
+.memo-card-del {
+  display:flex; align-items:center; justify-content:center; width:26px; height:26px;
+  background:none; border:1px solid transparent; border-radius:var(--radius-sm);
+  color:var(--text-muted); cursor:pointer; font-size:13px; transition:var(--transition); flex-shrink:0;
+}
+.memo-card-del:hover { color:var(--red); border-color:var(--red-dim); background:rgba(255,61,90,.08); }
+
+.memo-card-stats { display:flex; gap:12px; flex-wrap:wrap; }
+.memo-stat { display:flex; flex-direction:column; gap:2px; }
+.memo-stat-label { font-family:var(--font-mono); font-size:8px; letter-spacing:.12em; color:var(--text-muted); text-transform:uppercase; }
+.memo-stat-val   { font-family:var(--font-cond); font-size:15px; font-weight:700; color:var(--purple); letter-spacing:.03em; line-height:1; }
+.memo-stat-val.empty { color:var(--text-muted); font-size:12px; }
+
+.memo-card-note { font-family:var(--font-mono); font-size:11px; color:var(--text-secondary); line-height:1.6; letter-spacing:.03em; padding:8px 10px; background:var(--bg-elevated); border-radius:var(--radius-sm); border:1px solid var(--border-base); white-space:pre-wrap; }
+.memo-card-ts   { font-family:var(--font-mono); font-size:9px; color:var(--text-muted); letter-spacing:.05em; }
+
+.memo-empty { text-align:center; padding:32px 16px; font-family:var(--font-mono); font-size:11px; color:var(--text-muted); letter-spacing:.06em; border:1px dashed var(--border-base); border-radius:var(--radius-md); line-height:2; }
+
+/* ── WIDGET SHELL (heatmap) ── */
+.widget-shell { flex:1; position:relative; overflow:hidden; background:var(--bg-base); }
 .widget-shell .tradingview-widget-container { position:absolute; inset:0; height:100%; width:100%; }
 .widget-shell .tradingview-widget-container__widget { height:100%; width:100%; }
 
 /* ── WATCHLIST ── */
 #panel-watchlist { overflow:hidden; }
-.watchlist-toolbar {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:10px 16px; background:var(--bg-surface);
-  border-bottom:1px solid var(--border-base); flex-shrink:0; gap:10px;
-}
+.watchlist-toolbar { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; background:var(--bg-surface); border-bottom:1px solid var(--border-base); flex-shrink:0; gap:10px; }
 .wl-stats { display:flex; align-items:center; gap:16px; flex-shrink:0; }
 .wl-stat { display:flex; flex-direction:column; gap:1px; }
 .wl-stat-label { font-family:var(--font-mono); font-size:8px; letter-spacing:.15em; color:var(--text-muted); text-transform:uppercase; }
-.wl-stat-val { font-family:var(--font-cond); font-size:16px; font-weight:700; color:var(--green-bright); line-height:1; }
+.wl-stat-val   { font-family:var(--font-cond); font-size:16px; font-weight:700; color:var(--green-bright); line-height:1; }
 .wl-search-wrap { flex:1; max-width:300px; position:relative; }
 .wl-search-wrap .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:12px; pointer-events:none; }
-#wl-search {
-  width:100%; padding:7px 10px 7px 30px; background:var(--bg-elevated);
-  border:1px solid var(--border-base); border-radius:var(--radius-sm);
-  color:var(--text-primary); font-family:var(--font-mono); font-size:11px;
-  letter-spacing:.05em; outline:none; transition:var(--transition);
-}
+#wl-search { width:100%; padding:7px 10px 7px 30px; background:var(--bg-elevated); border:1px solid var(--border-base); border-radius:var(--radius-sm); color:var(--text-primary); font-family:var(--font-mono); font-size:11px; letter-spacing:.05em; outline:none; transition:var(--transition); }
 #wl-search:focus { border-color:var(--border-dim); box-shadow:0 0 0 2px rgba(0,230,118,.08); }
 #wl-search::placeholder { color:var(--text-muted); }
-.watchlist-grid {
-  flex:1; overflow-y:auto; padding:14px 16px 80px;
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-  gap:10px; align-content:start;
-}
+.watchlist-grid { flex:1; overflow-y:auto; padding:14px 16px 80px; display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:10px; align-content:start; }
 .watchlist-grid::-webkit-scrollbar { width:4px; }
 .watchlist-grid::-webkit-scrollbar-track { background:transparent; }
 .watchlist-grid::-webkit-scrollbar-thumb { background:var(--green-mid); border-radius:2px; }
 .watchlist-grid::-webkit-scrollbar-thumb:hover { background:var(--green-bright); }
-.empty-state {
-  grid-column:1/-1; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:14px; padding:60px 20px; text-align:center;
-}
-.empty-icon { font-size:40px; opacity:.3; filter:grayscale(.5); }
+.empty-state { grid-column:1/-1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:60px 20px; text-align:center; }
+.empty-icon  { font-size:40px; opacity:.3; filter:grayscale(.5); }
 .empty-title { font-family:var(--font-cond); font-size:16px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
-.empty-sub { font-family:var(--font-mono); font-size:11px; color:var(--text-muted); max-width:260px; line-height:1.6; letter-spacing:.03em; }
+.empty-sub   { font-family:var(--font-mono); font-size:11px; color:var(--text-muted); max-width:260px; line-height:1.6; letter-spacing:.03em; }
 
 /* ── WATCHLIST CARD ── */
-.wl-card {
-  background:var(--bg-card); border:1px solid var(--border-base);
-  border-radius:var(--radius-md); padding:14px;
-  display:flex; flex-direction:column; gap:10px;
-  position:relative; overflow:hidden;
-  transition:var(--transition); animation:card-in .3s cubic-bezier(.4,0,.2,1) forwards;
-}
-@keyframes card-in { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-.wl-card::before {
-  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
-  border-radius:var(--radius-sm) 0 0 var(--radius-sm);
-  background:var(--green-mid); transition:var(--transition);
-}
+.wl-card { background:var(--bg-card); border:1px solid var(--border-base); border-radius:var(--radius-md); padding:14px; display:flex; flex-direction:column; gap:10px; position:relative; overflow:hidden; transition:var(--transition); animation:card-in .3s cubic-bezier(.4,0,.2,1) forwards; }
+.wl-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:var(--radius-sm) 0 0 var(--radius-sm); background:var(--green-mid); transition:var(--transition); }
 .wl-card:hover { border-color:var(--border-dim); background:var(--bg-elevated); transform:translateY(-1px); box-shadow:0 4px 20px rgba(0,0,0,.4); }
 .wl-card:hover::before { background:var(--green-bright); box-shadow:0 0 8px var(--green-bright); }
 .wl-card.jp-stock::before { background:var(--amber-dim); }
 .wl-card.jp-stock:hover::before { background:var(--amber); box-shadow:0 0 8px var(--amber); }
-
 .card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
 .card-ticker-wrap { display:flex; flex-direction:column; gap:4px; }
 .card-ticker { font-family:var(--font-cond); font-size:24px; font-weight:800; letter-spacing:.05em; line-height:1; color:var(--text-bright); }
@@ -286,46 +260,21 @@ body::after {
 .card-name-input { flex:1; background:none; border:none; color:var(--text-secondary); font-family:var(--font-mono); font-size:11px; letter-spacing:.04em; cursor:text; outline:none; text-align:right; min-width:0; padding:2px 4px; border-bottom:1px solid transparent; transition:var(--transition); }
 .card-name-input:focus { border-bottom-color:var(--border-dim); color:var(--text-primary); }
 .card-name-input::placeholder { color:var(--text-muted); font-size:10px; }
-
 .card-memo { position:relative; }
 .memo-label { font-family:var(--font-mono); font-size:9px; letter-spacing:.12em; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; }
 .card-memo-input { width:100%; background:var(--bg-elevated); border:1px solid var(--border-base); border-radius:var(--radius-sm); color:var(--text-primary); font-family:var(--font-mono); font-size:11px; line-height:1.5; letter-spacing:.03em; padding:7px 9px; resize:none; height:60px; outline:none; transition:var(--transition); }
 .card-memo-input:focus { border-color:var(--border-dim); box-shadow:0 0 0 2px rgba(0,230,118,.06); }
 .card-memo-input::placeholder { color:var(--text-muted); }
-
-/* カードのリンクボタン群 */
-.card-links {
-  display:flex; flex-wrap:wrap; gap:6px;
-}
-.card-link {
-  display:inline-flex; align-items:center; gap:5px; padding:6px 12px;
-  border-radius:var(--radius-sm); font-family:var(--font-cond); font-size:12px;
-  font-weight:700; letter-spacing:.08em; text-transform:uppercase;
-  text-decoration:none; cursor:pointer; transition:var(--transition); white-space:nowrap;
-  border:1px solid;
-}
-/* TradingView — グリーン */
-.card-link.tv {
-  background:rgba(0,230,118,.08); border-color:rgba(0,230,118,.25); color:var(--green-bright);
-}
-.card-link.tv:hover { background:rgba(0,230,118,.16); box-shadow:0 0 12px rgba(0,230,118,.2); }
-/* 株探 — アンバー */
-.card-link.kabutan {
-  background:rgba(255,179,0,.08); border-color:rgba(255,179,0,.25); color:var(--amber);
-}
+.card-links { display:flex; flex-wrap:wrap; gap:6px; }
+.card-link { display:inline-flex; align-items:center; gap:5px; padding:6px 12px; border-radius:var(--radius-sm); font-family:var(--font-cond); font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; text-decoration:none; cursor:pointer; transition:var(--transition); white-space:nowrap; border:1px solid; }
+.card-link.tv      { background:rgba(0,230,118,.08); border-color:rgba(0,230,118,.25); color:var(--green-bright); }
+.card-link.tv:hover{ background:rgba(0,230,118,.16); box-shadow:0 0 12px rgba(0,230,118,.2); }
+.card-link.kabutan { background:rgba(255,179,0,.08); border-color:rgba(255,179,0,.25); color:var(--amber); }
 .card-link.kabutan:hover { background:rgba(255,179,0,.16); box-shadow:0 0 12px rgba(255,179,0,.2); }
-/* Yahoo Finance — ブルー */
-.card-link.yahoo {
-  background:var(--blue-dim); border-color:var(--blue-border); color:var(--blue);
-}
+.card-link.yahoo   { background:var(--blue-dim); border-color:var(--blue-border); color:var(--blue); }
 .card-link.yahoo:hover { background:rgba(41,182,246,.2); box-shadow:0 0 12px rgba(41,182,246,.2); }
-/* 削除 */
-.card-link.del {
-  background:none; border-color:transparent; color:var(--text-muted);
-  padding:6px 8px; margin-left:auto;
-}
+.card-link.del     { background:none; border-color:transparent; color:var(--text-muted); padding:6px 8px; margin-left:auto; }
 .card-link.del:hover { border-color:var(--red-dim); color:var(--red); background:rgba(255,61,90,.08); }
-
 .card-timestamp { font-family:var(--font-mono); font-size:9px; color:var(--text-muted); letter-spacing:.05em; }
 
 /* ── FAB ── */
@@ -353,7 +302,7 @@ body::after {
 .form-input::placeholder { color:var(--text-muted); font-size:11px; }
 .form-textarea { resize:vertical; min-height:70px; line-height:1.5; }
 .modal-preview { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--bg-surface); border:1px solid var(--border-base); border-radius:var(--radius-sm); min-height:38px; }
-.preview-label { font-family:var(--font-mono); font-size:9px; letter-spacing:.12em; color:var(--text-muted); text-transform:uppercase; flex-shrink:0; }
+.preview-label  { font-family:var(--font-mono); font-size:9px; letter-spacing:.12em; color:var(--text-muted); text-transform:uppercase; flex-shrink:0; }
 .preview-ticker { font-family:var(--font-cond); font-size:18px; font-weight:800; color:var(--text-bright); letter-spacing:.05em; }
 .modal-footer { padding:14px 20px; border-top:1px solid var(--border-base); display:flex; gap:10px; justify-content:flex-end; }
 .btn-primary { display:flex; align-items:center; gap:7px; padding:9px 22px; background:var(--green-bright); border:none; border-radius:var(--radius-sm); color:var(--bg-void); font-family:var(--font-cond); font-size:14px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:var(--transition); box-shadow:0 0 20px rgba(0,230,118,.3); }
@@ -406,10 +355,11 @@ body::after {
 @media(max-width:640px) {
   .logo-sub,.live-badge { display:none; }
   .tab-btn { padding:10px 12px; font-size:12px; gap:5px; }
-  .watchlist-grid { grid-template-columns:1fr; padding:10px 10px 80px; }
+  .watchlist-grid,.memo-cards-grid { grid-template-columns:1fr; }
   .launcher-grid { grid-template-columns:1fr; }
   .modal { max-width:100%; }
   #settings-panel { width:100vw; }
+  .memo-form-row { grid-template-columns:1fr 1fr; }
   .card-links { gap:5px; }
   .card-link { padding:5px 9px; font-size:11px; }
 }
@@ -418,6 +368,7 @@ body::after {
   .tab-btn .tab-label { display:none; }
   .tab-btn { padding:10px 14px; }
   .tab-icon { font-size:16px!important; }
+  .memo-form-row { grid-template-columns:1fr; }
 }
 </style>
 </head>
@@ -444,7 +395,7 @@ body::after {
       </div>
       <div>
         <div class="logo-text">APEX TERMINAL</div>
-        <div class="logo-sub">Breakout Monitor v6.0</div>
+        <div class="logo-sub">Breakout Monitor v7.0</div>
       </div>
     </div>
     <div class="live-badge"><div class="live-dot"></div>LIVE</div>
@@ -468,38 +419,54 @@ body::after {
 
   <main id="content">
 
-    <!-- ══ TAB 1: SCREENER LAUNCHER ══ -->
+    <!-- ══ TAB 1: SCREENER ══ -->
     <div class="tab-panel active" id="panel-screener">
       <div class="panel-header">
-        <div class="panel-title"><span>◈</span>外部リサーチリンク集</div>
+        <div class="panel-title"><span>◈</span>外部リサーチ & ファンダメンタルズメモ</div>
       </div>
       <div class="screener-body">
 
-        <div class="section-label">📈 TradingView スクリーナー（銘柄発掘）</div>
+        <!-- ─ TradingView スクリーナー ─ -->
+        <div class="section-label">📈 TradingView スクリーナー（カスタム設定済み）</div>
         <div class="launcher-grid">
 
-          <a class="launcher-card" href="https://jp.tradingview.com/screener/?market=japan" target="_blank" rel="noopener">
+          <!--
+            ★ 修正①: カスタムURL — 日本株スクリーナー
+               TradingView の Cookie バグを回避するため
+               ユーザーが作成したカスタムスクリーナーURLへ直接遷移
+          -->
+          <a class="launcher-card amber"
+             href="https://jp.tradingview.com/screener/f4OK5E8a/"
+             target="_blank" rel="noopener">
             <span class="lc-arrow">↗</span>
             <div class="lc-icon">🗾</div>
             <div class="lc-title">日本株 スクリーナー</div>
-            <div class="lc-sub">TradingView — TOPIX/JPX<br>上昇率・出来高・テクニカルでフィルタ</div>
-            <div class="lc-badge amber">TradingView · JP</div>
+            <div class="lc-sub">カスタム設定済み · TOPIX/JPX<br>上昇率・出来高・テクニカルでフィルタ</div>
+            <div class="lc-badge amber">TradingView · JP Custom</div>
           </a>
 
-          <a class="launcher-card blue" href="https://jp.tradingview.com/screener/?market=america" target="_blank" rel="noopener">
+          <!--
+            ★ 修正①: カスタムURL — 米国株スクリーナー
+          -->
+          <a class="launcher-card blue"
+             href="https://jp.tradingview.com/screener/4ZJUwxBU/"
+             target="_blank" rel="noopener">
             <span class="lc-arrow">↗</span>
             <div class="lc-icon">🇺🇸</div>
             <div class="lc-title">米国株 スクリーナー</div>
-            <div class="lc-sub">TradingView — NYSE/NASDAQ<br>上昇率・出来高・テクニカルでフィルタ</div>
-            <div class="lc-badge blue">TradingView · US</div>
+            <div class="lc-sub">カスタム設定済み · NYSE/NASDAQ<br>上昇率・出来高・テクニカルでフィルタ</div>
+            <div class="lc-badge blue">TradingView · US Custom</div>
           </a>
 
         </div>
 
+        <!-- ─ ファンダメンタル調査 ─ -->
         <div class="section-label">📊 ファンダメンタル調査</div>
         <div class="launcher-grid">
 
-          <a class="launcher-card amber" href="https://kabutan.jp/warning/?mode=2&market=1&profit=0&signal=3&sorttype=4&stc=1" target="_blank" rel="noopener">
+          <a class="launcher-card amber"
+             href="https://kabutan.jp/warning/?mode=2&market=1&profit=0&signal=3&sorttype=4&stc=1"
+             target="_blank" rel="noopener">
             <span class="lc-arrow">↗</span>
             <div class="lc-icon">📋</div>
             <div class="lc-title">株探 — 新高値更新</div>
@@ -507,7 +474,9 @@ body::after {
             <div class="lc-badge amber">株探 · JP</div>
           </a>
 
-          <a class="launcher-card amber" href="https://kabutan.jp/" target="_blank" rel="noopener">
+          <a class="launcher-card amber"
+             href="https://kabutan.jp/"
+             target="_blank" rel="noopener">
             <span class="lc-arrow">↗</span>
             <div class="lc-icon">🔍</div>
             <div class="lc-title">株探 — トップ</div>
@@ -515,7 +484,9 @@ body::after {
             <div class="lc-badge amber">株探 · JP</div>
           </a>
 
-          <a class="launcher-card blue" href="https://finance.yahoo.com/screener/new" target="_blank" rel="noopener">
+          <a class="launcher-card blue"
+             href="https://finance.yahoo.com/screener/new"
+             target="_blank" rel="noopener">
             <span class="lc-arrow">↗</span>
             <div class="lc-icon">💹</div>
             <div class="lc-title">Yahoo Finance スクリーナー</div>
@@ -523,7 +494,9 @@ body::after {
             <div class="lc-badge blue">Yahoo Finance · US</div>
           </a>
 
-          <a class="launcher-card blue" href="https://finviz.com/screener.ashx?v=111&f=ta_highoc20,ta_newhigh" target="_blank" rel="noopener">
+          <a class="launcher-card blue"
+             href="https://finviz.com/screener.ashx?v=111&f=ta_highoc20,ta_newhigh"
+             target="_blank" rel="noopener">
             <span class="lc-arrow">↗</span>
             <div class="lc-icon">📡</div>
             <div class="lc-title">Finviz — 新高値</div>
@@ -533,10 +506,13 @@ body::after {
 
         </div>
 
+        <!-- ─ セクター / マクロ分析 ─ -->
         <div class="section-label">🔥 セクター / マクロ分析</div>
         <div class="launcher-grid">
 
-          <a class="launcher-card" href="https://jp.tradingview.com/markets/stocks-japan/sectorandindustry-sector/" target="_blank" rel="noopener">
+          <a class="launcher-card"
+             href="https://jp.tradingview.com/markets/stocks-japan/sectorandindustry-sector/"
+             target="_blank" rel="noopener">
             <span class="lc-arrow">↗</span>
             <div class="lc-icon">🗺</div>
             <div class="lc-title">セクター分析（JP）</div>
@@ -544,7 +520,9 @@ body::after {
             <div class="lc-badge green">TradingView · JP</div>
           </a>
 
-          <a class="launcher-card blue" href="https://jp.tradingview.com/markets/stocks-usa/sectorandindustry-sector/" target="_blank" rel="noopener">
+          <a class="launcher-card blue"
+             href="https://jp.tradingview.com/markets/stocks-usa/sectorandindustry-sector/"
+             target="_blank" rel="noopener">
             <span class="lc-arrow">↗</span>
             <div class="lc-icon">🌐</div>
             <div class="lc-title">セクター分析（US）</div>
@@ -552,7 +530,72 @@ body::after {
             <div class="lc-badge blue">TradingView · US</div>
           </a>
 
+          <!--
+            ★ 修正③: 経済指標カレンダー追加
+               既存のセクター分析カードと同一サイズ・スタイル
+          -->
+          <a class="launcher-card"
+             href="https://jp.investing.com/economic-calendar/"
+             target="_blank" rel="noopener"
+             style="border-color:rgba(206,147,216,0.2);">
+            <span class="lc-arrow" style="color:var(--purple)">↗</span>
+            <div class="lc-icon">📅</div>
+            <div class="lc-title">経済指標カレンダー</div>
+            <div class="lc-sub">jp.investing.com<br>雇用統計・CPI・FOMCなどの重要イベント確認</div>
+            <div class="lc-badge purple">Investing.com · Macro</div>
+          </a>
+
         </div>
+
+        <!-- ════════════════════════════════════════════
+             ★ 修正②: クイックメモ（ファンダメンタルズ調査用）
+             スクリーナーで見つけた銘柄の情報を即座にメモ。
+             localStorage に保存するため、リロード・ブラウザ再起動後も保持。
+        ════════════════════════════════════════════ -->
+        <div class="section-label" id="memo-section-label">🗒 クイックメモ — ファンダメンタルズ調査（<span id="memo-count">0</span>件保存中）</div>
+
+        <div class="memo-section">
+
+          <!-- 入力フォーム -->
+          <div class="memo-form-card">
+            <div class="memo-form-row">
+              <div class="memo-form-field" style="grid-column:1/-1;">
+                <label>ティッカー / 銘柄コード <span style="color:var(--red);font-size:10px;">*</span></label>
+                <input type="text" id="qm-ticker" placeholder="例: 7011 / NVDA / TSM" autocomplete="off">
+              </div>
+              <div class="memo-form-field">
+                <label>時価総額</label>
+                <input type="text" id="qm-mktcap" placeholder="例: 1.2兆円 / 2.5T">
+              </div>
+              <div class="memo-form-field">
+                <label>PER（倍）</label>
+                <input type="text" id="qm-per" placeholder="例: 18.5">
+              </div>
+            </div>
+            <div class="memo-form-field">
+              <label>ブレイク根拠 / フリーメモ</label>
+              <textarea id="qm-note" placeholder="例: 52週高値ブレイク・出来高3倍・決算ビート後のフラッグ形成。目標株価○○円。リスクは△△..."></textarea>
+            </div>
+            <div class="memo-form-actions">
+              <button class="memo-clear-btn" onclick="clearMemoForm()">クリア</button>
+              <button class="memo-add-btn" onclick="addQuickMemo()">＋ メモを保存</button>
+            </div>
+          </div>
+
+          <!-- 保存済みメモカード一覧 -->
+          <div class="memo-cards-grid" id="memo-cards-grid">
+            <div class="memo-empty" id="memo-empty">
+              ティッカーとメモを入力して「保存」を押すと<br>
+              ここにカードが追加されます。<br>
+              データは localStorage に自動保存されます。
+            </div>
+          </div>
+
+        </div>
+        <!-- /memo-section -->
+
+        <!-- 画面下部の余白 -->
+        <div style="height:16px;flex-shrink:0;"></div>
 
       </div>
     </div>
@@ -569,21 +612,11 @@ body::after {
                   src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js"
                   async>
           {
-            "exchanges": [],
-            "dataSource": "TOPIX",
-            "grouping": "sector",
-            "blockSize": "market_cap_basic",
-            "blockColor": "change",
-            "locale": "ja",
-            "symbolUrl": "",
-            "colorTheme": "dark",
-            "hasTopBar": true,
-            "isDataSetEnabled": true,
-            "isZoomEnabled": true,
-            "hasSymbolTooltip": true,
-            "isMonoSize": false,
-            "width": "100%",
-            "height": "100%"
+            "exchanges":[],"dataSource":"TOPIX","grouping":"sector",
+            "blockSize":"market_cap_basic","blockColor":"change","locale":"ja",
+            "symbolUrl":"","colorTheme":"dark","hasTopBar":true,"isDataSetEnabled":true,
+            "isZoomEnabled":true,"hasSymbolTooltip":true,"isMonoSize":false,
+            "width":"100%","height":"100%"
           }
           </script>
         </div>
@@ -693,23 +726,30 @@ body::after {
 
 <div id="toast-container"></div>
 
+<!-- ================================================================
+     APPLICATION SCRIPT
+================================================================ -->
 <script>
 'use strict';
 
+/* ── STORAGE ── */
 var APP_KEY = 'apex_terminal_';
 var LS = {
   get: function(k)    { try { return JSON.parse(localStorage.getItem(APP_KEY+k)); } catch(e) { return null; } },
   set: function(k, v) { localStorage.setItem(APP_KEY+k, JSON.stringify(v)); }
 };
 
+/* ── STATE ── */
 var state = {
   tab:      'screener',
   items:    [],
   filtered: null,
+  memos:    [],   /* クイックメモ (localStorage: apex_terminal_qmemos) */
   sbUrl:    '',
   sbKey:    ''
 };
 
+/* ── BOOT ── */
 document.addEventListener('DOMContentLoaded', function() {
   setTimeout(function() { var bf = document.getElementById('boot-flash'); if (bf) bf.remove(); }, 300);
   state.sbUrl = LS.get('sbUrl') || '';
@@ -718,6 +758,9 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('sb-key').value = state.sbKey;
   updateConnBar();
   loadWatchlist();
+  /* クイックメモを localStorage から読み込んで表示 */
+  state.memos = LS.get('qmemos') || [];
+  renderMemoCards();
 });
 
 /* ── TAB SWITCHING ── */
@@ -730,43 +773,131 @@ function switchTab(tab) {
   document.getElementById('fab').classList.toggle('visible', tab === 'watchlist');
 }
 
+/* ════════════════════════════════════════════════════════════════
+   ★ QUICK MEMO — クイックメモ機能
+   ────────────────────────────────────────────────────────────────
+   ・入力: ティッカー (必須) / 時価総額 / PER / フリーメモ
+   ・保存: localStorage (キー: apex_terminal_qmemos) に JSON 配列で保存
+   ・表示: カード型グリッド、アニメーション付き
+   ・削除: カード右上の × ボタン
+   ・ページリロード / ブラウザ再起動後もデータを保持
+════════════════════════════════════════════════════════════════ */
+function addQuickMemo() {
+  var ticker = document.getElementById('qm-ticker').value.trim().toUpperCase();
+  var mktcap = document.getElementById('qm-mktcap').value.trim();
+  var per    = document.getElementById('qm-per').value.trim();
+  var note   = document.getElementById('qm-note').value.trim();
+
+  if (!ticker) {
+    toast('ティッカーを入力してください', 'error');
+    document.getElementById('qm-ticker').focus();
+    return;
+  }
+
+  var memo = {
+    id:         Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    ticker:     ticker,
+    mktcap:     mktcap,
+    per:        per,
+    note:       note,
+    created_at: new Date().toISOString()
+  };
+
+  /* 先頭に追加（新しいものが上に来る） */
+  state.memos.unshift(memo);
+  LS.set('qmemos', state.memos);
+  renderMemoCards();
+  clearMemoForm();
+  toast(ticker + ' のメモを保存しました', 'success');
+}
+
+function deleteMemo(id) {
+  state.memos = state.memos.filter(function(m) { return m.id !== id; });
+  LS.set('qmemos', state.memos);
+  renderMemoCards();
+  toast('メモを削除しました', 'info');
+}
+
+function clearMemoForm() {
+  document.getElementById('qm-ticker').value = '';
+  document.getElementById('qm-mktcap').value = '';
+  document.getElementById('qm-per').value    = '';
+  document.getElementById('qm-note').value   = '';
+  document.getElementById('qm-ticker').focus();
+}
+
+function renderMemoCards() {
+  var grid  = document.getElementById('memo-cards-grid');
+  var empty = document.getElementById('memo-empty');
+  var count = document.getElementById('memo-count');
+  count.textContent = state.memos.length;
+
+  /* 既存カードを削除 */
+  grid.querySelectorAll('.memo-card').forEach(function(c) { c.remove(); });
+
+  if (state.memos.length === 0) {
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  for (var i = 0; i < state.memos.length; i++) {
+    grid.insertAdjacentHTML('beforeend', buildMemoCard(state.memos[i]));
+  }
+}
+
+function buildMemoCard(m) {
+  var dt = m.created_at
+    ? new Date(m.created_at).toLocaleString('ja-JP', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' })
+    : '';
+
+  var mktcapHtml = m.mktcap
+    ? '<div class="memo-stat"><div class="memo-stat-label">時価総額</div><div class="memo-stat-val">' + escHtml(m.mktcap) + '</div></div>'
+    : '<div class="memo-stat"><div class="memo-stat-label">時価総額</div><div class="memo-stat-val empty">—</div></div>';
+
+  var perHtml = m.per
+    ? '<div class="memo-stat"><div class="memo-stat-label">PER</div><div class="memo-stat-val">' + escHtml(m.per) + '<span style="font-size:11px;color:var(--text-muted)"> 倍</span></div></div>'
+    : '<div class="memo-stat"><div class="memo-stat-label">PER</div><div class="memo-stat-val empty">—</div></div>';
+
+  var noteHtml = m.note
+    ? '<div class="memo-card-note">' + escHtml(m.note) + '</div>'
+    : '';
+
+  return '<div class="memo-card" data-memo-id="' + m.id + '">'
+    + '<div class="memo-card-header">'
+    +   '<div class="memo-card-ticker">' + escHtml(m.ticker) + '</div>'
+    +   '<button class="memo-card-del" onclick="deleteMemo(\'' + m.id + '\')" title="削除">✕</button>'
+    + '</div>'
+    + '<div class="memo-card-stats">' + mktcapHtml + perHtml + '</div>'
+    + noteHtml
+    + (dt ? '<div class="memo-card-ts">📝 ' + dt + '</div>' : '')
+    + '</div>';
+}
+
 /* ── MARKET DETECTION ── */
 function detectMarket(ticker) {
   var t = ticker.trim().toUpperCase();
   return (/^\d{4}$/.test(t) || /^\d{4}\.(T|OS)$/.test(t)) ? 'JP' : 'US';
 }
 
-/* ════════════════════════════════════════════════════════
-   URL GENERATION
-   JP → TradingView + 株探
-   US → TradingView + Yahoo Finance
-════════════════════════════════════════════════════════ */
+/* ── URL GENERATION ── */
 function getTradingViewUrl(ticker, market) {
   var raw = ticker.trim().toUpperCase().replace(/\.(T|OS|N|NK)$/i, '');
   var symbol;
-  if (raw.indexOf(':') !== -1) {
-    symbol = raw;
-  } else if (market === 'JP' || /^\d{4,5}$/.test(raw)) {
-    symbol = 'TSE:' + raw;
-  } else {
-    symbol = raw;
-  }
-  /* コロンをエンコードしない — TradingView は ?symbol=TSE:7011 を期待する */
+  if (raw.indexOf(':') !== -1) { symbol = raw; }
+  else if (market === 'JP' || /^\d{4,5}$/.test(raw)) { symbol = 'TSE:' + raw; }
+  else { symbol = raw; }
   return 'https://jp.tradingview.com/chart/?symbol=' + symbol;
 }
 
 function getResearchUrl(ticker, market) {
   var t = ticker.trim().replace(/\.(T|OS)$/i, '');
-  if (market === 'JP') {
-    /* 日本株 → 株探 */
-    return 'https://kabutan.jp/stock/?code=' + t;
-  } else {
-    /* 米国株 → Yahoo Finance */
-    return 'https://finance.yahoo.com/quote/' + t.toUpperCase();
-  }
+  return (market === 'JP')
+    ? 'https://kabutan.jp/stock/?code=' + t
+    : 'https://finance.yahoo.com/quote/' + t.toUpperCase();
 }
 
-/* ── ADD MODAL ── */
+/* ── ADD MODAL (Watchlist) ── */
 function openAddModal() {
   document.getElementById('modal-ticker').value = '';
   document.getElementById('modal-name').value   = '';
@@ -776,15 +907,11 @@ function openAddModal() {
   document.getElementById('add-modal').classList.add('open');
   setTimeout(function() { document.getElementById('modal-ticker').focus(); }, 100);
 }
-function closeAddModal() {
-  document.getElementById('add-modal').classList.remove('open');
-}
-document.getElementById('add-modal').addEventListener('click', function(e) {
-  if (e.target === e.currentTarget) closeAddModal();
-});
+function closeAddModal() { document.getElementById('add-modal').classList.remove('open'); }
+document.getElementById('add-modal').addEventListener('click', function(e) { if (e.target === e.currentTarget) closeAddModal(); });
 
 function updateModalPreview(val) {
-  var t      = val.trim().toUpperCase();
+  var t = val.trim().toUpperCase();
   var ticker = document.getElementById('preview-ticker');
   var badge  = document.getElementById('preview-badge');
   if (!t) { ticker.textContent = '—'; badge.innerHTML = ''; return; }
@@ -803,12 +930,7 @@ function addToWatchlist() {
   var dup = false;
   for (var d = 0; d < state.items.length; d++) { if (state.items[d].ticker === ticker) { dup = true; break; } }
   if (dup) { toast(ticker + ' は既に登録済みです', 'error'); return; }
-  var item = {
-    id: crypto.randomUUID(), ticker: ticker,
-    name: name || '', memo: memo || '',
-    created_at: new Date().toISOString(),
-    market: detectMarket(ticker)
-  };
+  var item = { id: crypto.randomUUID(), ticker: ticker, name: name||'', memo: memo||'', created_at: new Date().toISOString(), market: detectMarket(ticker) };
   state.items.unshift(item);
   renderWatchlist();
   closeAddModal();
@@ -817,158 +939,104 @@ function addToWatchlist() {
 }
 
 /* ── SUPABASE ── */
-function sbHeaders() {
-  return { 'Content-Type': 'application/json', 'apikey': state.sbKey, 'Authorization': 'Bearer ' + state.sbKey };
-}
-function sbReady() { return !!(state.sbUrl && state.sbKey); }
+function sbHeaders() { return { 'Content-Type':'application/json', 'apikey':state.sbKey, 'Authorization':'Bearer '+state.sbKey }; }
+function sbReady()   { return !!(state.sbUrl && state.sbKey); }
 
 function loadWatchlist() {
   if (!sbReady()) {
-    var cached = LS.get('watchlist') || [];
-    state.items = cached.map(function(i) {
-      return { id:i.id, ticker:i.ticker, name:i.name||'', memo:i.memo||'', created_at:i.created_at, market:detectMarket(i.ticker) };
-    });
+    state.items = (LS.get('watchlist')||[]).map(function(i) { return { id:i.id, ticker:i.ticker, name:i.name||'', memo:i.memo||'', created_at:i.created_at, market:detectMarket(i.ticker) }; });
     renderWatchlist(); return;
   }
-  fetch(state.sbUrl + '/rest/v1/breakout_watchlist?select=*&order=created_at.desc', { headers: sbHeaders() })
-    .then(function(res) { if (!res.ok) throw new Error(res.status); return res.json(); })
-    .then(function(data) {
-      state.items = data.map(function(i) {
-        return { id:i.id, ticker:i.ticker, name:i.name||'', memo:i.memo||'', created_at:i.created_at, market:detectMarket(i.ticker) };
-      });
-      renderWatchlist(); updateConnBar(true);
-    })
-    .catch(function(e) {
-      var cached = LS.get('watchlist') || [];
-      state.items = cached.map(function(i) {
-        return { id:i.id, ticker:i.ticker, name:i.name||'', memo:i.memo||'', created_at:i.created_at, market:detectMarket(i.ticker) };
-      });
-      renderWatchlist(); updateConnBar(false, String(e));
-    });
+  fetch(state.sbUrl+'/rest/v1/breakout_watchlist?select=*&order=created_at.desc', { headers:sbHeaders() })
+    .then(function(r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(d) { state.items = d.map(function(i) { return { id:i.id, ticker:i.ticker, name:i.name||'', memo:i.memo||'', created_at:i.created_at, market:detectMarket(i.ticker) }; }); renderWatchlist(); updateConnBar(true); })
+    .catch(function(e) { state.items = (LS.get('watchlist')||[]).map(function(i) { return { id:i.id, ticker:i.ticker, name:i.name||'', memo:i.memo||'', created_at:i.created_at, market:detectMarket(i.ticker) }; }); renderWatchlist(); updateConnBar(false, String(e)); });
 }
 
 function persistItem(item) {
   LS.set('watchlist', state.items);
   if (!sbReady()) return;
   var h = sbHeaders(); h['Prefer'] = 'return=minimal';
-  fetch(state.sbUrl + '/rest/v1/breakout_watchlist', {
-    method:'POST', headers:h,
-    body:JSON.stringify({ id:item.id, ticker:item.ticker, name:item.name, memo:item.memo, created_at:item.created_at })
-  }).catch(function() { toast('Supabase保存エラー（ローカルに保存済み）', 'error'); });
+  fetch(state.sbUrl+'/rest/v1/breakout_watchlist', { method:'POST', headers:h, body:JSON.stringify({ id:item.id, ticker:item.ticker, name:item.name, memo:item.memo, created_at:item.created_at }) })
+    .catch(function() { toast('Supabase保存エラー（ローカルに保存済み）','error'); });
 }
-
 function updateItemRemote(item) {
   LS.set('watchlist', state.items);
   if (!sbReady()) return;
   var h = sbHeaders(); h['Prefer'] = 'return=minimal';
-  fetch(state.sbUrl + '/rest/v1/breakout_watchlist?id=eq.' + item.id, {
-    method:'PATCH', headers:h, body:JSON.stringify({ name:item.name, memo:item.memo })
-  }).catch(function(e) { console.warn('PATCH:', e); });
+  fetch(state.sbUrl+'/rest/v1/breakout_watchlist?id=eq.'+item.id, { method:'PATCH', headers:h, body:JSON.stringify({ name:item.name, memo:item.memo }) }).catch(function(e) { console.warn(e); });
 }
-
 function deleteItemRemote(id) {
   LS.set('watchlist', state.items);
   if (!sbReady()) return;
-  fetch(state.sbUrl + '/rest/v1/breakout_watchlist?id=eq.' + id, { method:'DELETE', headers:sbHeaders() })
-    .catch(function(e) { console.warn('DELETE:', e); });
+  fetch(state.sbUrl+'/rest/v1/breakout_watchlist?id=eq.'+id, { method:'DELETE', headers:sbHeaders() }).catch(function(e) { console.warn(e); });
 }
-
 function deleteItem(id) {
-  var item = null;
-  for (var i = 0; i < state.items.length; i++) { if (state.items[i].id === id) { item = state.items[i]; break; } }
-  if (!item || !confirm('「' + item.ticker + '」を削除しますか？')) return;
-  state.items = state.items.filter(function(x) { return x.id !== id; });
-  renderWatchlist();
-  toast(item.ticker + ' を削除しました', 'info');
-  deleteItemRemote(id);
+  var item = null; for (var i=0; i<state.items.length; i++) { if (state.items[i].id===id) { item=state.items[i]; break; } }
+  if (!item || !confirm('「'+item.ticker+'」を削除しますか？')) return;
+  state.items = state.items.filter(function(x) { return x.id!==id; });
+  renderWatchlist(); toast(item.ticker+' を削除しました','info'); deleteItemRemote(id);
 }
-
 function saveItem(id) {
-  var item = null;
-  for (var i = 0; i < state.items.length; i++) { if (state.items[i].id === id) { item = state.items[i]; break; } }
+  var item = null; for (var i=0; i<state.items.length; i++) { if (state.items[i].id===id) { item=state.items[i]; break; } }
   if (!item) return;
-  var card = document.querySelector('[data-id="' + id + '"]');
+  var card = document.querySelector('[data-id="'+id+'"]');
   if (card) { item.name = card.querySelector('.card-name-input').value.trim(); item.memo = card.querySelector('.card-memo-input').value.trim(); }
-  toast(item.ticker + ' を保存しました', 'success');
-  updateItemRemote(item);
+  toast(item.ticker+' を保存しました','success'); updateItemRemote(item);
 }
 
 /* ── RENDER WATCHLIST ── */
 function renderWatchlist() {
-  var grid  = document.getElementById('watchlist-grid');
-  var items = (state.filtered !== null) ? state.filtered : state.items;
-  var jp = 0, us = 0;
-  for (var k = 0; k < state.items.length; k++) { if (state.items[k].market === 'JP') jp++; else us++; }
+  var grid = document.getElementById('watchlist-grid');
+  var items = (state.filtered!==null) ? state.filtered : state.items;
+  var jp=0, us=0; for (var k=0; k<state.items.length; k++) { if (state.items[k].market==='JP') jp++; else us++; }
   document.getElementById('stat-total').textContent     = state.items.length;
   document.getElementById('stat-jp').textContent        = jp;
   document.getElementById('stat-us').textContent        = us;
   document.getElementById('wl-count-badge').textContent = state.items.length;
   grid.querySelectorAll('.wl-card').forEach(function(c) { c.remove(); });
-  if (items.length === 0) { document.getElementById('wl-empty').style.display = ''; return; }
-  document.getElementById('wl-empty').style.display = 'none';
-  for (var j = 0; j < items.length; j++) { grid.insertAdjacentHTML('beforeend', buildCard(items[j])); }
+  if (items.length===0) { document.getElementById('wl-empty').style.display=''; return; }
+  document.getElementById('wl-empty').style.display='none';
+  for (var j=0; j<items.length; j++) { grid.insertAdjacentHTML('beforeend', buildCard(items[j])); }
 }
 
 function buildCard(item) {
   var tvUrl       = getTradingViewUrl(item.ticker, item.market);
   var researchUrl = getResearchUrl(item.ticker, item.market);
-  var researchIcon  = (item.market === 'JP') ? '📊' : '💹';
-  var researchLabel = (item.market === 'JP') ? '株探' : 'Yahoo Finance';
-  var researchClass = (item.market === 'JP') ? 'kabutan' : 'yahoo';
-  var dt = item.created_at
-    ? new Date(item.created_at).toLocaleString('ja-JP', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' })
-    : '';
-  var badge = (item.market === 'JP')
-    ? '<span class="card-market-badge jp">🗾 JP</span>'
-    : '<span class="card-market-badge us">🇺🇸 US</span>';
-
-  return '<div class="wl-card ' + item.market.toLowerCase() + '-stock" data-id="' + item.id + '">'
-    + '<div class="corner-tl"></div><div class="corner-tr"></div>'
-    + '<div class="card-header">'
-    +   '<div class="card-ticker-wrap"><div class="card-ticker">' + escHtml(item.ticker) + '</div>' + badge + '</div>'
-    +   '<input class="card-name-input" value="' + escHtml(item.name) + '" placeholder="銘柄名を入力..." onblur="autoSaveItem(\'' + item.id + '\')">'
-    + '</div>'
-    + '<div class="card-memo">'
-    +   '<div class="memo-label">注目理由・メモ</div>'
-    +   '<textarea class="card-memo-input" placeholder="例: 高値ブレイク、出来高急増、決算待ち..." onblur="autoSaveItem(\'' + item.id + '\')">' + escHtml(item.memo) + '</textarea>'
-    + '</div>'
-    + '<div class="card-links">'
-    +   '<a class="card-link tv"       href="' + tvUrl       + '" target="_blank" rel="noopener">📈 TradingView</a>'
-    +   '<a class="card-link ' + researchClass + '" href="' + researchUrl + '" target="_blank" rel="noopener">' + researchIcon + ' ' + researchLabel + '</a>'
-    +   '<button class="card-link del" onclick="deleteItem(\'' + item.id + '\')" title="削除">🗑</button>'
-    + '</div>'
-    + (dt ? '<div class="card-timestamp">登録: ' + dt + '</div>' : '')
-    + '</div>';
+  var researchIcon  = (item.market==='JP') ? '📊' : '💹';
+  var researchLabel = (item.market==='JP') ? '株探' : 'Yahoo Finance';
+  var researchClass = (item.market==='JP') ? 'kabutan' : 'yahoo';
+  var dt = item.created_at ? new Date(item.created_at).toLocaleString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
+  var badge = (item.market==='JP') ? '<span class="card-market-badge jp">🗾 JP</span>' : '<span class="card-market-badge us">🇺🇸 US</span>';
+  return '<div class="wl-card '+item.market.toLowerCase()+'-stock" data-id="'+item.id+'">'
+    +'<div class="corner-tl"></div><div class="corner-tr"></div>'
+    +'<div class="card-header"><div class="card-ticker-wrap"><div class="card-ticker">'+escHtml(item.ticker)+'</div>'+badge+'</div>'
+    +'<input class="card-name-input" value="'+escHtml(item.name)+'" placeholder="銘柄名を入力..." onblur="autoSaveItem(\''+item.id+'\')">'
+    +'</div>'
+    +'<div class="card-memo"><div class="memo-label">注目理由・メモ</div>'
+    +'<textarea class="card-memo-input" placeholder="例: 高値ブレイク、出来高急増..." onblur="autoSaveItem(\''+item.id+'\')">'+escHtml(item.memo)+'</textarea></div>'
+    +'<div class="card-links">'
+    +'<a class="card-link tv" href="'+tvUrl+'" target="_blank" rel="noopener">📈 TradingView</a>'
+    +'<a class="card-link '+researchClass+'" href="'+researchUrl+'" target="_blank" rel="noopener">'+researchIcon+' '+researchLabel+'</a>'
+    +'<button class="card-link del" onclick="deleteItem(\''+item.id+'\')" title="削除">🗑</button>'
+    +'</div>'
+    +(dt ? '<div class="card-timestamp">登録: '+dt+'</div>' : '')
+    +'</div>';
 }
 
 var autoSaveTimer = {};
 function autoSaveItem(id) {
   clearTimeout(autoSaveTimer[id]);
-  var item = null;
-  for (var i = 0; i < state.items.length; i++) { if (state.items[i].id === id) { item = state.items[i]; break; } }
-  var card = document.querySelector('[data-id="' + id + '"]');
-  if (item && card) {
-    item.name = card.querySelector('.card-name-input').value.trim();
-    item.memo = card.querySelector('.card-memo-input').value.trim();
-    LS.set('watchlist', state.items);
-  }
-  autoSaveTimer[id] = setTimeout(function() {
-    var it = null;
-    for (var j = 0; j < state.items.length; j++) { if (state.items[j].id === id) { it = state.items[j]; break; } }
-    updateItemRemote(it || {});
-  }, 2000);
+  var item=null; for (var i=0; i<state.items.length; i++) { if (state.items[i].id===id) { item=state.items[i]; break; } }
+  var card = document.querySelector('[data-id="'+id+'"]');
+  if (item && card) { item.name=card.querySelector('.card-name-input').value.trim(); item.memo=card.querySelector('.card-memo-input').value.trim(); LS.set('watchlist',state.items); }
+  autoSaveTimer[id] = setTimeout(function() { var it=null; for (var j=0;j<state.items.length;j++){if(state.items[j].id===id){it=state.items[j];break;}} updateItemRemote(it||{}); }, 2000);
 }
 
 function filterWatchlist(q) {
   var query = q.trim().toUpperCase();
-  if (!query) { state.filtered = null; }
-  else {
-    state.filtered = state.items.filter(function(i) {
-      return i.ticker.indexOf(query) !== -1
-        || (i.name && i.name.toUpperCase().indexOf(query) !== -1)
-        || (i.memo && i.memo.toUpperCase().indexOf(query) !== -1);
-    });
-  }
+  if (!query) { state.filtered=null; }
+  else { state.filtered = state.items.filter(function(i) { return i.ticker.indexOf(query)!==-1||(i.name&&i.name.toUpperCase().indexOf(query)!==-1)||(i.memo&&i.memo.toUpperCase().indexOf(query)!==-1); }); }
   renderWatchlist();
 }
 
@@ -977,66 +1045,48 @@ function openSettings()  { document.getElementById('settings-panel').classList.a
 function closeSettings() { document.getElementById('settings-panel').classList.remove('open'); document.getElementById('settings-backdrop').classList.remove('open'); }
 
 function saveSettings() {
-  var url = document.getElementById('sb-url').value.trim().replace(/\/+$/, '');
+  var url = document.getElementById('sb-url').value.trim().replace(/\/+$/,'');
   var key = document.getElementById('sb-key').value.trim();
-  if (!url || !key) { toast('URLとAnon Keyを入力してください', 'error'); return; }
-  state.sbUrl = url; state.sbKey = key;
-  LS.set('sbUrl', url); LS.set('sbKey', key);
-  var sEl = document.getElementById('supabase-status');
-  var sTx = document.getElementById('supabase-status-text');
-  sEl.className = 'status-indicator idle'; sTx.textContent = '接続テスト中...';
-  fetch(url + '/rest/v1/breakout_watchlist?select=id&limit=1', { headers: { 'apikey': key, 'Authorization': 'Bearer ' + key } })
-    .then(function(res) {
-      if (res.ok) {
-        sEl.className = 'status-indicator ok';
-        sTx.textContent = '接続成功 ✓ (' + new Date().toLocaleTimeString('ja-JP') + ')';
-        toast('Supabase 接続成功！', 'success'); updateConnBar(true); loadWatchlist();
-      } else { throw new Error(res.status); }
-    })
-    .catch(function(e) {
-      sEl.className = 'status-indicator err';
-      sTx.textContent = '接続失敗: ' + String(e).slice(0, 60);
-      toast('接続失敗 — URLとキーを確認してください', 'error'); updateConnBar(false, String(e));
-    });
+  if (!url||!key) { toast('URLとAnon Keyを入力してください','error'); return; }
+  state.sbUrl=url; state.sbKey=key; LS.set('sbUrl',url); LS.set('sbKey',key);
+  var sEl=document.getElementById('supabase-status'); var sTx=document.getElementById('supabase-status-text');
+  sEl.className='status-indicator idle'; sTx.textContent='接続テスト中...';
+  fetch(url+'/rest/v1/breakout_watchlist?select=id&limit=1',{headers:{'apikey':key,'Authorization':'Bearer '+key}})
+    .then(function(r) { if(r.ok){sEl.className='status-indicator ok';sTx.textContent='接続成功 ✓ ('+new Date().toLocaleTimeString('ja-JP')+')';toast('Supabase 接続成功！','success');updateConnBar(true);loadWatchlist();}else{throw new Error(r.status);} })
+    .catch(function(e) { sEl.className='status-indicator err';sTx.textContent='接続失敗: '+String(e).slice(0,60);toast('接続失敗 — URLとキーを確認してください','error');updateConnBar(false,String(e)); });
 }
 
 function updateConnBar(ok, errMsg) {
-  var bar = document.getElementById('conn-bar');
-  var msg = document.getElementById('conn-msg');
-  if (ok === true) {
-    bar.className = 'ok'; msg.textContent = 'Supabase 接続済み — ' + state.sbUrl;
-    setTimeout(function() { bar.classList.add('hidden'); }, 4000);
-  } else if (ok === false) {
-    bar.className = ''; msg.textContent = 'Supabase 接続エラー — ローカルモードで動作中 (' + (errMsg ? String(errMsg).slice(0,50) : '') + ')';
-  } else {
-    if (!state.sbUrl || !state.sbKey) { bar.className = ''; msg.textContent = 'Supabase 未設定 — 右上の ⚙️ 設定からURLとAnon Keyを入力してください'; }
-    else { bar.classList.add('hidden'); }
-  }
+  var bar=document.getElementById('conn-bar'); var msg=document.getElementById('conn-msg');
+  if (ok===true) { bar.className='ok'; msg.textContent='Supabase 接続済み — '+state.sbUrl; setTimeout(function(){bar.classList.add('hidden');},4000); }
+  else if (ok===false) { bar.className=''; msg.textContent='Supabase 接続エラー — ローカルモードで動作中 ('+(errMsg?String(errMsg).slice(0,50):'')+')'; }
+  else { if(!state.sbUrl||!state.sbKey){bar.className='';msg.textContent='Supabase 未設定 — 右上の ⚙️ 設定からURLとAnon Keyを入力してください';}else{bar.classList.add('hidden');} }
 }
 
 function clearAllData() {
-  if (!confirm('すべてのデータをリセットしますか？\nこの操作は取り消せません。')) return;
+  if (!confirm('すべてのデータ（Watchlist・クイックメモ・設定）をリセットしますか？\nこの操作は取り消せません。')) return;
   localStorage.clear(); location.reload();
 }
 
+/* ── TOAST ── */
 function toast(msg, type) {
-  type = type || 'info';
-  var el = document.createElement('div');
-  el.className = 'toast ' + type; el.textContent = msg;
+  type=type||'info';
+  var el=document.createElement('div'); el.className='toast '+type; el.textContent=msg;
   document.getElementById('toast-container').appendChild(el);
-  setTimeout(function() { el.style.animation = 'toast-out .3s ease forwards'; setTimeout(function() { el.remove(); }, 300); }, 3200);
+  setTimeout(function(){el.style.animation='toast-out .3s ease forwards';setTimeout(function(){el.remove();},300);},3200);
 }
 
+/* ── UTILITIES ── */
 function escHtml(str) {
   if (!str) return '';
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+/* ── KEYBOARD SHORTCUTS ── */
 document.addEventListener('keydown', function(e) {
-  var tag = document.activeElement ? document.activeElement.tagName : '';
-  var typing = (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT');
-  if (e.key === 'Escape') { closeAddModal(); closeSettings(); }
-  if (!typing && state.tab === 'watchlist' && e.key === 'n') { openAddModal(); }
+  var tag=document.activeElement?document.activeElement.tagName:''; var typing=(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT');
+  if (e.key==='Escape') { closeAddModal(); closeSettings(); }
+  if (!typing && state.tab==='watchlist' && e.key==='n') { openAddModal(); }
 });
 </script>
 </body>
