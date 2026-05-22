@@ -165,51 +165,26 @@ body::after {
 .mkt-btn:hover { color:var(--text-primary); background:rgba(255,255,255,.04); }
 .mkt-btn.jp.active { background:rgba(255,179,0,.12); color:var(--amber); }
 .mkt-btn.us.active { background:rgba(2,136,209,.12); color:#4fc3f7; }
-.mkt-btn:disabled { pointer-events:none; opacity:.4; }
 
-/* ── WIDGET OUTER SHELL ── */
+/* ── WIDGET SHELL ── */
+/*
+  widget-shell が flex:1 で残り高さを全て占有する。
+  その中に screener-jp / screener-us を position:absolute で重ねて配置し、
+  display:none / display:block の切り替えで表示を制御する。
+*/
 .widget-shell {
   flex:1; position:relative; overflow:hidden; background:var(--bg-base);
 }
 
-/* ローディングオーバーレイ（ウィジェット描画中に表示） */
-.widget-loading {
-  position:absolute; inset:0; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:16px;
-  background:var(--bg-base); pointer-events:none;
-  transition:opacity .4s; z-index:10;
+/* JP・US 両コンテナ共通スタイル */
+.screener-pane {
+  position:absolute; inset:0; width:100%; height:100%;
 }
-.widget-loading.hidden { opacity:0; pointer-events:none; }
-.loader-ring {
-  width:40px; height:40px; border:2px solid var(--border-dim);
-  border-top-color:var(--green-bright); border-radius:50%;
-  animation:spin .8s linear infinite;
+.screener-pane .tradingview-widget-container {
+  width:100%; height:100%;
 }
-@keyframes spin { to { transform:rotate(360deg); } }
-.loader-text {
-  font-family:var(--font-mono); font-size:10px; letter-spacing:.2em;
-  color:var(--text-secondary); text-transform:uppercase;
-  animation:blink 1.5s ease-in-out infinite;
-}
-.loader-market-label {
-  font-family:var(--font-cond); font-size:13px; font-weight:700;
-  letter-spacing:.15em; color:var(--text-muted); text-transform:uppercase;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-/*
-  ★ screener-container: これが renderScreener() で innerHTML='' される対象
-  ローディングオーバーレイとは別レイヤーに置くことで、
-  ウィジェット再構築時にオーバーレイを破壊しない
-*/
-#screener-container {
-  position:absolute; inset:0;
-}
-#screener-container .tradingview-widget-container {
-  height:100%; width:100%;
-}
-#screener-container .tradingview-widget-container__widget {
-  height:100%; width:100%;
+.screener-pane .tradingview-widget-container__widget {
+  width:100%; height:100%;
 }
 
 /* ── WATCHLIST ── */
@@ -411,7 +386,7 @@ body::after {
       </div>
       <div>
         <div class="logo-text">APEX TERMINAL</div>
-        <div class="logo-sub">Breakout Monitor v2.4</div>
+        <div class="logo-sub">Breakout Monitor v3.0</div>
       </div>
     </div>
     <div class="live-badge"><div class="live-dot"></div>LIVE</div>
@@ -435,31 +410,87 @@ body::after {
 
   <main id="content">
 
-    <!-- ══ TAB 1: SCREENER ══ -->
+    <!-- ══════════════════════════════════════════════
+         TAB 1: SCREENER
+         ──────────────────────────────────────────────
+         JP・US 2つのウィジェットを最初から静的に配置。
+         ボタンクリックは display の CSS 切り替えのみ。
+         動的なスクリプト生成・DOM操作は一切行わない。
+    ══════════════════════════════════════════════ -->
     <div class="tab-panel active" id="panel-breakout">
       <div class="panel-header">
         <div class="panel-title"><span>◈</span>高値ブレイク スクリーナー</div>
         <div class="market-toggle">
+          <!-- JP ボタン: 初期表示でアクティブ -->
           <button class="mkt-btn jp active" id="mkt-jp" onclick="switchMarket('japan')">🗾 JP</button>
-          <button class="mkt-btn us"         id="mkt-us" onclick="switchMarket('america')">🇺🇸 US</button>
+          <!-- US ボタン -->
+          <button class="mkt-btn us" id="mkt-us" onclick="switchMarket('america')">🇺🇸 US</button>
         </div>
         <div class="panel-meta" id="screener-ts">TradingView Screener</div>
       </div>
 
       <!--
-        widget-shell: flex:1 で残り高さを全て占有するラッパー
-        ├─ screener-loading : ローディングオーバーレイ（position:absolute）
-        └─ screener-container : ★ innerHTML='' で毎回クリアされる描画ターゲット（position:absolute）
+        widget-shell: flex:1 で縦方向の残り高さを全て占有するラッパー
+        screener-jp / screener-us は position:absolute で同一領域に重ねて配置。
+        switchMarket() が display:block / display:none を切り替えるだけで
+        ウィジェットの表示・非表示を制御する。
       -->
       <div class="widget-shell">
-        <div class="widget-loading" id="screener-loading">
-          <div class="loader-ring"></div>
-          <div class="loader-market-label" id="loader-market-label">🗾 日本株</div>
-          <div class="loader-text">Loading Screener...</div>
+
+        <!-- ★ 日本株スクリーナー (id="screener-jp") — 初期表示 -->
+        <div id="screener-jp" class="screener-pane" style="display:block;">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript"
+                    src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js"
+                    async>
+            {
+              "width": "100%",
+              "height": "100%",
+              "defaultColumn": "overview",
+              "defaultScreen": "top_gainers",
+              "market": "japan",
+              "showToolbar": true,
+              "colorTheme": "dark",
+              "locale": "ja",
+              "isTransparent": true,
+              "largeChartUrl": "https://jp.tradingview.com/chart/",
+              "displayCurrency": "JPY"
+            }
+            </script>
+          </div>
         </div>
-        <div id="screener-container"></div>
+        <!-- /screener-jp -->
+
+        <!-- ★ 米国株スクリーナー (id="screener-us") — 初期は非表示 -->
+        <div id="screener-us" class="screener-pane" style="display:none;">
+          <div class="tradingview-widget-container">
+            <div class="tradingview-widget-container__widget"></div>
+            <script type="text/javascript"
+                    src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js"
+                    async>
+            {
+              "width": "100%",
+              "height": "100%",
+              "defaultColumn": "overview",
+              "defaultScreen": "top_gainers",
+              "market": "america",
+              "showToolbar": true,
+              "colorTheme": "dark",
+              "locale": "ja",
+              "isTransparent": true,
+              "largeChartUrl": "https://jp.tradingview.com/chart/",
+              "displayCurrency": "USD"
+            }
+            </script>
+          </div>
+        </div>
+        <!-- /screener-us -->
+
       </div>
+      <!-- /widget-shell -->
     </div>
+    <!-- /panel-breakout -->
 
     <!-- ══ TAB 2: HEATMAP ══ -->
     <div class="tab-panel" id="panel-heatmap">
@@ -468,19 +499,27 @@ body::after {
         <div class="panel-meta">Stock Heatmap — 資金ローテーション</div>
       </div>
       <div class="widget-shell">
-        <div class="widget-loading" id="heatmap-loading">
-          <div class="loader-ring"></div>
-          <div class="loader-text">Loading Heatmap...</div>
-        </div>
-        <div class="tradingview-widget-container" style="position:absolute;inset:0;">
+        <div class="tradingview-widget-container" style="position:absolute;inset:0;height:100%;width:100%;">
           <div class="tradingview-widget-container__widget" style="height:100%;width:100%;"></div>
-          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js" async>
+          <script type="text/javascript"
+                  src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js"
+                  async>
           {
-            "exchanges": [], "dataSource": "TOPIX", "grouping": "sector",
-            "blockSize": "market_cap_basic", "blockColor": "change", "locale": "ja",
-            "symbolUrl": "", "colorTheme": "dark", "hasTopBar": true,
-            "isDataSetEnabled": true, "isZoomEnabled": true, "hasSymbolTooltip": true,
-            "isMonoSize": false, "width": "100%", "height": "100%"
+            "exchanges": [],
+            "dataSource": "TOPIX",
+            "grouping": "sector",
+            "blockSize": "market_cap_basic",
+            "blockColor": "change",
+            "locale": "ja",
+            "symbolUrl": "",
+            "colorTheme": "dark",
+            "hasTopBar": true,
+            "isDataSetEnabled": true,
+            "isZoomEnabled": true,
+            "hasSymbolTooltip": true,
+            "isMonoSize": false,
+            "width": "100%",
+            "height": "100%"
           }
           </script>
         </div>
@@ -603,7 +642,7 @@ body::after {
 /* ── STORAGE ── */
 const APP_KEY = 'apex_terminal_';
 const LS = {
-  get: k    => { try { return JSON.parse(localStorage.getItem(APP_KEY + k)); } catch(e) { return null; } },
+  get: k     => { try { return JSON.parse(localStorage.getItem(APP_KEY + k)); } catch(e) { return null; } },
   set: (k,v) => localStorage.setItem(APP_KEY + k, JSON.stringify(v)),
 };
 
@@ -617,105 +656,6 @@ let state = {
   sbKey:          '',
 };
 
-/*
-  ════════════════════════════════════════════════════════════
-  ★ SCREENER RENDER  —  必須条件を厳守した DOM 再構築ロジック
-  ════════════════════════════════════════════════════════════
-
-  【実行順序】
-  1. id="screener-container" を innerHTML = '' で完全に空にする
-  2. TradingView が要求するコンテナ構造を createElement で組み立てる
-       div.tradingview-widget-container
-         └─ div.tradingview-widget-container__widget  ← ウィジェット挿入先
-  3. document.createElement('script') で新規スクリプトタグを生成する
-  4. script.src に TradingView の埋め込みスクリプト URL を指定する
-  5. script.innerHTML に JSON 設定を流し込む
-       - 日本株: "market": "japan"
-       - 米国株: "market": "america"   ← TradingView の正式な市場コード
-       - "largeChartUrl" を設定することで、銘柄クリック時に
-         https://jp.tradingview.com/chart/?symbol=EXCHANGE:TICKER
-         が別タブで開かれる（TradingView ウィジェット仕様）
-  6. script を .tradingview-widget-container に appendChild する
-  7. コンテナ全体を screener-container に appendChild する
-  ════════════════════════════════════════════════════════════
-*/
-function renderScreener(market) {
-
-  /* ── ローダー表示 ── */
-  const loadingEl = document.getElementById('screener-loading');
-  const labelEl   = document.getElementById('loader-market-label');
-  loadingEl.classList.remove('hidden');
-  labelEl.textContent = (market === 'japan') ? '🗾 日本株' : '🇺🇸 米国株';
-
-  /* ────────────────────────────────────────────
-     STEP 1: コンテナを innerHTML = '' で完全に空にする
-  ──────────────────────────────────────────── */
-  const screenerContainer = document.getElementById('screener-container');
-  screenerContainer.innerHTML = '';
-
-  /* ────────────────────────────────────────────
-     STEP 2: TradingView が要求する DOM 構造を構築する
-  ──────────────────────────────────────────── */
-  const tvContainer = document.createElement('div');
-  tvContainer.className = 'tradingview-widget-container';
-  tvContainer.style.cssText = 'position:absolute;inset:0;height:100%;width:100%';
-
-  const tvWidget = document.createElement('div');
-  tvWidget.className = 'tradingview-widget-container__widget';
-  tvWidget.style.cssText = 'height:100%;width:100%';
-  tvContainer.appendChild(tvWidget);
-
-  /* ────────────────────────────────────────────
-     STEP 3: document.createElement('script') で
-             新規スクリプトタグを生成する
-  ──────────────────────────────────────────── */
-  const script = document.createElement('script');
-  script.type  = 'text/javascript';
-  script.async = true;
-
-  /* ────────────────────────────────────────────
-     STEP 4: script.src に TradingView スクリプト URL を指定する
-             ※ キャッシュ破棄のためタイムスタンプを付与し、
-               市場切り替えのたびに確実に再実行させる
-  ──────────────────────────────────────────── */
-  script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-screener.js?t=' + Date.now();
-
-  /* ────────────────────────────────────────────
-     STEP 5: script.innerHTML に JSON 設定を流し込む
-             - 日本株: "market": "japan"
-             - 米国株: "market": "america"  ← TradingView の正式市場コード
-             - "largeChartUrl" により銘柄クリックで別タブのチャートが開く
-  ──────────────────────────────────────────── */
-  const tvConfig = {
-    width:           '100%',
-    height:          '100%',
-    defaultColumn:   'overview',
-    defaultScreen:   'top_gainers',
-    market:          market,               // 'japan' or 'america'
-    showToolbar:     true,
-    colorTheme:      'dark',
-    locale:          'ja',
-    isTransparent:   true,
-    largeChartUrl:   'https://jp.tradingview.com/chart/',
-    displayCurrency: (market === 'japan') ? 'JPY' : 'USD',
-  };
-  script.innerHTML = JSON.stringify(tvConfig);
-
-  /* ────────────────────────────────────────────
-     STEP 6: script を tvContainer に appendChild する
-  ──────────────────────────────────────────── */
-  tvContainer.appendChild(script);
-
-  /* ────────────────────────────────────────────
-     STEP 7: tvContainer を screener-container に appendChild して
-             ウィジェットをゼロから再描画させる
-  ──────────────────────────────────────────── */
-  screenerContainer.appendChild(tvContainer);
-
-  /* ── ローダーを非表示（ウィジェット描画完了を想定した待機） ── */
-  setTimeout(() => loadingEl.classList.add('hidden'), 3000);
-}
-
 /* ── BOOT ── */
 document.addEventListener('DOMContentLoaded', async () => {
   setTimeout(() => { const el = document.getElementById('boot-flash'); if (el) el.remove(); }, 300);
@@ -725,18 +665,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sb-url').value = state.sbUrl;
   document.getElementById('sb-key').value = state.sbKey;
 
-  /* 前回の市場設定を復元（未保存なら 'japan'） */
-  state.screenerMarket = LS.get('screenerMarket') || 'japan';
-  updateMarketButtons(state.screenerMarket);
+  /* 前回の市場選択を復元してボタンと表示を同期 */
+  const savedMarket = LS.get('screenerMarket') || 'japan';
+  /* DOM は初期状態で japan=block / america=none なので
+     保存値が america の場合のみ切り替える            */
+  if (savedMarket === 'america') {
+    applyMarketDisplay('america');
+  }
+  state.screenerMarket = savedMarket;
 
   updateConnBar();
   await loadWatchlist();
-
-  /* スクリーナー初回描画 */
-  renderScreener(state.screenerMarket);
-
-  setTimeout(() => document.getElementById('heatmap-loading').classList.add('hidden'), 2500);
-
   updateClock();
   setInterval(updateClock, 1000);
 });
@@ -745,35 +684,32 @@ function updateClock() {
   const ts  = new Date().toLocaleTimeString('ja-JP', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
   const lbl = (state.screenerMarket === 'japan') ? '🗾 JP' : '🇺🇸 US';
   const el  = document.getElementById('screener-ts');
-  if (el) el.textContent = `${lbl} · ${ts}`;
+  if (el) el.textContent = lbl + ' · ' + ts;
 }
 
-/* ── MARKET SWITCH ── */
-function updateMarketButtons(market) {
+/* ════════════════════════════════════════════════════════════
+   ★ MARKET SWITCH  —  CSS の display 切り替えのみ
+     動的なスクリプト生成・DOM 操作は一切行わない。
+     2 つのウィジェットはページ読み込み時から静的に存在しており、
+     どちらを表示するかを display:block / display:none で制御する。
+════════════════════════════════════════════════════════════ */
+function applyMarketDisplay(market) {
+  /* 日本株コンテナ: japan のとき表示、america のとき非表示 */
+  document.getElementById('screener-jp').style.display = (market === 'japan')   ? 'block' : 'none';
+  /* 米国株コンテナ: america のとき表示、japan のとき非表示 */
+  document.getElementById('screener-us').style.display = (market === 'america') ? 'block' : 'none';
+  /* ボタンのアクティブ状態を更新 */
   document.getElementById('mkt-jp').classList.toggle('active', market === 'japan');
   document.getElementById('mkt-us').classList.toggle('active', market === 'america');
 }
 
 function switchMarket(market) {
-  /* 同じ市場を連打しても何もしない */
-  if (state.screenerMarket === market) return;
-
+  if (state.screenerMarket === market) return;   /* 同じ市場なら何もしない */
   state.screenerMarket = market;
   LS.set('screenerMarket', market);
-  updateMarketButtons(market);
-
-  /* 切り替え中は連打を防止（3 秒間ボタンを無効化） */
-  const jpBtn = document.getElementById('mkt-jp');
-  const usBtn = document.getElementById('mkt-us');
-  jpBtn.disabled = true;
-  usBtn.disabled = true;
-  setTimeout(() => { jpBtn.disabled = false; usBtn.disabled = false; }, 3000);
-
-  /* ★ ウィジェットを DOM レベルでゼロから再構築する */
-  renderScreener(market);
-
+  applyMarketDisplay(market);
   const label = (market === 'japan') ? '🗾 日本株 (TOPIX)' : '🇺🇸 米国株 (NYSE/NASDAQ)';
-  toast(`${label} に切り替えました`, 'info');
+  toast(label + ' に切り替えました', 'info');
 }
 
 /* ── TAB SWITCHING ── */
@@ -786,32 +722,31 @@ function switchTab(tab) {
   document.getElementById('fab').classList.toggle('visible', tab === 'watchlist');
 }
 
-/* ── MARKET DETECTION (Watchlist 用) ── */
+/* ── MARKET DETECTION (Watchlist カード用) ── */
 function detectMarket(ticker) {
   const t = ticker.trim().toUpperCase();
   return (/^\d{4}$/.test(t) || /^\d{4}\.(T|OS)$/.test(t)) ? 'JP' : 'US';
 }
 
-/* ── URL GENERATION (Watchlist カードの📈チャートボタン用)
-   ★ コロン(:)を encodeURIComponent しない
-      TradingView は ?symbol=TSE:7011 の形式を期待する
-      TSE%3A7011 にするとエラーになる                      ── */
+/* ── URL GENERATION (Watchlist カードのリンクボタン用)
+   コロン(:)を encodeURIComponent しない。
+   TradingView は ?symbol=TSE:7011 の形式を期待する。         ── */
 function getKabutanUrl(ticker, market) {
   const t = ticker.trim().replace(/\.(T|OS)$/i, '');
   return (market === 'JP')
-    ? `https://kabutan.jp/stock/?code=${t}`
-    : `https://us.kabutan.jp/stocks/${t.toUpperCase()}`;
+    ? 'https://kabutan.jp/stock/?code=' + t
+    : 'https://us.kabutan.jp/stocks/' + t.toUpperCase();
 }
 
 function getTradingViewUrl(ticker, market) {
   const raw = ticker.trim().toUpperCase().replace(/\.(T|OS|N|NK)$/i, '');
   let symbol;
   if (raw.includes(':')) {
-    symbol = raw;                 // 既に EXCHANGE:TICKER 形式
+    symbol = raw;
   } else if (market === 'JP' || /^\d{4,5}$/.test(raw)) {
-    symbol = 'TSE:' + raw;        // 日本株: TSE: プレフィックスが必須
+    symbol = 'TSE:' + raw;
   } else {
-    symbol = raw;                 // 米国株: TradingView が取引所を自動解決
+    symbol = raw;
   }
   return 'https://jp.tradingview.com/chart/?symbol=' + symbol;
 }
@@ -829,7 +764,7 @@ function openAddModal() {
 function closeAddModal() {
   document.getElementById('add-modal').classList.remove('open');
 }
-document.getElementById('add-modal').addEventListener('click', e => {
+document.getElementById('add-modal').addEventListener('click', function(e) {
   if (e.target === e.currentTarget) closeAddModal();
 });
 
@@ -850,9 +785,9 @@ async function addToWatchlist() {
   const name   = document.getElementById('modal-name').value.trim();
   const memo   = document.getElementById('modal-memo').value.trim();
   if (!ticker) { toast('銘柄コードを入力してください', 'error'); document.getElementById('modal-ticker').focus(); return; }
-  if (state.items.find(i => i.ticker === ticker)) { toast(ticker + ' は既に登録済みです', 'error'); return; }
+  if (state.items.find(function(i) { return i.ticker === ticker; })) { toast(ticker + ' は既に登録済みです', 'error'); return; }
   const item = {
-    id: crypto.randomUUID(), ticker,
+    id: crypto.randomUUID(), ticker: ticker,
     name: name || '', memo: memo || '',
     created_at: new Date().toISOString(),
     market: detectMarket(ticker),
@@ -865,26 +800,34 @@ async function addToWatchlist() {
 }
 
 /* ── SUPABASE ── */
-const sbHeaders = () => ({
-  'Content-Type':  'application/json',
-  'apikey':         state.sbKey,
-  'Authorization': 'Bearer ' + state.sbKey,
-});
-const sbReady = () => !!(state.sbUrl && state.sbKey);
+function sbHeaders() {
+  return {
+    'Content-Type':  'application/json',
+    'apikey':         state.sbKey,
+    'Authorization': 'Bearer ' + state.sbKey,
+  };
+}
+function sbReady() { return !!(state.sbUrl && state.sbKey); }
 
 async function loadWatchlist() {
   if (!sbReady()) {
-    state.items = (LS.get('watchlist') || []).map(i => ({ ...i, market: detectMarket(i.ticker) }));
-    renderWatchlist(); return;
+    const cached = LS.get('watchlist') || [];
+    state.items = cached.map(function(i) { return Object.assign({}, i, { market: detectMarket(i.ticker) }); });
+    renderWatchlist();
+    return;
   }
   try {
     const res = await fetch(state.sbUrl + '/rest/v1/breakout_watchlist?select=*&order=created_at.desc', { headers: sbHeaders() });
     if (!res.ok) throw new Error(await res.text());
-    state.items = (await res.json()).map(i => ({ ...i, market: detectMarket(i.ticker) }));
-    renderWatchlist(); updateConnBar(true);
+    const data = await res.json();
+    state.items = data.map(function(i) { return Object.assign({}, i, { market: detectMarket(i.ticker) }); });
+    renderWatchlist();
+    updateConnBar(true);
   } catch(e) {
-    state.items = (LS.get('watchlist') || []).map(i => ({ ...i, market: detectMarket(i.ticker) }));
-    renderWatchlist(); updateConnBar(false, e.message);
+    const cached = LS.get('watchlist') || [];
+    state.items = cached.map(function(i) { return Object.assign({}, i, { market: detectMarket(i.ticker) }); });
+    renderWatchlist();
+    updateConnBar(false, e.message);
   }
 }
 
@@ -894,7 +837,7 @@ async function persistItem(item) {
   try {
     const res = await fetch(state.sbUrl + '/rest/v1/breakout_watchlist', {
       method: 'POST',
-      headers: { ...sbHeaders(), 'Prefer': 'return=minimal' },
+      headers: Object.assign({}, sbHeaders(), { 'Prefer': 'return=minimal' }),
       body: JSON.stringify({ id: item.id, ticker: item.ticker, name: item.name, memo: item.memo, created_at: item.created_at }),
     });
     if (!res.ok) throw new Error(await res.text());
@@ -907,7 +850,7 @@ async function updateItemRemote(item) {
   try {
     await fetch(state.sbUrl + '/rest/v1/breakout_watchlist?id=eq.' + item.id, {
       method: 'PATCH',
-      headers: { ...sbHeaders(), 'Prefer': 'return=minimal' },
+      headers: Object.assign({}, sbHeaders(), { 'Prefer': 'return=minimal' }),
       body: JSON.stringify({ name: item.name, memo: item.memo }),
     });
   } catch(e) { console.warn('Supabase PATCH error:', e); }
@@ -922,16 +865,16 @@ async function deleteItemRemote(id) {
 }
 
 async function deleteItem(id) {
-  const item = state.items.find(i => i.id === id);
+  const item = state.items.find(function(i) { return i.id === id; });
   if (!item || !confirm('「' + item.ticker + '」を削除しますか？')) return;
-  state.items = state.items.filter(i => i.id !== id);
+  state.items = state.items.filter(function(i) { return i.id !== id; });
   renderWatchlist();
   toast(item.ticker + ' を削除しました', 'info');
   await deleteItemRemote(id);
 }
 
 async function saveItem(id) {
-  const item = state.items.find(i => i.id === id);
+  const item = state.items.find(function(i) { return i.id === id; });
   if (!item) return;
   const card = document.querySelector('[data-id="' + id + '"]');
   if (card) {
@@ -946,16 +889,16 @@ async function saveItem(id) {
 function renderWatchlist() {
   const grid  = document.getElementById('watchlist-grid');
   const items = (state.filtered !== null) ? state.filtered : state.items;
-  const jp    = state.items.filter(i => i.market === 'JP').length;
-  const us    = state.items.filter(i => i.market === 'US').length;
+  const jp    = state.items.filter(function(i) { return i.market === 'JP'; }).length;
+  const us    = state.items.filter(function(i) { return i.market === 'US'; }).length;
   document.getElementById('stat-total').textContent     = state.items.length;
   document.getElementById('stat-jp').textContent        = jp;
   document.getElementById('stat-us').textContent        = us;
   document.getElementById('wl-count-badge').textContent = state.items.length;
-  grid.querySelectorAll('.wl-card').forEach(c => c.remove());
+  grid.querySelectorAll('.wl-card').forEach(function(c) { c.remove(); });
   if (items.length === 0) { document.getElementById('wl-empty').style.display = ''; return; }
   document.getElementById('wl-empty').style.display = 'none';
-  items.forEach(item => grid.insertAdjacentHTML('beforeend', buildCard(item)));
+  items.forEach(function(item) { grid.insertAdjacentHTML('beforeend', buildCard(item)); });
 }
 
 function buildCard(item) {
@@ -967,50 +910,52 @@ function buildCard(item) {
   const badge = (item.market === 'JP')
     ? '<span class="card-market-badge jp">🗾 JP</span>'
     : '<span class="card-market-badge us">🇺🇸 US</span>';
-  return [
-    '<div class="wl-card ' + item.market.toLowerCase() + '-stock" data-id="' + item.id + '">',
-    '  <div class="corner-tl"></div><div class="corner-tr"></div>',
-    '  <div class="card-header">',
-    '    <div class="card-ticker-wrap">',
-    '      <div class="card-ticker">' + escHtml(item.ticker) + '</div>' + badge,
-    '    </div>',
-    '    <input class="card-name-input" value="' + escHtml(item.name) + '" placeholder="銘柄名を入力..." onblur="autoSaveItem(\'' + item.id + '\')">',
-    '  </div>',
-    '  <div class="card-memo">',
-    '    <div class="memo-label">注目理由・メモ</div>',
-    '    <textarea class="card-memo-input" placeholder="例: 52週高値更新、出来高急増、決算ブレイク待ち..." onblur="autoSaveItem(\'' + item.id + '\')">' + escHtml(item.memo) + '</textarea>',
-    '  </div>',
-    '  <div class="card-actions">',
-    '    <a class="btn-link"       href="' + kabuUrl + '" target="_blank" rel="noopener">📊 財務</a>',
-    '    <a class="btn-link chart" href="' + tvUrl   + '" target="_blank" rel="noopener">📈 チャート</a>',
-    '    <button class="btn-save"   onclick="saveItem(\''   + item.id + '\')">💾 保存</button>',
-    '    <button class="btn-delete" onclick="deleteItem(\'' + item.id + '\')" title="削除">🗑</button>',
-    '  </div>',
-    dt ? '  <div class="card-timestamp">登録: ' + dt + '</div>' : '',
-    '</div>',
-  ].join('\n');
+  return '<div class="wl-card ' + item.market.toLowerCase() + '-stock" data-id="' + item.id + '">'
+    + '<div class="corner-tl"></div><div class="corner-tr"></div>'
+    + '<div class="card-header">'
+    +   '<div class="card-ticker-wrap">'
+    +     '<div class="card-ticker">' + escHtml(item.ticker) + '</div>' + badge
+    +   '</div>'
+    +   '<input class="card-name-input" value="' + escHtml(item.name) + '" placeholder="銘柄名を入力..." onblur="autoSaveItem(\'' + item.id + '\')">'
+    + '</div>'
+    + '<div class="card-memo">'
+    +   '<div class="memo-label">注目理由・メモ</div>'
+    +   '<textarea class="card-memo-input" placeholder="例: 52週高値更新、出来高急増、決算ブレイク待ち..." onblur="autoSaveItem(\'' + item.id + '\')">' + escHtml(item.memo) + '</textarea>'
+    + '</div>'
+    + '<div class="card-actions">'
+    +   '<a class="btn-link"       href="' + kabuUrl + '" target="_blank" rel="noopener">📊 財務</a>'
+    +   '<a class="btn-link chart" href="' + tvUrl   + '" target="_blank" rel="noopener">📈 チャート</a>'
+    +   '<button class="btn-save"   onclick="saveItem(\''   + item.id + '\')">💾 保存</button>'
+    +   '<button class="btn-delete" onclick="deleteItem(\'' + item.id + '\')" title="削除">🗑</button>'
+    + '</div>'
+    + (dt ? '<div class="card-timestamp">登録: ' + dt + '</div>' : '')
+    + '</div>';
 }
 
-let autoSaveTimer = {};
+var autoSaveTimer = {};
 function autoSaveItem(id) {
   clearTimeout(autoSaveTimer[id]);
-  const item = state.items.find(i => i.id === id);
+  const item = state.items.find(function(i) { return i.id === id; });
   const card = document.querySelector('[data-id="' + id + '"]');
   if (item && card) {
     item.name = card.querySelector('.card-name-input').value.trim();
     item.memo = card.querySelector('.card-memo-input').value.trim();
     LS.set('watchlist', state.items);
   }
-  autoSaveTimer[id] = setTimeout(() => updateItemRemote(state.items.find(i => i.id === id) || {}), 2000);
+  autoSaveTimer[id] = setTimeout(function() {
+    const i = state.items.find(function(x) { return x.id === id; });
+    updateItemRemote(i || {});
+  }, 2000);
 }
 
 function filterWatchlist(q) {
   const query = q.trim().toUpperCase();
   state.filtered = query
-    ? state.items.filter(i =>
-        i.ticker.includes(query) ||
-        (i.name && i.name.toUpperCase().includes(query)) ||
-        (i.memo && i.memo.toUpperCase().includes(query)))
+    ? state.items.filter(function(i) {
+        return i.ticker.includes(query)
+          || (i.name && i.name.toUpperCase().includes(query))
+          || (i.memo && i.memo.toUpperCase().includes(query));
+      })
     : null;
   renderWatchlist();
 }
@@ -1034,7 +979,8 @@ async function saveSettings() {
       sEl.className = 'status-indicator ok';
       sTx.textContent = '接続成功 ✓ (' + new Date().toLocaleTimeString('ja-JP') + ')';
       toast('Supabase 接続成功！', 'success');
-      updateConnBar(true); await loadWatchlist();
+      updateConnBar(true);
+      await loadWatchlist();
     } else { throw new Error(await res.text()); }
   } catch(e) {
     sEl.className = 'status-indicator err';
@@ -1048,34 +994,48 @@ function updateConnBar(ok, errMsg) {
   const bar = document.getElementById('conn-bar');
   const msg = document.getElementById('conn-msg');
   if (ok === true) {
-    bar.className = 'ok'; msg.textContent = 'Supabase 接続済み — ' + state.sbUrl;
-    setTimeout(() => bar.classList.add('hidden'), 4000);
+    bar.className = 'ok';
+    msg.textContent = 'Supabase 接続済み — ' + state.sbUrl;
+    setTimeout(function() { bar.classList.add('hidden'); }, 4000);
   } else if (ok === false) {
-    bar.className = ''; msg.textContent = 'Supabase 接続エラー — ローカルモードで動作中 (' + (errMsg ? errMsg.slice(0,50) : '') + ')';
+    bar.className = '';
+    msg.textContent = 'Supabase 接続エラー — ローカルモードで動作中 (' + (errMsg ? errMsg.slice(0,50) : '') + ')';
   } else {
-    if (!state.sbUrl || !state.sbKey) { bar.className = ''; msg.textContent = 'Supabase 未設定 — 右上の ⚙️ 設定からURLとAnon Keyを入力してください'; }
-    else { bar.classList.add('hidden'); }
+    if (!state.sbUrl || !state.sbKey) {
+      bar.className = '';
+      msg.textContent = 'Supabase 未設定 — 右上の ⚙️ 設定からURLとAnon Keyを入力してください';
+    } else { bar.classList.add('hidden'); }
   }
 }
 
 function clearAllData() {
   if (!confirm('すべてのデータ（Watchlist・設定）をリセットしますか？\nこの操作は取り消せません。')) return;
-  localStorage.clear(); location.reload();
+  localStorage.clear();
+  location.reload();
 }
 
 /* ── TOAST ── */
 function toast(msg, type) {
   type = type || 'info';
   const el = document.createElement('div');
-  el.className = 'toast ' + type; el.textContent = msg;
+  el.className = 'toast ' + type;
+  el.textContent = msg;
   document.getElementById('toast-container').appendChild(el);
-  setTimeout(() => { el.style.animation = 'toast-out .3s ease forwards'; setTimeout(() => el.remove(), 300); }, 3200);
+  setTimeout(function() {
+    el.style.animation = 'toast-out .3s ease forwards';
+    setTimeout(function() { el.remove(); }, 300);
+  }, 3200);
 }
 
 /* ── UTILITIES ── */
 function escHtml(str) {
   if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 /* ── KEYBOARD SHORTCUTS ── */
