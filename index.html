@@ -1,286 +1,40 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>APEX TERMINAL V6.0 — Command Center</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-<style>
-:root {
-  --bg-void: #020617;
-  --bg-base: #0f172a;
-  --bg-surface: #1e293b;
-  --green: #22c55e;
-  --amber: #f59e0b;
-  --blue: #3b82f6;
-  --text-main: #f8fafc;
-  --text-dim: #94a3b8;
-  --font-main: 'Urbanist', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg-void); color: var(--text-main); font-family: var(--font-main); height: 100vh; overflow: hidden; }
-
-/* ── HEADER ── */
-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 25px; background: var(--bg-base); border-bottom: 1px solid rgba(255,255,255,0.05); }
-.logo { font-weight: 700; font-size: 20px; letter-spacing: 2px; color: var(--green); }
-.version { font-size: 10px; color: var(--text-dim); background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin-left: 10px; }
-
-/* ── NAV ── */
-nav { display: flex; background: var(--bg-base); padding: 0 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.nav-btn { padding: 15px 25px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--text-dim); cursor: pointer; font-weight: 700; font-size: 14px; text-transform: uppercase; }
-.nav-btn.active { color: var(--green); border-bottom-color: var(--green); }
-
-/* ── CONTENT ── */
-main { height: calc(100vh - 110px); position: relative; }
-.panel { display: none; height: 100%; width: 100%; flex-direction: column; }
-.panel.active { display: flex; }
-
-.panel-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: #020617; border-bottom: 1px solid rgba(255,255,255,0.03); }
-
-/* ── MARKET SELECTOR (V6 REFRESH) ── */
-.mkt-selector { display: flex; border-radius: 6px; overflow: hidden; border: 1px solid var(--bg-surface); }
-.mkt-btn { padding: 6px 15px; background: var(--bg-base); border: none; color: var(--text-dim); cursor: pointer; font-size: 12px; font-weight: 700; }
-.mkt-btn.active.jp { background: var(--amber); color: #000; }
-.mkt-btn.active.us { background: var(--blue); color: #fff; }
-
-/* ── SCREENER WIDGET ── */
-#screener-container { flex-grow: 1; position: relative; }
-
-/* ── WATCHLIST GRID ── */
-#watchlist-grid { flex-grow: 1; overflow-y: auto; padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; align-content: start; }
-.stock-card { background: var(--bg-surface); border-radius: 12px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); transition: 0.2s; position: relative; }
-.stock-card:hover { border-color: var(--green); background: #26334d; }
-.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-.ticker { font-size: 28px; font-weight: 700; font-family: var(--font-mono); color: var(--text-main); }
-.mkt-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
-.mkt-badge.jp { background: var(--amber); color: #000; }
-.mkt-badge.us { background: var(--blue); color: #fff; }
-
-.memo-area { margin-bottom: 20px; }
-.memo-input { width: 100%; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: var(--text-main); padding: 10px; font-size: 13px; resize: none; min-height: 80px; }
-
-.action-links { display: flex; gap: 10px; }
-.btn-link { flex-grow: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; transition: 0.2s; }
-.btn-link.finance { background: #334155; color: #fff; }
-.btn-link.chart { background: #22c55e; color: #000; }
-.btn-delete { background: none; border: none; color: #64748b; cursor: pointer; padding: 10px; }
-.btn-delete:hover { color: #ef4444; }
-
-/* ── FAB ── */
-.fab { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: var(--green); border: none; color: #000; font-size: 30px; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.5); z-index: 100; }
-
-/* ── MODAL ── */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
-.modal-overlay.active { display: flex; }
-.modal { background: var(--bg-base); padding: 30px; border-radius: 16px; width: 400px; border: 1px solid var(--green); }
-.form-input { width: 100%; padding: 12px; background: #020617; border: 1px solid #334155; border-radius: 8px; color: #fff; margin-bottom: 20px; font-size: 16px; }
-
-</style>
+    <meta charset="UTF-8">
+    <title>APEX COMMANDER V7.0</title>
+    <style>
+        body { background: #020617; color: #f8fafc; font-family: sans-serif; display: flex; justify-content: center; padding-top: 100px; }
+        .card { background: #1e293b; padding: 30px; border-radius: 12px; width: 400px; text-align: center; border: 1px solid #334155; }
+        input { width: 100%; padding: 15px; background: #020617; border: 1px solid #334155; color: white; border-radius: 8px; font-size: 18px; margin-bottom: 20px; text-align: center; }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
+        .btn { padding: 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; }
+        .btn-kabu { background: #22c55e; }
+        .btn-tv { background: #3b82f6; }
+        .btn-yaho { background: #6366f1; }
+    </style>
 </head>
 <body>
-
-<header>
-    <div class="logo">APEX <span style="color:#fff">TERMINAL</span> <span class="version">V6.0 FINAL</span></div>
-    <div id="clock" style="font-family: var(--font-mono); color: var(--text-dim); font-size: 14px;"></div>
-</header>
-
-<nav>
-    <button class="nav-btn active" onclick="switchTab('radar')">🚀 RADAR (SCREENER)</button>
-    <button class="nav-btn" onclick="switchTab('watchlist')">👁️ WATCHLIST HUB</button>
-</nav>
-
-<main>
-    <div class="panel active" id="panel-radar">
-        <div class="panel-header">
-            <div style="font-weight: 700; font-size: 12px; color: var(--text-dim);">SYSTEM: REAL-TIME RADAR</div>
-            <div class="mkt-selector">
-                <button class="mkt-btn jp" id="btn-mkt-jp" onclick="switchMarket('japan')">🗾 JAPAN</button>
-                <button class="mkt-btn us" id="btn-mkt-us" onclick="switchMarket('america')">🇺🇸 AMERICA</button>
-            </div>
-        </div>
-        <div id="screener-container"></div>
-    </div>
-
-    <div class="panel" id="panel-watchlist">
-        <div class="panel-header">
-            <div style="font-weight: 700; font-size: 12px; color: var(--text-dim);">HUB: STRATEGIC COMMAND</div>
-            <div id="wl-stats" style="font-size: 12px; color: var(--green);">ITEM COUNT: <span id="wl-count">0</span></div>
-        </div>
-        <div id="watchlist-grid"></div>
-    </div>
-</main>
-
-<button class="fab" onclick="openModal()" id="fab" style="display:none;">＋</button>
-
-<div class="modal-overlay" id="modal-overlay">
-    <div class="modal">
-        <h3 style="margin-bottom: 20px;">ADD NEW SYMBOL</h3>
-        <input type="text" id="input-ticker" class="form-input" placeholder="Ticker (e.g. 7011 or NVDA)">
-        <input type="text" id="input-name" class="form-input" placeholder="Company Name (Optional)">
-        <div style="display: flex; gap: 10px;">
-            <button onclick="closeModal()" style="flex:1; padding:12px; background:none; border:1px solid #334155; color:#fff; border-radius:8px; cursor:pointer;">CANCEL</button>
-            <button onclick="addStock()" style="flex:1; padding:12px; background:var(--green); border:none; color:#000; font-weight:700; border-radius:8px; cursor:pointer;">ADD TO HUB</button>
+    <div class="card">
+        <h2>APEX COMMANDER</h2>
+        <input type="text" id="ticker" placeholder="銘柄コードを入力" onkeydown="if(event.key==='Enter') go('kabu')">
+        <div class="btn-group">
+            <button class="btn btn-kabu" onclick="go('kabu')">財務分析 (株探)</button>
+            <button class="btn btn-tv" onclick="go('tv')">チャート (TradingView)</button>
+            <button class="btn btn-yaho" onclick="go('yaho')">詳細情報 (YAHOO)</button>
         </div>
     </div>
-</div>
-
-<script>
-/* ── V6.0 ARCHITECTURE ── */
-
-const STATE = {
-    market: new URLSearchParams(window.location.search).get('market') || 'japan',
-    tab: 'radar',
-    stocks: JSON.parse(localStorage.getItem('apex_hub_stocks') || '[]')
-};
-
-// 1. BOOTSTRAP
-document.addEventListener('DOMContentLoaded', () => {
-    // URL同期
-    if (!new URLSearchParams(window.location.search).has('market')) {
-        window.history.replaceState(null, '', `?market=${STATE.market}`);
-    }
-    
-    // UI初期化
-    document.getElementById(`btn-mkt-${STATE.market === 'japan' ? 'jp' : 'us'}`).classList.add('active');
-    
-    // ウィジェットロード
-    loadScreener();
-    renderWatchlist();
-    startTime();
-});
-
-// 2. RADAR: SCREENER INJECTOR
-function loadScreener() {
-    const container = document.getElementById('screener-container');
-    container.innerHTML = '';
-    
-    const script = document.createElement('script');
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-screener.js";
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-        "width": "100%",
-        "height": "100%",
-        "defaultColumn": "overview",
-        "market": STATE.market,
-        "showToolbar": true,
-        "colorTheme": "dark",
-        "locale": "ja",
-        "isTransparent": true,
-        "largeChartUrl": "https://jp.tradingview.com/chart/" // 万が一クリックしてもチャートには飛ぶように
-    });
-    container.appendChild(script);
-}
-
-function switchMarket(mkt) {
-    window.location.href = `?market=${mkt}`;
-}
-
-// 3. NAVIGATION
-function switchTab(t) {
-    STATE.tab = t;
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    
-    event.currentTarget.classList.add('active');
-    document.getElementById(`panel-${t}`).classList.add('active');
-    document.getElementById('fab').style.display = t === 'watchlist' ? 'block' : 'none';
-}
-
-// 4. WATCHLIST HUB: COMMAND LOGIC
-function renderWatchlist() {
-    const grid = document.getElementById('watchlist-grid');
-    grid.innerHTML = '';
-    document.getElementById('wl-count').textContent = STATE.stocks.length;
-
-    STATE.stocks.forEach(stock => {
-        const isJP = /^\d{4}$/.test(stock.ticker);
-        const mktClass = isJP ? 'jp' : 'us';
-        const mktLabel = isJP ? '🗾 JP' : '🇺🇸 US';
-        
-        // 🚀 V6 CORE: LINK DYNAMICS
-        const financeUrl = isJP 
-            ? `https://kabutan.jp/stock/?code=${stock.ticker}` 
-            : `https://finance.yahoo.com/quote/${stock.ticker}`;
-            
-        const chartUrl = `https://jp.tradingview.com/chart/?symbol=${isJP ? 'TSE:'+stock.ticker : stock.ticker}`;
-
-        const card = document.createElement('div');
-        card.className = 'stock-card';
-        card.innerHTML = `
-            <div class="card-top">
-                <div>
-                    <div class="ticker">${stock.ticker}</div>
-                    <div class="mkt-badge ${mktClass}">${mktLabel}</div>
-                </div>
-                <button class="btn-delete" onclick="deleteStock('${stock.id}')"><i class="fa-solid fa-trash"></i></button>
-            </div>
-            <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 10px;">${stock.name || '---'}</div>
-            <div class="memo-area">
-                <textarea class="memo-input" onblur="saveMemo('${stock.id}', this.value)" placeholder="ブレイク価格、材料、監視理由を入力...">${stock.memo || ''}</textarea>
-            </div>
-            <div class="action-links">
-                <a href="${financeUrl}" target="_blank" class="btn-link finance"><i class="fa-solid fa-file-invoice-dollar"></i> ${isJP ? '株探プレミアム' : 'YAHOO US'}</a>
-                <a href="${chartUrl}" target="_blank" class="btn-link chart"><i class="fa-solid fa-chart-line"></i> チャート</a>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-}
-
-// 5. DATA MANAGEMENT
-function addStock() {
-    const ticker = document.getElementById('input-ticker').value.trim().toUpperCase();
-    const name = document.getElementById('input-name').value.trim();
-    if(!ticker) return;
-
-    const newStock = {
-        id: Date.now().toString(),
-        ticker: ticker,
-        name: name,
-        memo: '',
-        date: new Date().toISOString()
-    };
-
-    STATE.stocks.unshift(newStock);
-    save();
-    renderWatchlist();
-    closeModal();
-}
-
-function deleteStock(id) {
-    if(!confirm('REMOVE FROM HUB?')) return;
-    STATE.stocks = STATE.stocks.filter(s => s.id !== id);
-    save();
-    renderWatchlist();
-}
-
-function saveMemo(id, val) {
-    const stock = STATE.stocks.find(s => s.id === id);
-    if(stock) {
-        stock.memo = val;
-        save();
-    }
-}
-
-function save() {
-    localStorage.setItem('apex_hub_stocks', JSON.stringify(STATE.stocks));
-}
-
-// 6. UI HELPERS
-function openModal() { document.getElementById('modal-overlay').classList.add('active'); document.getElementById('input-ticker').focus(); }
-function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
-function startTime() {
-    const el = document.getElementById('clock');
-    setInterval(() => {
-        el.textContent = new Date().toLocaleString('ja-JP');
-    }, 1000);
-}
-
-</script>
+    <script>
+        function go(type) {
+            const t = document.getElementById('ticker').value.trim().toUpperCase();
+            if (!t) return;
+            const isJP = /^\d{4}$/.test(t);
+            let url = '';
+            if (type === 'kabu') url = isJP ? `https://kabutan.jp/stock/?code=${t}` : `https://us.kabutan.jp/stocks/${t}`;
+            else if (type === 'tv') url = `https://jp.tradingview.com/chart/?symbol=${isJP ? 'TSE:'+t : t}`;
+            else if (type === 'yaho') url = isJP ? `https://finance.yahoo.co.jp/quote/${t}.T` : `https://finance.yahoo.com/quote/${t}`;
+            window.open(url, '_blank');
+        }
+    </script>
 </body>
 </html>
