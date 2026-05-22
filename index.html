@@ -2017,3 +2017,8 @@ document.addEventListener('keydown', e => {
 
 </body>
 </html>
+window.addEventListener('message', function(e) {
+    if (e.data && e.data.name === 'tv-widget-screener-symbol-click') {
+        window.open('https://jp.tradingview.com/chart/?symbol=' + encodeURIComponent(e.data.symbol), '_blank');
+    }
+});
