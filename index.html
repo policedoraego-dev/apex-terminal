@@ -1408,7 +1408,7 @@ body::after {
             "width": "100%",
             "height": "100%",
             "defaultColumn": "overview",
-            "defaultScreen": "most_capitalized",
+            "defaultScreen": "top_gainers",
             "market": "japan",
             "showToolbar": true,
             "colorTheme": "dark",
@@ -1419,6 +1419,19 @@ body::after {
           }
           </script>
         </div>
+        <!--
+          ╔══════════════════════════════════════════════════════════╗
+          ║  SCREENER CLICK → CHART URL LOGIC (how it works)        ║
+          ║                                                          ║
+          ║  When a ticker is clicked, TradingView widget fires:     ║
+          ║    1) postMessage  → caught by our window listener       ║
+          ║       → opens  https://jp.tradingview.com/chart/         ║
+          ║                    ?symbol=TSE:7011   (JP)               ║
+          ║                    ?symbol=NASDAQ:NVDA (US)              ║
+          ║    2) largeChartUrl fallback (if postMessage not fired)  ║
+          ║       → same URL, opened by TradingView widget itself    ║
+          ╚══════════════════════════════════════════════════════════╝
+        -->
         <!-- TradingView Screener Widget END -->
       </div>
     </div>
@@ -1652,6 +1665,39 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Clock in topbar
   updateClock();
   setInterval(updateClock, 1000);
+
+  // ── TradingView widget postMessage interceptor ──────────────────────────
+  // TradingView screener/heatmap widgets emit postMessage events when a
+  // symbol is clicked. We intercept these to open the chart in a new tab
+  // with the correctly formatted URL (TSE:XXXX for JP, raw ticker for US).
+  window.addEventListener('message', (evt) => {
+    try {
+      // Accept messages only from TradingView origins
+      if (!evt.origin.includes('tradingview.com')) return;
+
+      const data = typeof evt.data === 'string' ? JSON.parse(evt.data) : evt.data;
+      if (!data) return;
+
+      // Different TradingView widget versions use different event shapes
+      // Shape A: { name: "...", data: { symbol: "TSE:7011" } }
+      // Shape B: { symbol_name: "TSE:7011" }
+      // Shape C: { type: "symbol", symbol: "TSE:7011" }
+      const symbolRaw =
+        data?.data?.symbol ||
+        data?.symbol_name  ||
+        data?.symbol       || '';
+
+      if (!symbolRaw) return;
+
+      // Normalise: strip any leading exchange prefix for our detector,
+      // but pass the FULL prefixed symbol directly to TradingView
+      const sym = symbolRaw.trim().toUpperCase();
+      const url = `https://jp.tradingview.com/chart/?symbol=${sym}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } catch (_) {
+      // Silently ignore parse errors from unrelated postMessages
+    }
+  });
 });
 
 function updateClock() {
@@ -1695,10 +1741,27 @@ function getKabutanUrl(ticker, market) {
 }
 
 function getTradingViewUrl(ticker, market) {
-  let symbol = ticker.trim().toUpperCase();
-  // For JP stocks, prefix TSE: if plain number
-  if (market === 'JP' && /^\d{4}$/.test(symbol)) symbol = `TSE:${symbol}`;
-  return `https://jp.tradingview.com/chart/?symbol=${encodeURIComponent(symbol)}`;
+  // Strip exchange suffixes (.T = Tokyo, .OS = Osaka) before processing
+  const raw = ticker.trim().toUpperCase().replace(/\.(T|OS|N|NK)$/i, '');
+
+  let symbol;
+
+  if (raw.includes(':')) {
+    // Already in EXCHANGE:TICKER format (e.g. TSE:7011, NASDAQ:NVDA) — use as-is
+    symbol = raw;
+  } else if (market === 'JP' || /^\d{4,5}$/.test(raw)) {
+    // Japan stock: 4-digit (Prime/Standard/Growth) or 5-digit (ETF/REIT)
+    // TradingView requires TSE: prefix; without it the chart shows "symbol not found"
+    symbol = `TSE:${raw}`;
+  } else {
+    // US / Global: pass ticker as-is — TradingView resolves NVDA → NASDAQ:NVDA automatically
+    symbol = raw;
+  }
+
+  // IMPORTANT: Do NOT use encodeURIComponent() on the full symbol.
+  // TradingView chart URLs require a literal colon:  ?symbol=TSE:7011
+  // encodeURIComponent would produce TSE%3A7011 which TradingView rejects.
+  return `https://jp.tradingview.com/chart/?symbol=${symbol}`;
 }
 
 /* ─────────────────────────────────────────────
