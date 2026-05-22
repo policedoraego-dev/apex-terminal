@@ -2,39 +2,60 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>APEX COMMANDER V7.0</title>
+    <title>APEX TERMINAL V8.0</title>
     <style>
-        body { background: #020617; color: #f8fafc; font-family: sans-serif; display: flex; justify-content: center; padding-top: 100px; }
-        .card { background: #1e293b; padding: 30px; border-radius: 12px; width: 400px; text-align: center; border: 1px solid #334155; }
-        input { width: 100%; padding: 15px; background: #020617; border: 1px solid #334155; color: white; border-radius: 8px; font-size: 18px; margin-bottom: 20px; text-align: center; }
-        .btn-group { display: flex; flex-direction: column; gap: 10px; }
-        .btn { padding: 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; }
-        .btn-kabu { background: #22c55e; }
-        .btn-tv { background: #3b82f6; }
-        .btn-yaho { background: #6366f1; }
+        :root { --bg: #020617; --green: #22c55e; --text: #f8fafc; --surface: #1e293b; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .panel { background: var(--surface); padding: 20px; border-radius: 12px; border: 1px solid #334155; }
+        input { width: 100%; padding: 12px; background: #020617; border: 1px solid #334155; color: white; border-radius: 6px; margin: 10px 0; }
+        .stock-item { background: #0f172a; padding: 10px; margin-bottom: 8px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .links a { margin-left: 10px; font-size: 12px; text-decoration: none; color: var(--green); }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>APEX COMMANDER</h2>
-        <input type="text" id="ticker" placeholder="銘柄コードを入力" onkeydown="if(event.key==='Enter') go('kabu')">
-        <div class="btn-group">
-            <button class="btn btn-kabu" onclick="go('kabu')">財務分析 (株探)</button>
-            <button class="btn btn-tv" onclick="go('tv')">チャート (TradingView)</button>
-            <button class="btn btn-yaho" onclick="go('yaho')">詳細情報 (YAHOO)</button>
+    <div class="container">
+        <h1>APEX TERMINAL V8.0</h1>
+        <div class="grid">
+            <div class="panel">
+                <h3>🚀 MARKET RADAR</h3>
+                <div id="tv-screener" style="height: 500px;"></div>
+            </div>
+            <div class="panel">
+                <h3>🎯 ANALYSIS HUB</h3>
+                <input type="text" id="ticker" placeholder="ティッカーを入力 (例: 7011 / NVDA)">
+                <button onclick="addStock()">リストに追加</button>
+                <div id="watchlist" style="margin-top: 20px;"></div>
+            </div>
         </div>
     </div>
+
     <script>
-        function go(type) {
+        // TradingView Radar
+        new TradingView.widget({
+            "container_id": "tv-screener",
+            "width": "100%", "height": "100%",
+            "colorTheme": "dark", "market": "japan", "locale": "ja",
+            "isTransparent": true, "screener_type": "crypto_mkt"
+        });
+
+        function addStock() {
             const t = document.getElementById('ticker').value.trim().toUpperCase();
-            if (!t) return;
+            if(!t) return;
             const isJP = /^\d{4}$/.test(t);
-            let url = '';
-            if (type === 'kabu') url = isJP ? `https://kabutan.jp/stock/?code=${t}` : `https://us.kabutan.jp/stocks/${t}`;
-            else if (type === 'tv') url = `https://jp.tradingview.com/chart/?symbol=${isJP ? 'TSE:'+t : t}`;
-            else if (type === 'yaho') url = isJP ? `https://finance.yahoo.co.jp/quote/${t}.T` : `https://finance.yahoo.com/quote/${t}`;
-            window.open(url, '_blank');
+            const html = `
+                <div class="stock-item">
+                    <span>${t}</span>
+                    <div class="links">
+                        <a href="${isJP ? 'https://kabutan.jp/stock/?code='+t : 'https://us.kabutan.jp/stocks/'+t}" target="_blank">財務</a>
+                        <a href="${isJP ? 'https://finance.yahoo.co.jp/quote/'+t+'.T' : 'https://finance.yahoo.com/quote/'+t}" target="_blank">詳細</a>
+                        <a href="https://jp.tradingview.com/chart/?symbol=${isJP ? 'TSE:'+t : t}" target="_blank">チャート</a>
+                    </div>
+                </div>`;
+            document.getElementById('watchlist').insertAdjacentHTML('afterbegin', html);
         }
     </script>
+    <script src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js"></script>
 </body>
 </html>
