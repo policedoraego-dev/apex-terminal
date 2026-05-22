@@ -17,13 +17,11 @@
   --bg-surface:   #0d1214;
   --bg-elevated:  #111619;
   --bg-card:      #141a1d;
-  --bg-overlay:   rgba(5,7,8,0.95);
 
   --green-deep:   #032a16;
   --green-mid:    #054d28;
   --green-bright: #00e676;
   --green-glow:   #00ff88;
-  --green-dim:    #1a4a30;
   --green-text:   #4dffaa;
 
   --amber:        #ffb300;
@@ -31,7 +29,6 @@
   --red:          #ff3d5a;
   --red-dim:      #8b1a2a;
   --blue-accent:  #0288d1;
-  --purple-soft:  #7c4dff;
 
   --text-primary:   #e8f5e9;
   --text-secondary: #78909c;
@@ -46,25 +43,20 @@
   --scanline-opacity: 0.025;
   --glow-sm:  0 0 8px rgba(0,230,118,0.3);
   --glow-md:  0 0 20px rgba(0,230,118,0.25), 0 0 40px rgba(0,230,118,0.1);
-  --glow-lg:  0 0 40px rgba(0,230,118,0.3), 0 0 80px rgba(0,230,118,0.1);
 
-  --font-mono:  'JetBrains Mono', 'Courier New', monospace;
-  --font-cond:  'Barlow Condensed', sans-serif;
-  --font-ui:    'Rajdhani', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --font-cond: 'Barlow Condensed', sans-serif;
 
   --radius-sm: 3px;
   --radius-md: 6px;
   --radius-lg: 10px;
-
   --transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
-  --transition-slow: all 0.4s cubic-bezier(0.4,0,0.2,1);
 }
 
 /* ═══════════════════════════════════════════════
    RESET & BASE
 ═══════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { height: 100%; overflow: hidden; }
 
 body {
@@ -85,10 +77,9 @@ body::before {
   inset: 0;
   background: repeating-linear-gradient(
     0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0, var(--scanline-opacity)) 2px,
-    rgba(0,0,0, var(--scanline-opacity)) 4px
+    transparent, transparent 2px,
+    rgba(0,0,0,var(--scanline-opacity)) 2px,
+    rgba(0,0,0,var(--scanline-opacity)) 4px
   );
   pointer-events: none;
   z-index: 9999;
@@ -119,7 +110,7 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════
-   HEADER / TOPBAR
+   TOPBAR
 ═══════════════════════════════════════════════ */
 #topbar {
   display: flex;
@@ -134,7 +125,6 @@ body::after {
   z-index: 100;
 }
 
-/* Logo mark */
 .logo-wrap {
   display: flex;
   align-items: center;
@@ -142,16 +132,8 @@ body::after {
   flex-shrink: 0;
 }
 
-.logo-icon {
-  width: 28px;
-  height: 28px;
-  position: relative;
-}
-
-.logo-icon svg {
-  width: 100%;
-  height: 100%;
-}
+.logo-icon { width: 28px; height: 28px; }
+.logo-icon svg { width: 100%; height: 100%; }
 
 .logo-text {
   font-family: var(--font-cond);
@@ -174,7 +156,6 @@ body::after {
   margin-top: 2px;
 }
 
-/* Live ticker badge */
 .live-badge {
   display: flex;
   align-items: center;
@@ -191,8 +172,7 @@ body::after {
 }
 
 .live-dot {
-  width: 6px;
-  height: 6px;
+  width: 6px; height: 6px;
   border-radius: 50%;
   background: var(--green-bright);
   box-shadow: 0 0 6px var(--green-bright);
@@ -200,23 +180,17 @@ body::after {
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--green-bright); }
-  50% { opacity: 0.5; box-shadow: 0 0 2px var(--green-bright); }
+  0%,100% { opacity:1; box-shadow: 0 0 6px var(--green-bright); }
+  50%      { opacity:0.5; box-shadow: 0 0 2px var(--green-bright); }
 }
 
-/* Top-right actions */
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.topbar-actions { display: flex; align-items: center; gap: 8px; }
 
 .btn-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 34px; height: 34px;
   background: var(--bg-elevated);
   border: 1px solid var(--border-base);
   border-radius: var(--radius-sm);
@@ -224,7 +198,6 @@ body::after {
   cursor: pointer;
   font-size: 15px;
   transition: var(--transition);
-  position: relative;
 }
 
 .btn-icon:hover {
@@ -264,19 +237,11 @@ body::after {
   text-transform: uppercase;
   cursor: pointer;
   transition: var(--transition);
-  position: relative;
   white-space: nowrap;
 }
 
-.tab-btn .tab-icon {
-  font-size: 14px;
-  opacity: 0.7;
-  transition: var(--transition);
-}
-
-.tab-btn:hover {
-  color: var(--text-primary);
-}
+.tab-btn .tab-icon { font-size: 14px; opacity: 0.7; transition: var(--transition); }
+.tab-btn:hover { color: var(--text-primary); }
 
 .tab-btn.active {
   color: var(--green-bright);
@@ -289,13 +254,11 @@ body::after {
   filter: drop-shadow(0 0 4px var(--green-bright));
 }
 
-/* Tab badge */
 .tab-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 16px;
+  min-width: 18px; height: 16px;
   padding: 0 4px;
   background: var(--green-mid);
   border: 1px solid var(--green-bright);
@@ -310,25 +273,13 @@ body::after {
 /* ═══════════════════════════════════════════════
    CONTENT AREA
 ═══════════════════════════════════════════════ */
-#content {
-  flex: 1;
-  overflow: hidden;
-  position: relative;
-}
+#content { flex: 1; overflow: hidden; position: relative; }
 
-.tab-panel {
-  display: none;
-  width: 100%;
-  height: 100%;
-}
-
-.tab-panel.active {
-  display: flex;
-  flex-direction: column;
-}
+.tab-panel { display: none; width: 100%; height: 100%; }
+.tab-panel.active { display: flex; flex-direction: column; }
 
 /* ═══════════════════════════════════════════════
-   PANEL HEADER STRIP
+   PANEL HEADER
 ═══════════════════════════════════════════════ */
 .panel-header {
   display: flex;
@@ -338,6 +289,7 @@ body::after {
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border-base);
   flex-shrink: 0;
+  gap: 12px;
 }
 
 .panel-title {
@@ -347,12 +299,10 @@ body::after {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-secondary);
+  flex-shrink: 0;
 }
 
-.panel-title span {
-  color: var(--green-bright);
-  margin-right: 6px;
-}
+.panel-title span { color: var(--green-bright); margin-right: 6px; }
 
 .panel-meta {
   font-family: var(--font-mono);
@@ -362,7 +312,80 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════
-   WIDGET CONTAINER (TradingView embeds)
+   MARKET TOGGLE — JP / US switch
+═══════════════════════════════════════════════ */
+.market-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.mkt-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-cond);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  position: relative;
+}
+
+.mkt-btn + .mkt-btn::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 1px;
+  background: var(--border-base);
+}
+
+.mkt-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.04); }
+
+/* JP active */
+.mkt-btn.jp.active {
+  background: rgba(255,179,0,0.12);
+  color: var(--amber);
+  box-shadow: inset 0 0 12px rgba(255,179,0,0.08);
+}
+
+/* US active */
+.mkt-btn.us.active {
+  background: rgba(2,136,209,0.12);
+  color: #4fc3f7;
+  box-shadow: inset 0 0 12px rgba(2,136,209,0.08);
+}
+
+/* Loading state on toggle */
+.mkt-btn.loading { pointer-events: none; opacity: 0.5; }
+
+/* Screener reload spinner (mini, shown inline) */
+.mkt-spinner {
+  width: 10px; height: 10px;
+  border: 1.5px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+
+.mkt-btn.loading .mkt-spinner { display: inline-block; }
+.mkt-btn.loading .mkt-flag    { display: none; }
+
+/* ═══════════════════════════════════════════════
+   WIDGET CONTAINER
 ═══════════════════════════════════════════════ */
 .widget-container {
   flex: 1;
@@ -372,12 +395,8 @@ body::after {
 }
 
 .widget-container iframe,
-.widget-container > div {
-  width: 100%;
-  height: 100%;
-}
+.widget-container > div { width: 100%; height: 100%; }
 
-/* Loading placeholder */
 .widget-loading {
   position: absolute;
   inset: 0;
@@ -389,13 +408,13 @@ body::after {
   background: var(--bg-base);
   pointer-events: none;
   transition: opacity 0.5s;
+  z-index: 10;
 }
 
-.widget-loading.hidden { opacity: 0; }
+.widget-loading.hidden { opacity: 0; pointer-events: none; }
 
 .loader-ring {
-  width: 40px;
-  height: 40px;
+  width: 40px; height: 40px;
   border: 2px solid var(--border-dim);
   border-top-color: var(--green-bright);
   border-radius: 50%;
@@ -413,14 +432,21 @@ body::after {
   animation: blink 1.5s ease-in-out infinite;
 }
 
+.loader-market-label {
+  font-family: var(--font-cond);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
 /* ═══════════════════════════════════════════════
-   WATCHLIST TAB
+   WATCHLIST
 ═══════════════════════════════════════════════ */
-#panel-watchlist {
-  overflow: hidden;
-}
+#panel-watchlist { overflow: hidden; }
 
 .watchlist-toolbar {
   display: flex;
@@ -433,18 +459,9 @@ body::after {
   gap: 10px;
 }
 
-.wl-stats {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-shrink: 0;
-}
+.wl-stats { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
 
-.wl-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
+.wl-stat { display: flex; flex-direction: column; gap: 1px; }
 
 .wl-stat-label {
   font-family: var(--font-mono);
@@ -462,16 +479,11 @@ body::after {
   line-height: 1;
 }
 
-.wl-search-wrap {
-  flex: 1;
-  max-width: 300px;
-  position: relative;
-}
+.wl-search-wrap { flex: 1; max-width: 300px; position: relative; }
 
 .wl-search-wrap .search-icon {
   position: absolute;
-  left: 10px;
-  top: 50%;
+  left: 10px; top: 50%;
   transform: translateY(-50%);
   color: var(--text-muted);
   font-size: 12px;
@@ -499,7 +511,6 @@ body::after {
 
 #wl-search::placeholder { color: var(--text-muted); }
 
-/* Watchlist grid */
 .watchlist-grid {
   flex: 1;
   overflow-y: auto;
@@ -510,13 +521,11 @@ body::after {
   align-content: start;
 }
 
-/* Custom scrollbar */
 .watchlist-grid::-webkit-scrollbar { width: 4px; }
 .watchlist-grid::-webkit-scrollbar-track { background: transparent; }
 .watchlist-grid::-webkit-scrollbar-thumb { background: var(--green-mid); border-radius: 2px; }
 .watchlist-grid::-webkit-scrollbar-thumb:hover { background: var(--green-bright); }
 
-/* Empty state */
 .empty-state {
   grid-column: 1/-1;
   display: flex;
@@ -528,11 +537,7 @@ body::after {
   text-align: center;
 }
 
-.empty-icon {
-  font-size: 40px;
-  opacity: 0.3;
-  filter: grayscale(0.5);
-}
+.empty-icon { font-size: 40px; opacity: 0.3; filter: grayscale(0.5); }
 
 .empty-title {
   font-family: var(--font-cond);
@@ -570,16 +575,14 @@ body::after {
 }
 
 @keyframes card-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity:0; transform: translateY(8px); }
+  to   { opacity:1; transform: translateY(0); }
 }
 
 .wl-card::before {
   content: '';
   position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
+  left: 0; top: 0; bottom: 0;
   width: 3px;
   border-radius: var(--radius-sm) 0 0 var(--radius-sm);
   background: var(--green-mid);
@@ -593,16 +596,10 @@ body::after {
   box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 0 30px rgba(0,230,118,0.02);
 }
 
-.wl-card:hover::before {
-  background: var(--green-bright);
-  box-shadow: 0 0 8px var(--green-bright);
-}
-
-/* Card: JP stock */
+.wl-card:hover::before { background: var(--green-bright); box-shadow: 0 0 8px var(--green-bright); }
 .wl-card.jp-stock::before { background: var(--amber-dim); }
 .wl-card.jp-stock:hover::before { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
 
-/* Card header */
 .card-header {
   display: flex;
   align-items: flex-start;
@@ -610,11 +607,7 @@ body::after {
   gap: 8px;
 }
 
-.card-ticker-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
+.card-ticker-wrap { display: flex; flex-direction: column; gap: 3px; }
 
 .card-ticker {
   font-family: var(--font-cond);
@@ -651,7 +644,6 @@ body::after {
   color: var(--amber);
 }
 
-/* Card name input */
 .card-name-input {
   flex: 1;
   background: none;
@@ -669,17 +661,10 @@ body::after {
   transition: var(--transition);
 }
 
-.card-name-input:focus {
-  border-bottom-color: var(--border-dim);
-  color: var(--text-primary);
-}
-
+.card-name-input:focus { border-bottom-color: var(--border-dim); color: var(--text-primary); }
 .card-name-input::placeholder { color: var(--text-muted); font-size: 10px; }
 
-/* Card memo */
-.card-memo {
-  position: relative;
-}
+.card-memo { position: relative; }
 
 .memo-label {
   font-family: var(--font-mono);
@@ -707,19 +692,10 @@ body::after {
   transition: var(--transition);
 }
 
-.card-memo-input:focus {
-  border-color: var(--border-dim);
-  box-shadow: 0 0 0 2px rgba(0,230,118,0.06);
-}
-
+.card-memo-input:focus { border-color: var(--border-dim); box-shadow: 0 0 0 2px rgba(0,230,118,0.06); }
 .card-memo-input::placeholder { color: var(--text-muted); }
 
-/* Card actions */
-.card-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+.card-actions { display: flex; align-items: center; gap: 6px; }
 
 .btn-link {
   display: flex;
@@ -774,17 +750,13 @@ body::after {
   transition: var(--transition);
 }
 
-.btn-save:hover {
-  background: rgba(0,230,118,0.18);
-  box-shadow: 0 0 10px rgba(0,230,118,0.2);
-}
+.btn-save:hover { background: rgba(0,230,118,0.18); box-shadow: 0 0 10px rgba(0,230,118,0.2); }
 
 .btn-delete {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 28px; height: 28px;
   background: none;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
@@ -795,13 +767,8 @@ body::after {
   flex-shrink: 0;
 }
 
-.btn-delete:hover {
-  color: var(--red);
-  border-color: var(--red-dim);
-  background: rgba(255,61,90,0.08);
-}
+.btn-delete:hover { color: var(--red); border-color: var(--red-dim); background: rgba(255,61,90,0.08); }
 
-/* Timestamp */
 .card-timestamp {
   font-family: var(--font-mono);
   font-size: 9px;
@@ -810,14 +777,12 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════
-   FAB — Floating Action Button
+   FAB
 ═══════════════════════════════════════════════ */
 #fab {
   position: fixed;
-  bottom: 24px;
-  right: 20px;
-  width: 52px;
-  height: 52px;
+  bottom: 24px; right: 20px;
+  width: 52px; height: 52px;
   border-radius: 50%;
   background: var(--green-bright);
   border: none;
@@ -835,16 +800,11 @@ body::after {
 }
 
 #fab.visible { display: flex; }
-
-#fab:hover {
-  transform: scale(1.08);
-  box-shadow: 0 6px 30px rgba(0,230,118,0.6), 0 0 60px rgba(0,230,118,0.3);
-}
-
+#fab:hover { transform: scale(1.08); box-shadow: 0 6px 30px rgba(0,230,118,0.6), 0 0 60px rgba(0,230,118,0.3); }
 #fab:active { transform: scale(0.96); }
 
 /* ═══════════════════════════════════════════════
-   MODAL — Add Watchlist Item
+   MODAL
 ═══════════════════════════════════════════════ */
 .modal-backdrop {
   position: fixed;
@@ -860,7 +820,6 @@ body::after {
 }
 
 .modal-backdrop.open { display: flex; }
-
 @keyframes fade-in { from{opacity:0} to{opacity:1} }
 
 .modal {
@@ -902,8 +861,7 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 28px; height: 28px;
   background: none;
   border: none;
   color: var(--text-secondary);
@@ -922,11 +880,7 @@ body::after {
   gap: 16px;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+.form-group { display: flex; flex-direction: column; gap: 6px; }
 
 .form-label {
   font-family: var(--font-mono);
@@ -939,10 +893,7 @@ body::after {
   gap: 6px;
 }
 
-.form-label .required {
-  color: var(--red);
-  font-size: 11px;
-}
+.form-label .required { color: var(--red); font-size: 11px; }
 
 .form-input {
   background: var(--bg-elevated);
@@ -964,14 +915,8 @@ body::after {
 }
 
 .form-input::placeholder { color: var(--text-muted); font-size: 11px; }
+.form-textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
 
-.form-textarea {
-  resize: vertical;
-  min-height: 70px;
-  line-height: 1.5;
-}
-
-/* Preview strip */
 .modal-preview {
   display: flex;
   align-items: center;
@@ -1048,13 +993,10 @@ body::after {
   transition: var(--transition);
 }
 
-.btn-secondary:hover {
-  border-color: var(--border-dim);
-  color: var(--text-primary);
-}
+.btn-secondary:hover { border-color: var(--border-dim); color: var(--text-primary); }
 
 /* ═══════════════════════════════════════════════
-   SETTINGS PANEL (slide-in)
+   SETTINGS PANEL
 ═══════════════════════════════════════════════ */
 #settings-backdrop {
   position: fixed;
@@ -1069,9 +1011,7 @@ body::after {
 
 #settings-panel {
   position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; right: 0; bottom: 0;
   width: min(380px, 100vw);
   background: var(--bg-card);
   border-left: 1px solid var(--border-dim);
@@ -1133,10 +1073,7 @@ body::after {
   letter-spacing: 0.03em;
 }
 
-.settings-help a {
-  color: var(--green-bright);
-  text-decoration: none;
-}
+.settings-help a { color: var(--green-bright); text-decoration: none; }
 
 .settings-footer {
   padding: 16px 20px;
@@ -1157,37 +1094,17 @@ body::after {
   letter-spacing: 0.08em;
 }
 
-.status-indicator.ok {
-  background: rgba(0,230,118,0.08);
-  border: 1px solid rgba(0,230,118,0.2);
-  color: var(--green-bright);
-}
+.status-indicator.ok  { background: rgba(0,230,118,0.08); border: 1px solid rgba(0,230,118,0.2); color: var(--green-bright); }
+.status-indicator.err { background: rgba(255,61,90,0.08);  border: 1px solid rgba(255,61,90,0.2);  color: var(--red); }
+.status-indicator.idle{ background: var(--bg-elevated);    border: 1px solid var(--border-base);   color: var(--text-secondary); }
 
-.status-indicator.err {
-  background: rgba(255,61,90,0.08);
-  border: 1px solid rgba(255,61,90,0.2);
-  color: var(--red);
-}
-
-.status-indicator.idle {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-base);
-  color: var(--text-secondary);
-}
-
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.status-indicator.ok .status-dot  { background: var(--green-bright); box-shadow: 0 0 6px var(--green-bright); }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.status-indicator.ok  .status-dot { background: var(--green-bright); box-shadow: 0 0 6px var(--green-bright); }
 .status-indicator.err .status-dot { background: var(--red); }
 .status-indicator.idle .status-dot{ background: var(--text-muted); }
 
 /* ═══════════════════════════════════════════════
-   TOAST NOTIFICATIONS
+   TOAST
 ═══════════════════════════════════════════════ */
 #toast-container {
   position: fixed;
@@ -1216,35 +1133,15 @@ body::after {
   box-shadow: 0 8px 24px rgba(0,0,0,0.4);
 }
 
-.toast.success {
-  background: var(--green-mid);
-  border: 1px solid var(--green-bright);
-  color: var(--green-text);
-}
+.toast.success { background: var(--green-mid); border: 1px solid var(--green-bright); color: var(--green-text); }
+.toast.error   { background: var(--red-dim);   border: 1px solid var(--red);          color: #ffb3c0; }
+.toast.info    { background: var(--bg-elevated);border: 1px solid var(--border-dim);  color: var(--text-secondary); }
 
-.toast.error {
-  background: var(--red-dim);
-  border: 1px solid var(--red);
-  color: #ffb3c0;
-}
-
-.toast.info {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border-dim);
-  color: var(--text-secondary);
-}
-
-@keyframes toast-in {
-  from { opacity:0; transform: translateY(20px) scale(0.9); }
-  to   { opacity:1; transform: translateY(0) scale(1); }
-}
-
-@keyframes toast-out {
-  to { opacity:0; transform: translateY(10px) scale(0.95); }
-}
+@keyframes toast-in  { from{opacity:0;transform:translateY(20px) scale(0.9)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes toast-out { to{opacity:0;transform:translateY(10px) scale(0.95)} }
 
 /* ═══════════════════════════════════════════════
-   SUPABASE CONNECTION STATUS BAR
+   CONN BAR
 ═══════════════════════════════════════════════ */
 #conn-bar {
   display: flex;
@@ -1262,11 +1159,28 @@ body::after {
 }
 
 #conn-bar.hidden { display: none; }
-#conn-bar.ok {
-  background: rgba(0,230,118,0.05);
-  border-color: rgba(0,230,118,0.15);
-  color: var(--green-bright);
+#conn-bar.ok { background: rgba(0,230,118,0.05); border-color: rgba(0,230,118,0.15); color: var(--green-bright); }
+
+/* ═══════════════════════════════════════════════
+   MISC DECORATIONS
+═══════════════════════════════════════════════ */
+.corner-tl, .corner-tr {
+  position: absolute;
+  width: 12px; height: 12px;
+  pointer-events: none;
 }
+.corner-tl { top:6px; left:6px;  border-top:1px solid var(--green-bright); border-left:1px solid var(--green-bright);  opacity:0.4; }
+.corner-tr { top:6px; right:6px; border-top:1px solid var(--green-bright); border-right:1px solid var(--green-bright); opacity:0.4; }
+
+.boot-flash {
+  position: fixed; inset: 0;
+  background: var(--green-bright);
+  z-index: 9998;
+  animation: boot-flash 0.15s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes boot-flash { from{opacity:0.12} to{opacity:0} }
 
 /* ═══════════════════════════════════════════════
    RESPONSIVE
@@ -1281,6 +1195,7 @@ body::after {
   #settings-panel { width: 100vw; }
   .card-actions { flex-wrap: wrap; }
   .btn-link { padding: 5px 8px; font-size: 10px; }
+  .mkt-btn { padding: 5px 9px; font-size: 11px; }
 }
 
 @media (max-width: 400px) {
@@ -1288,55 +1203,17 @@ body::after {
   .tab-btn .tab-label { display: none; }
   .tab-btn { padding: 10px 14px; }
   .tab-icon { font-size: 16px !important; }
-}
-
-/* ═══════════════════════════════════════════════
-   TICKER CORNER DECORATION
-═══════════════════════════════════════════════ */
-.corner-tl, .corner-tr {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  pointer-events: none;
-}
-.corner-tl {
-  top: 6px; left: 6px;
-  border-top: 1px solid var(--green-bright);
-  border-left: 1px solid var(--green-bright);
-  opacity: 0.4;
-}
-.corner-tr {
-  top: 6px; right: 6px;
-  border-top: 1px solid var(--green-bright);
-  border-right: 1px solid var(--green-bright);
-  opacity: 0.4;
-}
-
-/* Animated boot sequence */
-.boot-flash {
-  position: fixed;
-  inset: 0;
-  background: var(--green-bright);
-  z-index: 9998;
-  animation: boot-flash 0.15s ease-out forwards;
-  pointer-events: none;
-}
-
-@keyframes boot-flash {
-  from { opacity: 0.12; }
-  to   { opacity: 0; }
+  .panel-header { flex-wrap: wrap; gap: 6px; }
 }
 </style>
 </head>
 <body>
 
-<!-- Boot flash -->
 <div class="boot-flash" id="boot-flash"></div>
 
-<!-- App shell -->
 <div id="app">
 
-  <!-- Connection warning bar -->
+  <!-- Connection bar -->
   <div id="conn-bar">
     <span>⚠</span>
     <span id="conn-msg">Supabase 未設定 — 右上の ⚙️ 設定からURLとAnon Keyを入力してください</span>
@@ -1355,15 +1232,10 @@ body::after {
       </div>
       <div>
         <div class="logo-text">APEX TERMINAL</div>
-        <div class="logo-sub">Breakout Monitor v2.0</div>
+        <div class="logo-sub">Breakout Monitor v2.1</div>
       </div>
     </div>
-
-    <div class="live-badge">
-      <div class="live-dot"></div>
-      LIVE
-    </div>
-
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
     <div class="topbar-actions">
       <button class="btn-icon" onclick="openSettings()" title="設定">⚙️</button>
     </div>
@@ -1372,71 +1244,54 @@ body::after {
   <!-- Tab nav -->
   <nav id="tab-nav">
     <button class="tab-btn active" onclick="switchTab('breakout')" id="tab-breakout">
-      <span class="tab-icon">🚀</span>
-      <span class="tab-label">スクリーナー</span>
+      <span class="tab-icon">🚀</span><span class="tab-label">スクリーナー</span>
     </button>
     <button class="tab-btn" onclick="switchTab('heatmap')" id="tab-heatmap">
-      <span class="tab-icon">🔥</span>
-      <span class="tab-label">セクター熱量</span>
+      <span class="tab-icon">🔥</span><span class="tab-label">セクター熱量</span>
     </button>
     <button class="tab-btn" onclick="switchTab('watchlist')" id="tab-watchlist">
-      <span class="tab-icon">👁️</span>
-      <span class="tab-label">監視リスト</span>
+      <span class="tab-icon">👁️</span><span class="tab-label">監視リスト</span>
       <span class="tab-badge" id="wl-count-badge">0</span>
     </button>
   </nav>
 
-  <!-- Main content -->
   <main id="content">
 
-    <!-- ── TAB 1: SCREENER ── -->
+    <!-- ══ TAB 1: SCREENER ══ -->
     <div class="tab-panel active" id="panel-breakout">
+
       <div class="panel-header">
         <div class="panel-title"><span>◈</span>高値ブレイク スクリーナー</div>
+
+        <!-- ★ 市場切り替えボタン ★ -->
+        <div class="market-toggle" id="market-toggle" role="group" aria-label="市場切り替え">
+          <button class="mkt-btn jp active" id="mkt-jp" onclick="switchMarket('japan')" title="日本株 (TOPIX/JPX)">
+            <span class="mkt-flag">🗾</span>
+            <span class="mkt-spinner"></span>
+            <span>JP</span>
+          </button>
+          <button class="mkt-btn us" id="mkt-us" onclick="switchMarket('US')" title="米国株 (NYSE/NASDAQ)">
+            <span class="mkt-flag">🇺🇸</span>
+            <span class="mkt-spinner"></span>
+            <span>US</span>
+          </button>
+        </div>
+
         <div class="panel-meta" id="screener-ts">TradingView Screener Widget</div>
       </div>
+
       <div class="widget-container" id="screener-container">
         <div class="widget-loading" id="screener-loading">
           <div class="loader-ring"></div>
+          <div class="loader-market-label" id="loader-market-label">🗾 日本株</div>
           <div class="loader-text">Loading Screener...</div>
         </div>
-        <!-- TradingView Screener Widget BEGIN -->
-        <div class="tradingview-widget-container" style="height:100%;width:100%">
-          <div class="tradingview-widget-container__widget" style="height:calc(100%);width:100%"></div>
-          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>
-          {
-            "width": "100%",
-            "height": "100%",
-            "defaultColumn": "overview",
-            "defaultScreen": "top_gainers",
-            "market": "japan",
-            "showToolbar": true,
-            "colorTheme": "dark",
-            "locale": "ja",
-            "isTransparent": true,
-            "largeChartUrl": "https://jp.tradingview.com/chart/",
-            "displayCurrency": "JPY"
-          }
-          </script>
-        </div>
-        <!--
-          ╔══════════════════════════════════════════════════════════╗
-          ║  SCREENER CLICK → CHART URL LOGIC (how it works)        ║
-          ║                                                          ║
-          ║  When a ticker is clicked, TradingView widget fires:     ║
-          ║    1) postMessage  → caught by our window listener       ║
-          ║       → opens  https://jp.tradingview.com/chart/         ║
-          ║                    ?symbol=TSE:7011   (JP)               ║
-          ║                    ?symbol=NASDAQ:NVDA (US)              ║
-          ║    2) largeChartUrl fallback (if postMessage not fired)  ║
-          ║       → same URL, opened by TradingView widget itself    ║
-          ╚══════════════════════════════════════════════════════════╝
-        -->
-        <!-- TradingView Screener Widget END -->
+        <!-- TradingView Screener Widget は JS で動的挿入 -->
+        <div id="screener-widget-wrap" style="height:100%;width:100%"></div>
       </div>
     </div>
 
-    <!-- ── TAB 2: HEATMAP ── -->
+    <!-- ══ TAB 2: HEATMAP ══ -->
     <div class="tab-panel" id="panel-heatmap">
       <div class="panel-header">
         <div class="panel-title"><span>◈</span>セクター熱量レーダー</div>
@@ -1447,7 +1302,6 @@ body::after {
           <div class="loader-ring"></div>
           <div class="loader-text">Loading Heatmap...</div>
         </div>
-        <!-- TradingView Stock Heatmap Widget BEGIN -->
         <div class="tradingview-widget-container" style="height:100%;width:100%">
           <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js" async>
@@ -1470,11 +1324,10 @@ body::after {
           }
           </script>
         </div>
-        <!-- TradingView Stock Heatmap Widget END -->
       </div>
     </div>
 
-    <!-- ── TAB 3: WATCHLIST ── -->
+    <!-- ══ TAB 3: WATCHLIST ══ -->
     <div class="tab-panel" id="panel-watchlist">
       <div class="watchlist-toolbar">
         <div class="wl-stats">
@@ -1511,7 +1364,7 @@ body::after {
 <!-- FAB -->
 <button id="fab" onclick="openAddModal()" title="銘柄を追加">＋</button>
 
-<!-- ══════════ ADD MODAL ══════════ -->
+<!-- ══ ADD MODAL ══ -->
 <div class="modal-backdrop" id="add-modal">
   <div class="modal">
     <div class="modal-header">
@@ -1526,20 +1379,17 @@ body::after {
                oninput="updateModalPreview(this.value)"
                onkeydown="if(event.key==='Enter') document.getElementById('modal-name').focus()">
       </div>
-
       <div class="modal-preview" id="modal-preview">
         <span class="preview-label">判定→</span>
         <span class="preview-ticker" id="preview-ticker">—</span>
         <span id="preview-badge"></span>
       </div>
-
       <div class="form-group">
         <label class="form-label">銘柄名（任意）</label>
         <input type="text" class="form-input" id="modal-name"
                placeholder="例: 三菱重工業 / NVIDIA Corp"
                onkeydown="if(event.key==='Enter') document.getElementById('modal-memo').focus()">
       </div>
-
       <div class="form-group">
         <label class="form-label">注目理由・メモ（任意）</label>
         <textarea class="form-input form-textarea" id="modal-memo"
@@ -1548,14 +1398,12 @@ body::after {
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeAddModal()">キャンセル</button>
-      <button class="btn-primary" onclick="addToWatchlist()">
-        <span>＋</span> 追加する
-      </button>
+      <button class="btn-primary" onclick="addToWatchlist()"><span>＋</span> 追加する</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════ SETTINGS PANEL ══════════ -->
+<!-- ══ SETTINGS ══ -->
 <div id="settings-backdrop" onclick="closeSettings()"></div>
 <div id="settings-panel">
   <div class="settings-header">
@@ -1564,36 +1412,20 @@ body::after {
   </div>
   <div class="settings-body">
     <div class="settings-section-title">Supabase 接続設定</div>
-
     <div class="settings-help">
       <a href="https://supabase.com" target="_blank">supabase.com</a> でプロジェクトを作成し、
       Settings → API から Project URL と anon key を取得してください。<br><br>
       テーブル: <code style="color:var(--green-bright)">breakout_watchlist</code><br>
       必要カラム: <code style="color:var(--text-code)">id (uuid), ticker (text), name (text), memo (text), created_at (timestamp)</code>
     </div>
-
     <div class="form-group">
       <label class="form-label">Project URL</label>
-      <input type="text" class="form-input" id="sb-url"
-             placeholder="https://xxxxxxxxxxxx.supabase.co">
+      <input type="text" class="form-input" id="sb-url" placeholder="https://xxxxxxxxxxxx.supabase.co">
     </div>
-
     <div class="form-group">
       <label class="form-label">Anon Key</label>
-      <input type="password" class="form-input" id="sb-key"
-             placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6...">
+      <input type="password" class="form-input" id="sb-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6...">
     </div>
-
-    <div class="settings-section-title" style="margin-top:8px">TradingView スクリーナー設定</div>
-    <div class="form-group">
-      <label class="form-label">対象市場</label>
-      <select class="form-input" id="tv-market" style="cursor:pointer">
-        <option value="japan">日本株 (TOPIX/JPX)</option>
-        <option value="US">米国株 (NYSE/NASDAQ)</option>
-        <option value="crypto">暗号通貨</option>
-      </select>
-    </div>
-
   </div>
   <div class="settings-footer">
     <div class="status-indicator idle" id="supabase-status">
@@ -1609,102 +1441,205 @@ body::after {
   </div>
 </div>
 
-<!-- Toast container -->
 <div id="toast-container"></div>
 
 <!-- ══════════════════════════════════════════════
-   MAIN APPLICATION LOGIC
+   APPLICATION LOGIC
 ══════════════════════════════════════════════ -->
 <script>
 'use strict';
 
 /* ─────────────────────────────────────────────
-   CONSTANTS & STATE
+   STATE
 ───────────────────────────────────────────── */
-const APP_KEY   = 'apex_terminal_';
+const APP_KEY = 'apex_terminal_';
 const LS = {
-  get: k  => { try { return JSON.parse(localStorage.getItem(APP_KEY+k)); } catch(e) { return null; } },
+  get: k   => { try { return JSON.parse(localStorage.getItem(APP_KEY+k)); } catch(e) { return null; } },
   set: (k,v) => localStorage.setItem(APP_KEY+k, JSON.stringify(v)),
-  del: k  => localStorage.removeItem(APP_KEY+k),
 };
 
 let state = {
-  tab: 'breakout',
-  items: [],        // watchlist items
-  filtered: null,   // null = no filter
-  sbUrl: '',
-  sbKey: '',
+  tab:           'breakout',
+  screenerMarket: 'japan',   // 'japan' | 'US'  ← 切り替えトグルで変化
+  items:         [],
+  filtered:      null,
+  sbUrl:         '',
+  sbKey:         '',
+};
+
+/* ─────────────────────────────────────────────
+   SCREENER MARKET CONFIG
+   各市場ごとの TradingView Screener 設定を一元管理
+───────────────────────────────────────────── */
+const SCREENER_CONFIG = {
+  japan: {
+    market:          'japan',
+    defaultScreen:   'top_gainers',
+    defaultColumn:   'overview',
+    locale:          'ja',
+    displayCurrency: 'JPY',
+    loaderLabel:     '🗾 日本株',
+    chartBase:       'https://jp.tradingview.com/chart/',
+  },
+  US: {
+    market:          'US',
+    defaultScreen:   'top_gainers',
+    defaultColumn:   'overview',
+    locale:          'ja',
+    displayCurrency: 'USD',
+    loaderLabel:     '🇺🇸 米国株',
+    chartBase:       'https://jp.tradingview.com/chart/',
+  },
 };
 
 /* ─────────────────────────────────────────────
    BOOT
 ───────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', async () => {
-  // Remove boot flash after tiny delay
-  setTimeout(() => {
-    const bf = document.getElementById('boot-flash');
-    if (bf) bf.remove();
-  }, 300);
+  setTimeout(() => { const bf = document.getElementById('boot-flash'); if(bf) bf.remove(); }, 300);
 
-  // Load settings
   state.sbUrl = LS.get('sbUrl') || '';
   state.sbKey = LS.get('sbKey') || '';
-  document.getElementById('sb-url').value  = state.sbUrl;
-  document.getElementById('sb-key').value  = state.sbKey;
+  document.getElementById('sb-url').value = state.sbUrl;
+  document.getElementById('sb-key').value = state.sbKey;
+
+  // 前回の市場設定を復元（未設定なら japan）
+  state.screenerMarket = LS.get('screenerMarket') || 'japan';
 
   updateConnBar();
-
-  // Load watchlist (from Supabase or localStorage fallback)
   await loadWatchlist();
 
-  // Hide loading spinners after 2s (TradingView loads async)
+  // スクリーナー初回描画
+  renderScreener(state.screenerMarket, false);
+
+  // ヒートマップのローダーを隠す
   setTimeout(() => {
-    document.querySelectorAll('.widget-loading').forEach(el => el.classList.add('hidden'));
+    document.getElementById('heatmap-loading').classList.add('hidden');
   }, 2500);
 
-  // Clock in topbar
+  // 時計
   updateClock();
   setInterval(updateClock, 1000);
 
-  // ── TradingView widget postMessage interceptor ──────────────────────────
-  // TradingView screener/heatmap widgets emit postMessage events when a
-  // symbol is clicked. We intercept these to open the chart in a new tab
-  // with the correctly formatted URL (TSE:XXXX for JP, raw ticker for US).
+  // ── TradingView postMessage interceptor ─────────────────────────────
+  // ウィジェットがシンボルクリック時に postMessage を発火する。
+  // それを受け取り window.open で正しい URL を新タブで開く。
   window.addEventListener('message', (evt) => {
     try {
-      // Accept messages only from TradingView origins
       if (!evt.origin.includes('tradingview.com')) return;
-
       const data = typeof evt.data === 'string' ? JSON.parse(evt.data) : evt.data;
       if (!data) return;
 
-      // Different TradingView widget versions use different event shapes
-      // Shape A: { name: "...", data: { symbol: "TSE:7011" } }
-      // Shape B: { symbol_name: "TSE:7011" }
-      // Shape C: { type: "symbol", symbol: "TSE:7011" }
+      // TradingView ウィジェットのバージョンによりイベント形式が異なる
       const symbolRaw =
-        data?.data?.symbol ||
-        data?.symbol_name  ||
-        data?.symbol       || '';
+        data?.data?.symbol ||   // Shape A: { name:"...", data:{ symbol:"TSE:7011" } }
+        data?.symbol_name  ||   // Shape B: { symbol_name:"TSE:7011" }
+        data?.symbol       || ''; // Shape C: { symbol:"TSE:7011" }
 
       if (!symbolRaw) return;
 
-      // Normalise: strip any leading exchange prefix for our detector,
-      // but pass the FULL prefixed symbol directly to TradingView
       const sym = symbolRaw.trim().toUpperCase();
-      const url = `https://jp.tradingview.com/chart/?symbol=${sym}`;
-      window.open(url, '_blank', 'noopener,noreferrer');
-    } catch (_) {
-      // Silently ignore parse errors from unrelated postMessages
-    }
+      // コロンはそのまま（encodeURIComponent 不使用）
+      window.open(`https://jp.tradingview.com/chart/?symbol=${sym}`, '_blank', 'noopener,noreferrer');
+    } catch(_) { /* 無関係な postMessage は無視 */ }
   });
 });
 
 function updateClock() {
-  const now = new Date();
-  const ts = now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const ts = new Date().toLocaleTimeString('ja-JP', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
   const el = document.getElementById('screener-ts');
-  if (el) el.textContent = `TradingView Screener · ${ts}`;
+  if (el) {
+    const mktLabel = state.screenerMarket === 'japan' ? '🗾 JP' : '🇺🇸 US';
+    el.textContent = `${mktLabel} · TradingView Screener · ${ts}`;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   ★ SCREENER DYNAMIC RENDER
+   TradingView Screener を動的に生成・差し替え
+   （script タグを再生成することでウィジェットを再初期化）
+───────────────────────────────────────────── */
+function renderScreener(market, showLoadingSpinner = true) {
+  const cfg  = SCREENER_CONFIG[market] || SCREENER_CONFIG['japan'];
+  const wrap = document.getElementById('screener-widget-wrap');
+  const loading = document.getElementById('screener-loading');
+
+  // ローダー表示
+  if (showLoadingSpinner) {
+    loading.classList.remove('hidden');
+    document.getElementById('loader-market-label').textContent = cfg.loaderLabel;
+  }
+
+  // 既存ウィジェットを完全に破棄
+  wrap.innerHTML = '';
+
+  // 新しいコンテナを生成
+  const container = document.createElement('div');
+  container.className = 'tradingview-widget-container';
+  container.style.cssText = 'height:100%;width:100%';
+
+  const inner = document.createElement('div');
+  inner.className = 'tradingview-widget-container__widget';
+  inner.style.cssText = 'height:100%;width:100%';
+  container.appendChild(inner);
+
+  // TradingView Screener の設定オブジェクト
+  const tvConfig = {
+    width:           '100%',
+    height:          '100%',
+    defaultColumn:   cfg.defaultColumn,
+    defaultScreen:   cfg.defaultScreen,
+    market:          cfg.market,
+    showToolbar:     true,
+    colorTheme:      'dark',
+    locale:          cfg.locale,
+    isTransparent:   true,
+    // largeChartUrl: クリック時の遷移先ベースURL
+    // TradingView ウィジェットが ?symbol=EXCHANGE:TICKER を自動付与する
+    largeChartUrl:   cfg.chartBase,
+    displayCurrency: cfg.displayCurrency,
+  };
+
+  // <script> タグを動的生成（これにより TV ウィジェットが再初期化される）
+  const script = document.createElement('script');
+  script.type  = 'text/javascript';
+  script.src   = 'https://s3.tradingview.com/external-embedding/embed-widget-screener.js';
+  script.async = true;
+  script.textContent = JSON.stringify(tvConfig);
+
+  container.appendChild(script);
+  wrap.appendChild(container);
+
+  // ローダーを非表示（ウィジェット読み込み完了相当の時間で隠す）
+  setTimeout(() => loading.classList.add('hidden'), showLoadingSpinner ? 2800 : 100);
+}
+
+/* ─────────────────────────────────────────────
+   ★ MARKET SWITCH — JP ⇄ US
+───────────────────────────────────────────── */
+function switchMarket(market) {
+  if (state.screenerMarket === market) return; // 同じ市場なら何もしない
+
+  state.screenerMarket = market;
+  LS.set('screenerMarket', market);
+
+  // ボタンのアクティブ状態を更新
+  document.getElementById('mkt-jp').classList.toggle('active', market === 'japan');
+  document.getElementById('mkt-us').classList.toggle('active', market === 'US');
+
+  // ローディングアニメーション（スピナーを一瞬表示）
+  const activeBtn = document.getElementById(market === 'japan' ? 'mkt-jp' : 'mkt-us');
+  const otherBtn  = document.getElementById(market === 'japan' ? 'mkt-us' : 'mkt-jp');
+  activeBtn.classList.add('loading');
+  otherBtn.classList.remove('loading');
+
+  setTimeout(() => activeBtn.classList.remove('loading'), 1800);
+
+  // ウィジェットを再描画
+  renderScreener(market, true);
+
+  const label = market === 'japan' ? '🗾 日本株 (TOPIX)' : '🇺🇸 米国株 (NYSE/NASDAQ)';
+  toast(`スクリーナーを ${label} に切り替えました`, 'info');
 }
 
 /* ─────────────────────────────────────────────
@@ -1712,60 +1647,61 @@ function updateClock() {
 ───────────────────────────────────────────── */
 function switchTab(tab) {
   state.tab = tab;
-
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
   document.getElementById(`panel-${tab}`).classList.add('active');
   document.getElementById(`tab-${tab}`).classList.add('active');
-
-  const fab = document.getElementById('fab');
-  fab.classList.toggle('visible', tab === 'watchlist');
+  document.getElementById('fab').classList.toggle('visible', tab === 'watchlist');
 }
 
 /* ─────────────────────────────────────────────
-   MARKET TYPE DETECTION
+   MARKET DETECTION
 ───────────────────────────────────────────── */
 function detectMarket(ticker) {
   const t = ticker.trim().toUpperCase();
-  // JP: 4-digit number (also sometimes with suffix like .T)
   if (/^\d{4}$/.test(t) || /^\d{4}\.(T|OS)$/.test(t)) return 'JP';
-  // US: letters, possibly numbers
   return 'US';
 }
 
+/* ─────────────────────────────────────────────
+   URL GENERATION
+   ★ 修正済み：encodeURIComponent を使わず生コロンで出力
+      TradingView は ?symbol=TSE:7011 の形式を期待している
+      encodeURIComponent すると TSE%3A7011 になりエラーになる
+───────────────────────────────────────────── */
 function getKabutanUrl(ticker, market) {
   const t = ticker.trim().replace(/\.(T|OS)$/i, '');
-  if (market === 'JP') return `https://kabutan.jp/stock/?code=${t}`;
-  return `https://us.kabutan.jp/stocks/${t.toUpperCase()}`;
+  return market === 'JP'
+    ? `https://kabutan.jp/stock/?code=${t}`
+    : `https://us.kabutan.jp/stocks/${t.toUpperCase()}`;
 }
 
 function getTradingViewUrl(ticker, market) {
-  // Strip exchange suffixes (.T = Tokyo, .OS = Osaka) before processing
+  // .T / .OS などの取引所サフィックスを除去
   const raw = ticker.trim().toUpperCase().replace(/\.(T|OS|N|NK)$/i, '');
 
   let symbol;
 
   if (raw.includes(':')) {
-    // Already in EXCHANGE:TICKER format (e.g. TSE:7011, NASDAQ:NVDA) — use as-is
+    // 既に EXCHANGE:TICKER 形式 (例: TSE:7011, NASDAQ:NVDA) → そのまま使用
     symbol = raw;
   } else if (market === 'JP' || /^\d{4,5}$/.test(raw)) {
-    // Japan stock: 4-digit (Prime/Standard/Growth) or 5-digit (ETF/REIT)
-    // TradingView requires TSE: prefix; without it the chart shows "symbol not found"
+    // 日本株：4桁（プライム/スタンダード/グロース）または5桁（ETF/REIT）
+    // TSE: プレフィックスが必須。省略すると TradingView が "symbol not found" を返す
     symbol = `TSE:${raw}`;
   } else {
-    // US / Global: pass ticker as-is — TradingView resolves NVDA → NASDAQ:NVDA automatically
+    // 米国株・その他：そのまま渡す（TradingView が NVDA → NASDAQ:NVDA を自動解決）
     symbol = raw;
   }
 
-  // IMPORTANT: Do NOT use encodeURIComponent() on the full symbol.
-  // TradingView chart URLs require a literal colon:  ?symbol=TSE:7011
-  // encodeURIComponent would produce TSE%3A7011 which TradingView rejects.
+  // ★ コロン(:)を encodeURIComponent しない
+  //    正しい形式: ?symbol=TSE:7011
+  //    誤った形式: ?symbol=TSE%3A7011  ← TradingView がエラーを返す
   return `https://jp.tradingview.com/chart/?symbol=${symbol}`;
 }
 
 /* ─────────────────────────────────────────────
-   MODAL — ADD WATCHLIST ITEM
+   MODAL
 ───────────────────────────────────────────── */
 function openAddModal() {
   document.getElementById('modal-ticker').value = '';
@@ -1781,20 +1717,15 @@ function closeAddModal() {
   document.getElementById('add-modal').classList.remove('open');
 }
 
-// Close on backdrop click
 document.getElementById('add-modal').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeAddModal();
 });
 
 function updateModalPreview(val) {
-  const t = val.trim().toUpperCase();
+  const t      = val.trim().toUpperCase();
   const ticker = document.getElementById('preview-ticker');
   const badge  = document.getElementById('preview-badge');
-  if (!t) {
-    ticker.textContent = '—';
-    badge.innerHTML = '';
-    return;
-  }
+  if (!t) { ticker.textContent = '—'; badge.innerHTML = ''; return; }
   const mkt = detectMarket(t);
   ticker.textContent = t;
   badge.innerHTML = mkt === 'JP'
@@ -1807,17 +1738,8 @@ async function addToWatchlist() {
   const name   = document.getElementById('modal-name').value.trim();
   const memo   = document.getElementById('modal-memo').value.trim();
 
-  if (!ticker) {
-    toast('銘柄コードを入力してください', 'error');
-    document.getElementById('modal-ticker').focus();
-    return;
-  }
-
-  // Check duplicate
-  if (state.items.find(i => i.ticker === ticker)) {
-    toast(`${ticker} は既に登録済みです`, 'error');
-    return;
-  }
+  if (!ticker) { toast('銘柄コードを入力してください', 'error'); document.getElementById('modal-ticker').focus(); return; }
+  if (state.items.find(i => i.ticker === ticker)) { toast(`${ticker} は既に登録済みです`, 'error'); return; }
 
   const item = {
     id:         crypto.randomUUID(),
@@ -1828,53 +1750,41 @@ async function addToWatchlist() {
     market:     detectMarket(ticker),
   };
 
-  // Optimistic update
   state.items.unshift(item);
   renderWatchlist();
   closeAddModal();
   toast(`${ticker} を追加しました`, 'success');
-
-  // Persist
   await persistItem(item);
 }
 
 /* ─────────────────────────────────────────────
-   SUPABASE INTEGRATION
+   SUPABASE
 ───────────────────────────────────────────── */
 function sbHeaders() {
   return {
-    'Content-Type': 'application/json',
-    'apikey':        state.sbKey,
+    'Content-Type':  'application/json',
+    'apikey':         state.sbKey,
     'Authorization': `Bearer ${state.sbKey}`,
   };
 }
 
-function sbReady() {
-  return state.sbUrl && state.sbKey;
-}
+function sbReady() { return !!(state.sbUrl && state.sbKey); }
 
 async function loadWatchlist() {
   if (!sbReady()) {
-    // Load from localStorage
     const cached = LS.get('watchlist') || [];
     state.items = cached.map(i => ({ ...i, market: detectMarket(i.ticker) }));
     renderWatchlist();
     return;
   }
-
   try {
-    const res = await fetch(
-      `${state.sbUrl}/rest/v1/breakout_watchlist?select=*&order=created_at.desc`,
-      { headers: sbHeaders() }
-    );
+    const res  = await fetch(`${state.sbUrl}/rest/v1/breakout_watchlist?select=*&order=created_at.desc`, { headers: sbHeaders() });
     if (!res.ok) throw new Error(await res.text());
     const data = await res.json();
     state.items = data.map(i => ({ ...i, market: detectMarket(i.ticker) }));
     renderWatchlist();
     updateConnBar(true);
   } catch(e) {
-    console.warn('Supabase load error:', e);
-    // Fallback to localStorage
     const cached = LS.get('watchlist') || [];
     state.items = cached.map(i => ({ ...i, market: detectMarket(i.ticker) }));
     renderWatchlist();
@@ -1883,76 +1793,43 @@ async function loadWatchlist() {
 }
 
 async function persistItem(item) {
-  // Always save to localStorage as backup
   LS.set('watchlist', state.items);
-
   if (!sbReady()) return;
-
   try {
-    const payload = {
-      id:         item.id,
-      ticker:     item.ticker,
-      name:       item.name,
-      memo:       item.memo,
-      created_at: item.created_at,
-    };
-    const res = await fetch(
-      `${state.sbUrl}/rest/v1/breakout_watchlist`,
-      {
-        method: 'POST',
-        headers: { ...sbHeaders(), 'Prefer': 'return=minimal' },
-        body: JSON.stringify(payload),
-      }
-    );
+    const res = await fetch(`${state.sbUrl}/rest/v1/breakout_watchlist`, {
+      method:  'POST',
+      headers: { ...sbHeaders(), 'Prefer': 'return=minimal' },
+      body:    JSON.stringify({ id: item.id, ticker: item.ticker, name: item.name, memo: item.memo, created_at: item.created_at }),
+    });
     if (!res.ok) throw new Error(await res.text());
-  } catch(e) {
-    console.warn('Supabase persist error:', e);
-    toast('Supabase保存エラー（ローカルに保存済み）', 'error');
-  }
+  } catch(e) { toast('Supabase保存エラー（ローカルに保存済み）', 'error'); }
 }
 
 async function updateItemRemote(item) {
   LS.set('watchlist', state.items);
-
   if (!sbReady()) return;
-
   try {
-    const res = await fetch(
-      `${state.sbUrl}/rest/v1/breakout_watchlist?id=eq.${item.id}`,
-      {
-        method: 'PATCH',
-        headers: { ...sbHeaders(), 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ name: item.name, memo: item.memo }),
-      }
-    );
+    const res = await fetch(`${state.sbUrl}/rest/v1/breakout_watchlist?id=eq.${item.id}`, {
+      method:  'PATCH',
+      headers: { ...sbHeaders(), 'Prefer': 'return=minimal' },
+      body:    JSON.stringify({ name: item.name, memo: item.memo }),
+    });
     if (!res.ok) throw new Error(await res.text());
-  } catch(e) {
-    console.warn('Supabase update error:', e);
-  }
+  } catch(e) { console.warn('Supabase update error:', e); }
 }
 
 async function deleteItemRemote(id) {
   LS.set('watchlist', state.items);
-
   if (!sbReady()) return;
-
   try {
-    const res = await fetch(
-      `${state.sbUrl}/rest/v1/breakout_watchlist?id=eq.${id}`,
-      { method: 'DELETE', headers: sbHeaders() }
-    );
+    const res = await fetch(`${state.sbUrl}/rest/v1/breakout_watchlist?id=eq.${id}`, { method: 'DELETE', headers: sbHeaders() });
     if (!res.ok) throw new Error(await res.text());
-  } catch(e) {
-    console.warn('Supabase delete error:', e);
-  }
+  } catch(e) { console.warn('Supabase delete error:', e); }
 }
 
 async function deleteItem(id) {
   const item = state.items.find(i => i.id === id);
-  if (!item) return;
-
-  if (!confirm(`「${item.ticker}」を削除しますか？`)) return;
-
+  if (!item || !confirm(`「${item.ticker}」を削除しますか？`)) return;
   state.items = state.items.filter(i => i.id !== id);
   renderWatchlist();
   toast(`${item.ticker} を削除しました`, 'info');
@@ -1962,93 +1839,68 @@ async function deleteItem(id) {
 async function saveItem(id) {
   const item = state.items.find(i => i.id === id);
   if (!item) return;
-
   const card = document.querySelector(`[data-id="${id}"]`);
   if (card) {
     item.name = card.querySelector('.card-name-input').value.trim();
     item.memo = card.querySelector('.card-memo-input').value.trim();
   }
-
   toast(`${item.ticker} を保存しました`, 'success');
   await updateItemRemote(item);
 }
 
 /* ─────────────────────────────────────────────
-   RENDER WATCHLIST
+   RENDER
 ───────────────────────────────────────────── */
 function renderWatchlist() {
   const grid  = document.getElementById('watchlist-grid');
   const empty = document.getElementById('wl-empty');
   const items = state.filtered !== null ? state.filtered : state.items;
 
-  // Update stats
   const jp = state.items.filter(i => i.market === 'JP').length;
   const us = state.items.filter(i => i.market === 'US').length;
-  document.getElementById('stat-total').textContent  = state.items.length;
-  document.getElementById('stat-jp').textContent     = jp;
-  document.getElementById('stat-us').textContent     = us;
-  document.getElementById('wl-count-badge').textContent = state.items.length;
+  document.getElementById('stat-total').textContent        = state.items.length;
+  document.getElementById('stat-jp').textContent           = jp;
+  document.getElementById('stat-us').textContent           = us;
+  document.getElementById('wl-count-badge').textContent    = state.items.length;
 
-  // Clear existing cards (not empty state)
   grid.querySelectorAll('.wl-card').forEach(c => c.remove());
 
-  if (items.length === 0) {
-    empty.style.display = '';
-    return;
-  }
+  if (items.length === 0) { empty.style.display = ''; return; }
   empty.style.display = 'none';
-
-  items.forEach(item => {
-    grid.insertAdjacentHTML('beforeend', buildCard(item));
-  });
+  items.forEach(item => grid.insertAdjacentHTML('beforeend', buildCard(item)));
 }
 
 function buildCard(item) {
-  const mkt     = item.market;
-  const kabuUrl = getKabutanUrl(item.ticker, mkt);
-  const tvUrl   = getTradingViewUrl(item.ticker, mkt);
-  const dtLabel = item.created_at
+  const mkt      = item.market;
+  const kabuUrl  = getKabutanUrl(item.ticker, mkt);
+  const tvUrl    = getTradingViewUrl(item.ticker, mkt);
+  const dtLabel  = item.created_at
     ? new Date(item.created_at).toLocaleString('ja-JP', { year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit' })
     : '';
-
-  const marketBadge = mkt === 'JP'
+  const badge = mkt === 'JP'
     ? `<span class="card-market-badge jp">🗾 JP</span>`
     : `<span class="card-market-badge us">🇺🇸 US</span>`;
 
   return `
     <div class="wl-card ${mkt.toLowerCase()}-stock" data-id="${item.id}" data-ticker="${item.ticker}">
-      <div class="corner-tl"></div>
-      <div class="corner-tr"></div>
-
+      <div class="corner-tl"></div><div class="corner-tr"></div>
       <div class="card-header">
         <div class="card-ticker-wrap">
           <div class="card-ticker">${escHtml(item.ticker)}</div>
-          ${marketBadge}
+          ${badge}
         </div>
-        <input class="card-name-input"
-               value="${escHtml(item.name)}"
-               placeholder="銘柄名を入力..."
-               onblur="autoSaveItem('${item.id}')">
+        <input class="card-name-input" value="${escHtml(item.name)}" placeholder="銘柄名を入力..." onblur="autoSaveItem('${item.id}')">
       </div>
-
       <div class="card-memo">
         <div class="memo-label">注目理由・メモ</div>
-        <textarea class="card-memo-input"
-                  placeholder="例: 52週高値更新、出来高急増、決算ブレイク待ち..."
-                  onblur="autoSaveItem('${item.id}')">${escHtml(item.memo)}</textarea>
+        <textarea class="card-memo-input" placeholder="例: 52週高値更新、出来高急増、決算ブレイク待ち..." onblur="autoSaveItem('${item.id}')">${escHtml(item.memo)}</textarea>
       </div>
-
       <div class="card-actions">
-        <a class="btn-link" href="${kabuUrl}" target="_blank" rel="noopener" title="株探で財務確認">
-          📊 財務
-        </a>
-        <a class="btn-link chart" href="${tvUrl}" target="_blank" rel="noopener" title="TradingViewでチャート表示">
-          📈 チャート
-        </a>
+        <a class="btn-link"       href="${kabuUrl}" target="_blank" rel="noopener" title="株探で財務確認">📊 財務</a>
+        <a class="btn-link chart" href="${tvUrl}"   target="_blank" rel="noopener" title="TradingViewでチャート表示">📈 チャート</a>
         <button class="btn-save" onclick="saveItem('${item.id}')">💾 保存</button>
         <button class="btn-delete" onclick="deleteItem('${item.id}')" title="削除">🗑</button>
       </div>
-
       ${dtLabel ? `<div class="card-timestamp">登録: ${dtLabel}</div>` : ''}
     </div>`;
 }
@@ -2056,11 +1908,6 @@ function buildCard(item) {
 let autoSaveTimer = {};
 function autoSaveItem(id) {
   clearTimeout(autoSaveTimer[id]);
-  autoSaveTimer[id] = setTimeout(() => updateItemRemote(
-    state.items.find(i => i.id === id) || {}
-  ), 2000);
-
-  // Sync to state
   const item = state.items.find(i => i.id === id);
   const card = document.querySelector(`[data-id="${id}"]`);
   if (item && card) {
@@ -2068,76 +1915,49 @@ function autoSaveItem(id) {
     item.memo = card.querySelector('.card-memo-input').value.trim();
     LS.set('watchlist', state.items);
   }
+  autoSaveTimer[id] = setTimeout(() => updateItemRemote(state.items.find(i => i.id === id) || {}), 2000);
 }
 
-/* ─────────────────────────────────────────────
-   SEARCH / FILTER
-───────────────────────────────────────────── */
 function filterWatchlist(q) {
   const query = q.trim().toUpperCase();
-  if (!query) {
-    state.filtered = null;
-  } else {
-    state.filtered = state.items.filter(i =>
-      i.ticker.includes(query) ||
-      (i.name && i.name.toUpperCase().includes(query)) ||
-      (i.memo && i.memo.toUpperCase().includes(query))
-    );
-  }
+  state.filtered = query
+    ? state.items.filter(i => i.ticker.includes(query) || (i.name&&i.name.toUpperCase().includes(query)) || (i.memo&&i.memo.toUpperCase().includes(query)))
+    : null;
   renderWatchlist();
 }
 
 /* ─────────────────────────────────────────────
    SETTINGS
 ───────────────────────────────────────────── */
-function openSettings() {
-  document.getElementById('settings-panel').classList.add('open');
-  document.getElementById('settings-backdrop').classList.add('open');
-}
-
-function closeSettings() {
-  document.getElementById('settings-panel').classList.remove('open');
-  document.getElementById('settings-backdrop').classList.remove('open');
-}
+function openSettings()  { document.getElementById('settings-panel').classList.add('open');    document.getElementById('settings-backdrop').classList.add('open'); }
+function closeSettings() { document.getElementById('settings-panel').classList.remove('open'); document.getElementById('settings-backdrop').classList.remove('open'); }
 
 async function saveSettings() {
   const url = document.getElementById('sb-url').value.trim().replace(/\/+$/, '');
   const key = document.getElementById('sb-key').value.trim();
+  if (!url || !key) { toast('URLとAnon Keyを入力してください', 'error'); return; }
 
-  if (!url || !key) {
-    toast('URLとAnon Keyを入力してください', 'error');
-    return;
-  }
+  state.sbUrl = url; state.sbKey = key;
+  LS.set('sbUrl', url); LS.set('sbKey', key);
 
-  state.sbUrl = url;
-  state.sbKey = key;
-  LS.set('sbUrl', url);
-  LS.set('sbKey', key);
-
-  // Connection test
   const statusEl   = document.getElementById('supabase-status');
   const statusText = document.getElementById('supabase-status-text');
-  statusEl.className   = 'status-indicator idle';
+  statusEl.className    = 'status-indicator idle';
   statusText.textContent = '接続テスト中...';
 
   try {
-    const res = await fetch(
-      `${url}/rest/v1/breakout_watchlist?select=id&limit=1`,
-      { headers: { 'apikey': key, 'Authorization': `Bearer ${key}` } }
-    );
-
+    const res = await fetch(`${url}/rest/v1/breakout_watchlist?select=id&limit=1`, { headers: { 'apikey': key, 'Authorization': `Bearer ${key}` } });
     if (res.ok) {
-      statusEl.className   = 'status-indicator ok';
+      statusEl.className    = 'status-indicator ok';
       statusText.textContent = `接続成功 ✓ (${new Date().toLocaleTimeString('ja-JP')})`;
       toast('Supabase 接続成功！', 'success');
       updateConnBar(true);
       await loadWatchlist();
     } else {
-      const err = await res.text();
-      throw new Error(err);
+      throw new Error(await res.text());
     }
   } catch(e) {
-    statusEl.className   = 'status-indicator err';
+    statusEl.className    = 'status-indicator err';
     statusText.textContent = `接続失敗: ${e.message.slice(0,60)}`;
     toast('接続失敗 — URLとキーを確認してください', 'error');
     updateConnBar(false, e.message);
@@ -2147,30 +1967,21 @@ async function saveSettings() {
 function updateConnBar(ok, errMsg) {
   const bar = document.getElementById('conn-bar');
   const msg = document.getElementById('conn-msg');
-
   if (ok === true) {
-    bar.classList.add('ok');
-    bar.classList.remove('hidden');
-    msg.textContent = `Supabase 接続済み — ${state.sbUrl}`;
+    bar.className = 'ok'; msg.textContent = `Supabase 接続済み — ${state.sbUrl}`;
     setTimeout(() => bar.classList.add('hidden'), 4000);
   } else if (ok === false) {
-    bar.classList.remove('ok', 'hidden');
-    msg.textContent = `Supabase 接続エラー — ローカルモードで動作中 (${errMsg ? errMsg.slice(0,50) : ''})`;
+    bar.className = ''; msg.textContent = `Supabase 接続エラー — ローカルモードで動作中 (${errMsg ? errMsg.slice(0,50) : ''})`;
   } else {
-    // Initial check
     if (!state.sbUrl || !state.sbKey) {
-      bar.classList.remove('ok', 'hidden');
-      msg.textContent = 'Supabase 未設定 — 右上の ⚙️ 設定からURLとAnon Keyを入力してください';
-    } else {
-      bar.classList.add('hidden');
-    }
+      bar.className = ''; msg.textContent = 'Supabase 未設定 — 右上の ⚙️ 設定からURLとAnon Keyを入力してください';
+    } else { bar.classList.add('hidden'); }
   }
 }
 
 function clearAllData() {
   if (!confirm('すべてのデータ（Watchlist・設定）をリセットしますか？\nこの操作は取り消せません。')) return;
-  localStorage.clear();
-  location.reload();
+  localStorage.clear(); location.reload();
 }
 
 /* ─────────────────────────────────────────────
@@ -2182,10 +1993,7 @@ function toast(msg, type = 'info') {
   el.className = `toast ${type}`;
   el.textContent = msg;
   container.appendChild(el);
-  setTimeout(() => {
-    el.style.animation = 'toast-out 0.3s ease forwards';
-    setTimeout(() => el.remove(), 300);
-  }, 3200);
+  setTimeout(() => { el.style.animation = 'toast-out 0.3s ease forwards'; setTimeout(() => el.remove(), 300); }, 3200);
 }
 
 /* ─────────────────────────────────────────────
@@ -2193,26 +2001,17 @@ function toast(msg, type = 'info') {
 ───────────────────────────────────────────── */
 function escHtml(str) {
   if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-            .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-// Keyboard shortcuts
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    closeAddModal();
-    closeSettings();
+  if (e.key === 'Escape') { closeAddModal(); closeSettings(); }
+  if (e.key === 'n' && state.tab === 'watchlist' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) openAddModal();
+  // J/U キーで市場切り替え（スクリーナータブ表示中のみ）
+  if (state.tab === 'breakout' && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
+    if (e.key === 'j' || e.key === 'J') switchMarket('japan');
+    if (e.key === 'u' || e.key === 'U') switchMarket('US');
   }
-  // n to open add modal when on watchlist tab
-  if (e.key === 'n' && state.tab === 'watchlist' &&
-      !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
-    openAddModal();
-  }
-});
-
-// Show FAB if on watchlist tab on load
-document.addEventListener('DOMContentLoaded', () => {
-  // (Handled by switchTab on first load via default activeTab)
 });
 </script>
 
