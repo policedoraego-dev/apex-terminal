@@ -5,449 +5,1748 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>APEX TERMINAL — Breakout Monitor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
+/* ═══════════════════════════════════════════════
+   CSS VARIABLES — APEX TERMINAL DESIGN SYSTEM
+═══════════════════════════════════════════════ */
 :root {
   --bg-void:      #050708;
   --bg-base:      #090c0e;
   --bg-surface:   #0d1214;
   --bg-elevated:  #111619;
   --bg-card:      #141a1d;
+  --bg-overlay:   rgba(5,7,8,0.95);
+
   --green-deep:   #032a16;
   --green-mid:    #054d28;
   --green-bright: #00e676;
   --green-glow:   #00ff88;
+  --green-dim:    #1a4a30;
   --green-text:   #4dffaa;
+
   --amber:        #ffb300;
   --amber-dim:    #c47d00;
   --red:          #ff3d5a;
   --red-dim:      #8b1a2a;
-  --red-soft:     rgba(255,61,90,0.10);
-  --blue:         #29b6f6;
-  --blue-dim:     rgba(41,182,246,0.12);
-  --blue-border:  rgba(41,182,246,0.35);
-  --purple:       #ce93d8;
-  --purple-dim:   rgba(206,147,216,0.10);
-  --purple-border:rgba(206,147,216,0.30);
-  --teal:         #4dd0e1;
-  --teal-dim:     rgba(77,208,225,0.10);
-  --teal-border:  rgba(77,208,225,0.30);
+  --blue-accent:  #0288d1;
+  --purple-soft:  #7c4dff;
+
   --text-primary:   #e8f5e9;
   --text-secondary: #78909c;
   --text-muted:     #37474f;
   --text-bright:    #ffffff;
   --text-code:      #80cbc4;
+
   --border-glow:  rgba(0,230,118,0.4);
   --border-dim:   rgba(0,230,118,0.12);
   --border-base:  rgba(255,255,255,0.06);
-  --glow-sm: 0 0 8px rgba(0,230,118,0.3);
-  --glow-md: 0 0 20px rgba(0,230,118,0.25),0 0 40px rgba(0,230,118,0.1);
-  --font-mono: 'JetBrains Mono','Courier New',monospace;
-  --font-cond: 'Barlow Condensed',sans-serif;
-  --radius-sm: 3px; --radius-md: 6px; --radius-lg: 10px;
+
+  --scanline-opacity: 0.025;
+  --glow-sm:  0 0 8px rgba(0,230,118,0.3);
+  --glow-md:  0 0 20px rgba(0,230,118,0.25), 0 0 40px rgba(0,230,118,0.1);
+  --glow-lg:  0 0 40px rgba(0,230,118,0.3), 0 0 80px rgba(0,230,118,0.1);
+
+  --font-mono:  'JetBrains Mono', 'Courier New', monospace;
+  --font-cond:  'Barlow Condensed', sans-serif;
+  --font-ui:    'Rajdhani', sans-serif;
+
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+
   --transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  --transition-slow: all 0.4s cubic-bezier(0.4,0,0.2,1);
 }
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-html { height:100%; overflow:hidden; }
+
+/* ═══════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { height: 100%; overflow: hidden; }
+
 body {
-  min-height:100%; height:100dvh;
-  background:var(--bg-void); color:var(--text-primary);
-  font-family:var(--font-mono); font-size:13px;
-  overflow:hidden; position:relative;
+  min-height: 100%;
+  height: 100dvh;
+  background: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  overflow: hidden;
+  position: relative;
 }
+
+/* Scanline overlay */
 body::before {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px);
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0, var(--scanline-opacity)) 2px,
+    rgba(0,0,0, var(--scanline-opacity)) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
 }
+
+/* Ambient grid */
 body::after {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-  background-image:linear-gradient(rgba(0,230,118,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,230,118,.03) 1px,transparent 1px);
-  background-size:40px 40px;
-}
-#app { display:flex; flex-direction:column; height:100dvh; position:relative; z-index:1; }
-
-/* ── TOPBAR ── */
-#topbar { display:flex; align-items:center; justify-content:space-between; padding:0 16px; height:52px; background:linear-gradient(180deg,#0a0f12 0%,var(--bg-base) 100%); border-bottom:1px solid var(--border-dim); flex-shrink:0; z-index:100; }
-.logo-wrap { display:flex; align-items:center; gap:10px; flex-shrink:0; }
-.logo-icon { width:28px; height:28px; }
-.logo-icon svg { width:100%; height:100%; }
-.logo-text { font-family:var(--font-cond); font-size:18px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; color:var(--green-bright); text-shadow:var(--glow-sm); line-height:1; }
-.logo-sub  { font-family:var(--font-mono); font-size:9px; letter-spacing:.2em; color:var(--text-secondary); text-transform:uppercase; line-height:1; margin-top:2px; }
-.live-badge { display:flex; align-items:center; gap:6px; padding:3px 9px; background:rgba(0,230,118,.08); border:1px solid rgba(0,230,118,.2); border-radius:2px; font-family:var(--font-mono); font-size:9px; letter-spacing:.15em; color:var(--green-bright); text-transform:uppercase; }
-.live-dot { width:6px; height:6px; border-radius:50%; background:var(--green-bright); box-shadow:0 0 6px var(--green-bright); animation:pulse 2s ease-in-out infinite; }
-@keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 6px var(--green-bright)}50%{opacity:.5;box-shadow:0 0 2px var(--green-bright)} }
-.topbar-actions { display:flex; align-items:center; gap:8px; }
-.btn-icon { display:flex; align-items:center; justify-content:center; width:34px; height:34px; background:var(--bg-elevated); border:1px solid var(--border-base); border-radius:var(--radius-sm); color:var(--text-secondary); cursor:pointer; font-size:15px; transition:var(--transition); }
-.btn-icon:hover { border-color:var(--border-dim); color:var(--green-bright); background:var(--green-deep); box-shadow:var(--glow-sm); }
-
-/* ── TAB NAV ── */
-#tab-nav { display:flex; background:var(--bg-base); border-bottom:1px solid var(--border-dim); padding:0 8px; flex-shrink:0; z-index:90; }
-.tab-btn { display:flex; align-items:center; gap:7px; padding:10px 18px; background:none; border:none; border-bottom:2px solid transparent; margin-bottom:-1px; color:var(--text-secondary); font-family:var(--font-cond); font-size:14px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:var(--transition); white-space:nowrap; }
-.tab-btn .tab-icon { font-size:14px; opacity:.7; transition:var(--transition); }
-.tab-btn:hover { color:var(--text-primary); }
-.tab-btn.active { color:var(--green-bright); border-bottom-color:var(--green-bright); text-shadow:var(--glow-sm); }
-.tab-btn.active .tab-icon { opacity:1; filter:drop-shadow(0 0 4px var(--green-bright)); }
-.tab-badge { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:16px; padding:0 4px; background:var(--green-mid); border:1px solid var(--green-bright); border-radius:2px; font-family:var(--font-mono); font-size:9px; font-weight:700; color:var(--green-bright); box-shadow:0 0 6px rgba(0,230,118,.3); }
-
-/* ── CONTENT ── */
-#content { flex:1; overflow:hidden; position:relative; }
-.tab-panel { display:none; width:100%; height:100%; }
-.tab-panel.active { display:flex; flex-direction:column; }
-
-/* ── PANEL HEADER ── */
-.panel-header { display:flex; align-items:center; justify-content:space-between; padding:8px 16px; background:var(--bg-surface); border-bottom:1px solid var(--border-base); flex-shrink:0; gap:12px; }
-.panel-title { font-family:var(--font-cond); font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary); }
-.panel-title span { color:var(--green-bright); margin-right:6px; }
-
-/* ── SCREENER BODY ── */
-.screener-body { flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:24px; }
-.screener-body::-webkit-scrollbar { width:4px; }
-.screener-body::-webkit-scrollbar-track { background:transparent; }
-.screener-body::-webkit-scrollbar-thumb { background:var(--green-mid); border-radius:2px; }
-.screener-body::-webkit-scrollbar-thumb:hover { background:var(--green-bright); }
-
-/* ── SECTION LABEL ── */
-.section-label { font-family:var(--font-mono); font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--green-bright); padding-bottom:10px; border-bottom:1px solid var(--border-dim); text-shadow:var(--glow-sm); }
-
-/* ── STRATEGY SECTION BLOCK ── */
-.strategy-block { display:flex; flex-direction:column; gap:10px; }
-
-.strategy-header {
-  display:flex; align-items:center; gap:12px;
-  padding:11px 16px; border-radius:var(--radius-md);
-  border:1px solid; position:relative; overflow:hidden;
-}
-.strategy-header::before { content:''; position:absolute; inset:0; opacity:.04; pointer-events:none; }
-
-/* モメンタム: グリーン */
-.sh-momentum { border-color:rgba(0,230,118,.25); background:rgba(0,230,118,.04); }
-.sh-momentum::before { background:linear-gradient(90deg,var(--green-bright),transparent); }
-.sh-momentum .sh-icon,.sh-momentum .sh-title { color:var(--green-bright); }
-
-/* バリュー: アンバー */
-.sh-value { border-color:rgba(255,179,0,.25); background:rgba(255,179,0,.04); }
-.sh-value::before { background:linear-gradient(90deg,var(--amber),transparent); }
-.sh-value .sh-icon,.sh-value .sh-title { color:var(--amber); }
-
-/* シクリカル: ブルー */
-.sh-cyclical { border-color:rgba(41,182,246,.25); background:rgba(41,182,246,.04); }
-.sh-cyclical::before { background:linear-gradient(90deg,var(--blue),transparent); }
-.sh-cyclical .sh-icon,.sh-cyclical .sh-title { color:var(--blue); }
-
-/* 逆張り: レッド */
-.sh-contrarian { border-color:rgba(255,61,90,.25); background:rgba(255,61,90,.04); }
-.sh-contrarian::before { background:linear-gradient(90deg,var(--red),transparent); }
-.sh-contrarian .sh-icon,.sh-contrarian .sh-title { color:var(--red); }
-
-.sh-icon  { font-size:22px; line-height:1; flex-shrink:0; }
-.sh-title { font-family:var(--font-cond); font-size:17px; font-weight:800; letter-spacing:.08em; line-height:1.1; }
-.sh-sub   { font-family:var(--font-mono); font-size:10px; color:var(--text-secondary); letter-spacing:.04em; margin-top:2px; }
-
-/* ── LAUNCHER GRID & CARDS ── */
-.launcher-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; }
-
-.launcher-card {
-  display:flex; flex-direction:column; gap:9px;
-  padding:16px; background:var(--bg-card);
-  border:1px solid var(--border-base); border-radius:var(--radius-lg);
-  text-decoration:none; cursor:pointer; transition:var(--transition);
-  position:relative; overflow:hidden;
-}
-.launcher-card::before { content:''; position:absolute; inset:0; opacity:0; transition:var(--transition); background:radial-gradient(ellipse at 50% 0%,rgba(0,230,118,.06) 0%,transparent 70%); }
-.launcher-card:hover { border-color:var(--border-dim); transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.4); }
-.launcher-card:hover::before { opacity:1; }
-.launcher-card:active { transform:translateY(0); }
-
-.launcher-card.lc-amber { border-color:rgba(255,179,0,.15); }
-.launcher-card.lc-amber:hover { border-color:rgba(255,179,0,.35); box-shadow:0 8px 24px rgba(255,179,0,.08); }
-.launcher-card.lc-amber::before { background:radial-gradient(ellipse at 50% 0%,rgba(255,179,0,.06) 0%,transparent 70%); }
-
-.launcher-card.lc-blue { border-color:var(--blue-border); }
-.launcher-card.lc-blue:hover { border-color:rgba(41,182,246,.5); box-shadow:0 8px 24px rgba(41,182,246,.08); }
-.launcher-card.lc-blue::before { background:radial-gradient(ellipse at 50% 0%,rgba(41,182,246,.06) 0%,transparent 70%); }
-
-.launcher-card.lc-red { border-color:rgba(255,61,90,.2); }
-.launcher-card.lc-red:hover { border-color:rgba(255,61,90,.4); box-shadow:0 8px 24px rgba(255,61,90,.08); }
-.launcher-card.lc-red::before { background:radial-gradient(ellipse at 50% 0%,rgba(255,61,90,.06) 0%,transparent 70%); }
-
-/* 準備中カード */
-.launcher-card.lc-pending { border-color:rgba(255,255,255,.04); opacity:.6; cursor:default; }
-.launcher-card.lc-pending:hover { transform:none; box-shadow:none; }
-
-.lc-arrow { position:absolute; top:14px; right:14px; font-size:14px; color:var(--text-muted); transition:var(--transition); }
-.launcher-card:hover .lc-arrow { color:var(--green-bright); transform:translate(2px,-2px); }
-.launcher-card.lc-amber:hover .lc-arrow  { color:var(--amber); }
-.launcher-card.lc-blue:hover  .lc-arrow  { color:var(--blue);  }
-.launcher-card.lc-red:hover   .lc-arrow  { color:var(--red);   }
-.launcher-card.lc-pending .lc-arrow { display:none; }
-
-.lc-icon  { font-size:22px; line-height:1; }
-.lc-title { font-family:var(--font-cond); font-size:16px; font-weight:700; letter-spacing:.06em; color:var(--text-bright); line-height:1.2; }
-.lc-sub   { font-family:var(--font-mono); font-size:9px; color:var(--text-secondary); letter-spacing:.03em; line-height:1.5; }
-
-/* バッジ */
-.lc-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 7px; border-radius:2px; font-family:var(--font-mono); font-size:8px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; width:fit-content; border:1px solid; }
-.lc-badge.green  { background:rgba(0,230,118,.08);  border-color:rgba(0,230,118,.25);   color:var(--green-bright); }
-.lc-badge.amber  { background:rgba(255,179,0,.08);  border-color:rgba(255,179,0,.25);   color:var(--amber); }
-.lc-badge.blue   { background:var(--blue-dim);      border-color:var(--blue-border);    color:var(--blue); }
-.lc-badge.red    { background:var(--red-soft);      border-color:rgba(255,61,90,.3);    color:var(--red); }
-.lc-badge.purple { background:var(--purple-dim);    border-color:var(--purple-border);  color:var(--purple); }
-.lc-badge.muted  { background:var(--bg-elevated);   border-color:var(--border-base);    color:var(--text-muted); }
-
-/* アノテーション（おすすめ注釈） */
-.lc-annotation {
-  font-family:var(--font-mono); font-size:9px; color:var(--text-muted);
-  letter-spacing:.02em; line-height:1.5; margin-top:2px;
-  padding:4px 8px;
-  border-left:2px solid var(--border-base);
-  background:rgba(255,255,255,.015);
-  border-radius:0 var(--radius-sm) var(--radius-sm) 0;
-}
-.lc-annotation strong { color:var(--text-secondary); font-weight:600; }
-
-/* 準備中バッジ */
-.lc-pending-badge {
-  display:inline-flex; align-items:center; gap:5px; padding:3px 8px;
-  background:rgba(255,255,255,.04); border:1px dashed rgba(255,255,255,.12);
-  border-radius:2px; font-family:var(--font-mono); font-size:8px;
-  letter-spacing:.12em; color:var(--text-muted); text-transform:uppercase;
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,230,118,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,230,118,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* ════════════════════════════════════════════════════
-   ★ QUICK MEMO — 拡張版（戦略別 + チェックリスト）
-════════════════════════════════════════════════════ */
-.memo-section { display:flex; flex-direction:column; gap:16px; }
-
-.memo-form-card { background:var(--bg-card); border:1px solid var(--border-base); border-radius:var(--radius-lg); padding:18px; display:flex; flex-direction:column; gap:14px; }
-.memo-form-row  { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; }
-.memo-form-field { display:flex; flex-direction:column; gap:5px; }
-.memo-form-field label { font-family:var(--font-mono); font-size:9px; letter-spacing:.15em; text-transform:uppercase; color:var(--text-muted); }
-
-.memo-form-field input,
-.memo-form-field textarea,
-.memo-form-field select {
-  background:var(--bg-elevated); border:1px solid var(--border-base); border-radius:var(--radius-sm);
-  color:var(--text-primary); font-family:var(--font-mono); font-size:12px; letter-spacing:.04em;
-  padding:7px 10px; outline:none; transition:var(--transition); width:100%;
-  -webkit-appearance:none; appearance:none;
+/* ═══════════════════════════════════════════════
+   LAYOUT SHELL
+═══════════════════════════════════════════════ */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  position: relative;
+  z-index: 1;
 }
-.memo-form-field input:focus,
-.memo-form-field textarea:focus,
-.memo-form-field select:focus { border-color:var(--border-glow); box-shadow:0 0 0 2px rgba(0,230,118,.07); background:var(--bg-surface); }
-.memo-form-field input::placeholder,
-.memo-form-field textarea::placeholder { color:var(--text-muted); font-size:11px; }
-.memo-form-field textarea { resize:vertical; min-height:80px; line-height:1.6; }
 
-/* strategy select 特殊スタイル */
-#qm-strategy { cursor:pointer; }
+/* ═══════════════════════════════════════════════
+   HEADER / TOPBAR
+═══════════════════════════════════════════════ */
+#topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 52px;
+  background: linear-gradient(180deg, #0a0f12 0%, var(--bg-base) 100%);
+  border-bottom: 1px solid var(--border-dim);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 100;
+}
 
-/* 戦略ヒント（バリュー/シクリカル選択時） */
-.strategy-hint { display:none; padding:8px 12px; background:rgba(255,179,0,.06); border:1px solid rgba(255,179,0,.2); border-radius:var(--radius-sm); font-family:var(--font-mono); font-size:10px; color:var(--amber); letter-spacing:.04em; line-height:1.6; }
-.strategy-hint.visible { display:block; }
+/* Logo mark */
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
 
-.memo-form-actions { display:flex; align-items:center; gap:10px; justify-content:flex-end; }
-.memo-add-btn { display:flex; align-items:center; gap:6px; padding:8px 20px; background:var(--green-bright); border:none; border-radius:var(--radius-sm); color:var(--bg-void); font-family:var(--font-cond); font-size:14px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:var(--transition); box-shadow:0 0 16px rgba(0,230,118,.25); }
-.memo-add-btn:hover { background:var(--green-glow); box-shadow:0 0 24px rgba(0,255,136,.35); transform:translateY(-1px); }
-.memo-clear-btn { padding:8px 14px; background:none; border:1px solid var(--border-base); border-radius:var(--radius-sm); color:var(--text-secondary); font-family:var(--font-cond); font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; transition:var(--transition); }
-.memo-clear-btn:hover { border-color:var(--red-dim); color:var(--red); background:rgba(255,61,90,.06); }
+.logo-icon {
+  width: 28px;
+  height: 28px;
+  position: relative;
+}
 
-/* メモカードグリッド */
-.memo-cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:10px; }
-.memo-card { background:var(--bg-card); border:1px solid var(--border-base); border-radius:var(--radius-md); padding:14px; display:flex; flex-direction:column; gap:10px; position:relative; overflow:hidden; animation:card-in .3s cubic-bezier(.4,0,.2,1) forwards; transition:var(--transition); }
-.memo-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:var(--radius-sm) 0 0 var(--radius-sm); background:var(--purple-border); transition:var(--transition); }
-.memo-card:hover { border-color:var(--purple-border); background:var(--bg-elevated); transform:translateY(-1px); box-shadow:0 4px 20px rgba(0,0,0,.4); }
-.memo-card:hover::before { background:var(--purple); box-shadow:0 0 8px rgba(206,147,216,.4); }
-/* 戦略別左ボーダー色 */
-.memo-card.strat-momentum::before { background:rgba(0,230,118,.5); }
-.memo-card.strat-momentum:hover::before { background:var(--green-bright); box-shadow:0 0 8px rgba(0,230,118,.4); }
-.memo-card.strat-value::before { background:rgba(255,179,0,.5); }
-.memo-card.strat-value:hover::before { background:var(--amber); box-shadow:0 0 8px rgba(255,179,0,.4); }
-.memo-card.strat-cyclical::before { background:rgba(41,182,246,.5); }
-.memo-card.strat-cyclical:hover::before { background:var(--blue); box-shadow:0 0 8px rgba(41,182,246,.4); }
-.memo-card.strat-panic::before { background:rgba(255,61,90,.5); }
-.memo-card.strat-panic:hover::before { background:var(--red); box-shadow:0 0 8px rgba(255,61,90,.4); }
-@keyframes card-in { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.logo-icon svg {
+  width: 100%;
+  height: 100%;
+}
 
-.memo-card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
-.memo-card-ticker { font-family:var(--font-cond); font-size:22px; font-weight:800; letter-spacing:.05em; color:var(--text-bright); line-height:1; }
-.memo-card-del { display:flex; align-items:center; justify-content:center; width:26px; height:26px; background:none; border:1px solid transparent; border-radius:var(--radius-sm); color:var(--text-muted); cursor:pointer; font-size:13px; transition:var(--transition); flex-shrink:0; }
-.memo-card-del:hover { color:var(--red); border-color:var(--red-dim); background:rgba(255,61,90,.08); }
-.memo-card-stats { display:flex; gap:12px; flex-wrap:wrap; }
-.memo-stat { display:flex; flex-direction:column; gap:2px; }
-.memo-stat-label { font-family:var(--font-mono); font-size:8px; letter-spacing:.12em; color:var(--text-muted); text-transform:uppercase; }
-.memo-stat-val   { font-family:var(--font-cond); font-size:15px; font-weight:700; color:var(--purple); letter-spacing:.03em; line-height:1; }
-.memo-stat-val.empty { color:var(--text-muted); font-size:12px; }
+.logo-text {
+  font-family: var(--font-cond);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--green-bright);
+  text-shadow: var(--glow-sm);
+  line-height: 1;
+}
 
-/* チェックボックス付きノート */
-.memo-card-note { display:flex; flex-direction:column; gap:1px; padding:8px 10px; background:var(--bg-elevated); border-radius:var(--radius-sm); border:1px solid var(--border-base); }
-.memo-cb-line { display:flex; align-items:flex-start; gap:7px; cursor:pointer; padding:2px 0; transition:var(--transition); border-radius:2px; }
-.memo-cb-line:hover { background:rgba(255,255,255,.03); }
-.cb-icon { font-size:13px; flex-shrink:0; line-height:1.5; color:var(--text-muted); transition:var(--transition); }
-.cb-icon.checked { color:var(--green-bright); text-shadow:0 0 6px rgba(0,230,118,.4); }
-.cb-text { font-family:var(--font-mono); font-size:10px; color:var(--text-secondary); line-height:1.5; transition:var(--transition); }
-.cb-text.checked { color:var(--text-muted); text-decoration:line-through; }
-.memo-text-line { font-family:var(--font-mono); font-size:10px; color:var(--text-secondary); line-height:1.5; padding:1px 0; }
+.logo-sub {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  line-height: 1;
+  margin-top: 2px;
+}
 
-.memo-card-ts { font-family:var(--font-mono); font-size:9px; color:var(--text-muted); letter-spacing:.05em; }
-.memo-empty { text-align:center; padding:28px 16px; font-family:var(--font-mono); font-size:11px; color:var(--text-muted); letter-spacing:.05em; border:1px dashed var(--border-base); border-radius:var(--radius-md); line-height:2; }
+/* Live ticker badge */
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  background: rgba(0,230,118,0.08);
+  border: 1px solid rgba(0,230,118,0.2);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--green-bright);
+  text-transform: uppercase;
+}
 
-/* ── WIDGET SHELL ── */
-.widget-shell { flex:1; position:relative; overflow:hidden; background:var(--bg-base); }
-.widget-shell .tradingview-widget-container { position:absolute; inset:0; height:100%; width:100%; }
-.widget-shell .tradingview-widget-container__widget { height:100%; width:100%; }
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green-bright);
+  box-shadow: 0 0 6px var(--green-bright);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
 
-/* ── WATCHLIST ── */
-#panel-watchlist { overflow:hidden; }
-.watchlist-toolbar { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; background:var(--bg-surface); border-bottom:1px solid var(--border-base); flex-shrink:0; gap:10px; }
-.wl-stats { display:flex; align-items:center; gap:16px; flex-shrink:0; }
-.wl-stat { display:flex; flex-direction:column; gap:1px; }
-.wl-stat-label { font-family:var(--font-mono); font-size:8px; letter-spacing:.15em; color:var(--text-muted); text-transform:uppercase; }
-.wl-stat-val   { font-family:var(--font-cond); font-size:16px; font-weight:700; color:var(--green-bright); line-height:1; }
-.wl-search-wrap { flex:1; max-width:300px; position:relative; }
-.wl-search-wrap .search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:12px; pointer-events:none; }
-#wl-search { width:100%; padding:7px 10px 7px 30px; background:var(--bg-elevated); border:1px solid var(--border-base); border-radius:var(--radius-sm); color:var(--text-primary); font-family:var(--font-mono); font-size:11px; letter-spacing:.05em; outline:none; transition:var(--transition); }
-#wl-search:focus { border-color:var(--border-dim); box-shadow:0 0 0 2px rgba(0,230,118,.08); }
-#wl-search::placeholder { color:var(--text-muted); }
-.watchlist-grid { flex:1; overflow-y:auto; padding:14px 16px 80px; display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:10px; align-content:start; }
-.watchlist-grid::-webkit-scrollbar { width:4px; }
-.watchlist-grid::-webkit-scrollbar-track { background:transparent; }
-.watchlist-grid::-webkit-scrollbar-thumb { background:var(--green-mid); border-radius:2px; }
-.empty-state { grid-column:1/-1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:60px 20px; text-align:center; }
-.empty-icon  { font-size:40px; opacity:.3; filter:grayscale(.5); }
-.empty-title { font-family:var(--font-cond); font-size:16px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--text-secondary); }
-.empty-sub   { font-family:var(--font-mono); font-size:11px; color:var(--text-muted); max-width:260px; line-height:1.6; letter-spacing:.03em; }
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--green-bright); }
+  50% { opacity: 0.5; box-shadow: 0 0 2px var(--green-bright); }
+}
 
-/* ── WATCHLIST CARD ── */
-.wl-card { background:var(--bg-card); border:1px solid var(--border-base); border-radius:var(--radius-md); padding:14px; display:flex; flex-direction:column; gap:10px; position:relative; overflow:hidden; transition:var(--transition); animation:card-in .3s cubic-bezier(.4,0,.2,1) forwards; }
-.wl-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:var(--radius-sm) 0 0 var(--radius-sm); background:var(--green-mid); transition:var(--transition); }
-.wl-card:hover { border-color:var(--border-dim); background:var(--bg-elevated); transform:translateY(-1px); box-shadow:0 4px 20px rgba(0,0,0,.4); }
-.wl-card:hover::before { background:var(--green-bright); box-shadow:0 0 8px var(--green-bright); }
-.wl-card.jp-stock::before { background:var(--amber-dim); }
-.wl-card.jp-stock:hover::before { background:var(--amber); box-shadow:0 0 8px var(--amber); }
-.card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
-.card-ticker-wrap { display:flex; flex-direction:column; gap:4px; }
-.card-ticker { font-family:var(--font-cond); font-size:24px; font-weight:800; letter-spacing:.05em; line-height:1; color:var(--text-bright); }
-.card-market-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 7px; border-radius:2px; font-family:var(--font-mono); font-size:9px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; width:fit-content; }
-.card-market-badge.us { background:rgba(2,136,209,.15); border:1px solid rgba(2,136,209,.35); color:#4fc3f7; }
-.card-market-badge.jp { background:rgba(255,179,0,.12); border:1px solid rgba(255,179,0,.3); color:var(--amber); }
-.card-name-input { flex:1; background:none; border:none; color:var(--text-secondary); font-family:var(--font-mono); font-size:11px; letter-spacing:.04em; cursor:text; outline:none; text-align:right; min-width:0; padding:2px 4px; border-bottom:1px solid transparent; transition:var(--transition); }
-.card-name-input:focus { border-bottom-color:var(--border-dim); color:var(--text-primary); }
-.card-name-input::placeholder { color:var(--text-muted); font-size:10px; }
-.card-memo-wrap .memo-label { font-family:var(--font-mono); font-size:9px; letter-spacing:.12em; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; }
-.card-memo-input { width:100%; background:var(--bg-elevated); border:1px solid var(--border-base); border-radius:var(--radius-sm); color:var(--text-primary); font-family:var(--font-mono); font-size:11px; line-height:1.5; letter-spacing:.03em; padding:7px 9px; resize:none; height:60px; outline:none; transition:var(--transition); }
-.card-memo-input:focus { border-color:var(--border-dim); box-shadow:0 0 0 2px rgba(0,230,118,.06); }
-.card-memo-input::placeholder { color:var(--text-muted); }
-.card-links { display:flex; flex-wrap:wrap; gap:6px; }
-.card-link { display:inline-flex; align-items:center; gap:5px; padding:6px 12px; border-radius:var(--radius-sm); font-family:var(--font-cond); font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; text-decoration:none; cursor:pointer; transition:var(--transition); white-space:nowrap; border:1px solid; }
-.card-link.tv      { background:rgba(0,230,118,.08); border-color:rgba(0,230,118,.25); color:var(--green-bright); }
-.card-link.tv:hover{ background:rgba(0,230,118,.16); box-shadow:0 0 12px rgba(0,230,118,.2); }
-.card-link.kabutan { background:rgba(255,179,0,.08); border-color:rgba(255,179,0,.25); color:var(--amber); }
-.card-link.kabutan:hover { background:rgba(255,179,0,.16); box-shadow:0 0 12px rgba(255,179,0,.2); }
-.card-link.yahoo   { background:var(--blue-dim); border-color:var(--blue-border); color:var(--blue); }
-.card-link.yahoo:hover { background:rgba(41,182,246,.2); box-shadow:0 0 12px rgba(41,182,246,.2); }
-.card-link.del     { background:none; border-color:transparent; color:var(--text-muted); padding:6px 8px; margin-left:auto; }
-.card-link.del:hover { border-color:var(--red-dim); color:var(--red); background:rgba(255,61,90,.08); }
-.card-timestamp { font-family:var(--font-mono); font-size:9px; color:var(--text-muted); letter-spacing:.05em; }
+/* Top-right actions */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-/* ── FAB ── */
-#fab { position:fixed; bottom:24px; right:20px; width:52px; height:52px; border-radius:50%; background:var(--green-bright); border:none; color:var(--bg-void); font-size:24px; font-weight:300; cursor:pointer; display:none; align-items:center; justify-content:center; box-shadow:0 4px 20px rgba(0,230,118,.5),0 0 40px rgba(0,230,118,.2); transition:var(--transition); z-index:500; line-height:1; }
-#fab.visible { display:flex; }
-#fab:hover { transform:scale(1.08); box-shadow:0 6px 30px rgba(0,230,118,.6),0 0 60px rgba(0,230,118,.3); }
-#fab:active { transform:scale(.96); }
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 15px;
+  transition: var(--transition);
+  position: relative;
+}
 
-/* ── MODAL ── */
-.modal-backdrop { position:fixed; inset:0; background:rgba(5,7,8,.85); backdrop-filter:blur(6px); z-index:1000; display:none; align-items:center; justify-content:center; padding:16px; animation:fade-in .2s ease; }
-.modal-backdrop.open { display:flex; }
+.btn-icon:hover {
+  border-color: var(--border-dim);
+  color: var(--green-bright);
+  background: var(--green-deep);
+  box-shadow: var(--glow-sm);
+}
+
+/* ═══════════════════════════════════════════════
+   TAB NAV
+═══════════════════════════════════════════════ */
+#tab-nav {
+  display: flex;
+  background: var(--bg-base);
+  border-bottom: 1px solid var(--border-dim);
+  padding: 0 8px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 90;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 18px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  color: var(--text-secondary);
+  font-family: var(--font-cond);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  white-space: nowrap;
+}
+
+.tab-btn .tab-icon {
+  font-size: 14px;
+  opacity: 0.7;
+  transition: var(--transition);
+}
+
+.tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  color: var(--green-bright);
+  border-bottom-color: var(--green-bright);
+  text-shadow: var(--glow-sm);
+}
+
+.tab-btn.active .tab-icon {
+  opacity: 1;
+  filter: drop-shadow(0 0 4px var(--green-bright));
+}
+
+/* Tab badge */
+.tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 16px;
+  padding: 0 4px;
+  background: var(--green-mid);
+  border: 1px solid var(--green-bright);
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--green-bright);
+  box-shadow: 0 0 6px rgba(0,230,118,0.3);
+}
+
+/* ═══════════════════════════════════════════════
+   CONTENT AREA
+═══════════════════════════════════════════════ */
+#content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.tab-panel {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+.tab-panel.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ═══════════════════════════════════════════════
+   PANEL HEADER STRIP
+═══════════════════════════════════════════════ */
+.panel-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-base);
+  flex-shrink: 0;
+}
+
+/* 各行の共通レイアウト */
+.panel-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 14px;
+  gap: 10px;
+}
+
+/* アクティビスト行 — 上に仕切り線 */
+.panel-header-row--activist {
+  border-top: 1px solid var(--border-base);
+  padding: 6px 14px;
+}
+
+.panel-title {
+  font-family: var(--font-cond);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.panel-title span {
+  color: var(--green-bright);
+  margin-right: 6px;
+}
+
+.panel-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+/* ── Screener shortcut link buttons ─────────────────────── */
+.screener-shortcuts {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.scr-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-cond);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.scr-link:hover {
+  border-color: var(--border-glow);
+  color: var(--green-bright);
+  background: var(--green-deep);
+  box-shadow: var(--glow-sm);
+  text-decoration: none;
+}
+
+.scr-link .scr-flag { font-size: 12px; }
+.scr-link .scr-arrow {
+  font-size: 9px;
+  opacity: 0.5;
+  transition: var(--transition);
+}
+.scr-link:hover .scr-arrow { opacity: 1; transform: translateX(2px); }
+
+/* シクリカルバリュー — アンバーアクセント */
+.scr-link--cyclic {
+  border-color: rgba(255,179,0,0.18);
+  color: var(--amber-dim);
+}
+.scr-link--cyclic:hover {
+  border-color: rgba(255,179,0,0.55);
+  color: var(--amber);
+  background: rgba(255,179,0,0.06);
+  box-shadow: 0 0 8px rgba(255,179,0,0.25);
+}
+
+/* ボタングループ間の区切り線 */
+.scr-divider {
+  display: inline-block;
+  width: 1px;
+  height: 16px;
+  background: var(--border-base);
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+/* アクティビスト行のラベル */
+.activist-label {
+  font-family: var(--font-cond);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.activist-label span { color: var(--purple-soft); margin-right: 4px; }
+
+/* アクティビストボタン群 */
+.activist-shortcuts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+/* アクティビスト — パープルアクセント */
+.scr-link--activist {
+  border-color: rgba(124,77,255,0.22);
+  color: rgba(160,120,255,0.75);
+}
+.scr-link--activist:hover {
+  border-color: rgba(124,77,255,0.65);
+  color: #b39dff;
+  background: rgba(124,77,255,0.08);
+  box-shadow: 0 0 8px rgba(124,77,255,0.28);
+}
+
+/* IR Bankは特別にアンバー系で目立たせる */
+.scr-link--irbank {
+  border-color: rgba(255,179,0,0.28);
+  color: var(--amber-dim);
+  font-weight: 700;
+}
+.scr-link--irbank:hover {
+  border-color: rgba(255,179,0,0.65);
+  color: var(--amber);
+  background: rgba(255,179,0,0.07);
+  box-shadow: 0 0 8px rgba(255,179,0,0.28);
+}
+
+/* ═══════════════════════════════════════════════
+   WIDGET CONTAINER (TradingView embeds)
+═══════════════════════════════════════════════ */
+.widget-container {
+  flex: 1;
+  overflow: hidden;
+  background: var(--bg-base);
+  position: relative;
+}
+
+.widget-container iframe,
+.widget-container > div {
+  width: 100%;
+  height: 100%;
+}
+
+/* Loading placeholder */
+.widget-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: var(--bg-base);
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+
+.widget-loading.hidden { opacity: 0; }
+
+.loader-ring {
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--border-dim);
+  border-top-color: var(--green-bright);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loader-text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  animation: blink 1.5s ease-in-out infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+/* ═══════════════════════════════════════════════
+   WATCHLIST TAB
+═══════════════════════════════════════════════ */
+#panel-watchlist {
+  overflow: hidden;
+}
+
+.watchlist-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-base);
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+.wl-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.wl-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.wl-stat-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.wl-stat-val {
+  font-family: var(--font-cond);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--green-bright);
+  line-height: 1;
+}
+
+.wl-search-wrap {
+  flex: 1;
+  max-width: 300px;
+  position: relative;
+}
+
+.wl-search-wrap .search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+#wl-search {
+  width: 100%;
+  padding: 7px 10px 7px 30px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  outline: none;
+  transition: var(--transition);
+}
+
+#wl-search:focus {
+  border-color: var(--border-dim);
+  box-shadow: 0 0 0 2px rgba(0,230,118,0.08);
+}
+
+#wl-search::placeholder { color: var(--text-muted); }
+
+/* Watchlist grid */
+.watchlist-grid {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px 80px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 10px;
+  align-content: start;
+}
+
+/* Custom scrollbar */
+.watchlist-grid::-webkit-scrollbar { width: 4px; }
+.watchlist-grid::-webkit-scrollbar-track { background: transparent; }
+.watchlist-grid::-webkit-scrollbar-thumb { background: var(--green-mid); border-radius: 2px; }
+.watchlist-grid::-webkit-scrollbar-thumb:hover { background: var(--green-bright); }
+
+/* Empty state */
+.empty-state {
+  grid-column: 1/-1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 40px;
+  opacity: 0.3;
+  filter: grayscale(0.5);
+}
+
+.empty-title {
+  font-family: var(--font-cond);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.empty-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  max-width: 260px;
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+}
+
+/* ═══════════════════════════════════════════════
+   WATCHLIST CARD
+═══════════════════════════════════════════════ */
+.wl-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+  animation: card-in 0.3s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.wl-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  background: var(--green-mid);
+  transition: var(--transition);
+}
+
+.wl-card:hover {
+  border-color: var(--border-dim);
+  background: var(--bg-elevated);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 0 30px rgba(0,230,118,0.02);
+}
+
+.wl-card:hover::before {
+  background: var(--green-bright);
+  box-shadow: 0 0 8px var(--green-bright);
+}
+
+/* Card: JP stock */
+.wl-card.jp-stock::before { background: var(--amber-dim); }
+.wl-card.jp-stock:hover::before { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+
+/* Card header */
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.card-ticker-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.card-ticker {
+  font-family: var(--font-cond);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  color: var(--text-bright);
+}
+
+.card-market-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 2px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.card-market-badge.us {
+  background: rgba(2,136,209,0.15);
+  border: 1px solid rgba(2,136,209,0.35);
+  color: #4fc3f7;
+}
+
+.card-market-badge.jp {
+  background: rgba(255,179,0,0.12);
+  border: 1px solid rgba(255,179,0,0.3);
+  color: var(--amber);
+}
+
+/* Card name input */
+.card-name-input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  cursor: text;
+  outline: none;
+  text-align: right;
+  min-width: 0;
+  padding: 2px 4px;
+  border-bottom: 1px solid transparent;
+  transition: var(--transition);
+}
+
+.card-name-input:focus {
+  border-bottom-color: var(--border-dim);
+  color: var(--text-primary);
+}
+
+.card-name-input::placeholder { color: var(--text-muted); font-size: 10px; }
+
+/* Card memo */
+.card-memo {
+  position: relative;
+}
+
+.memo-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.card-memo-input {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  padding: 7px 9px;
+  resize: none;
+  height: 60px;
+  outline: none;
+  transition: var(--transition);
+}
+
+.card-memo-input:focus {
+  border-color: var(--border-dim);
+  box-shadow: 0 0 0 2px rgba(0,230,118,0.06);
+}
+
+.card-memo-input::placeholder { color: var(--text-muted); }
+
+/* Card actions */
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-cond);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.btn-link:hover {
+  border-color: var(--border-dim);
+  color: var(--green-bright);
+  background: var(--green-deep);
+  box-shadow: 0 0 8px rgba(0,230,118,0.15);
+}
+
+.btn-link.chart:hover {
+  color: #4fc3f7;
+  border-color: rgba(2,136,209,0.4);
+  background: rgba(2,136,209,0.08);
+  box-shadow: 0 0 8px rgba(2,136,209,0.15);
+}
+
+.btn-save {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: rgba(0,230,118,0.1);
+  border: 1px solid rgba(0,230,118,0.25);
+  border-radius: var(--radius-sm);
+  color: var(--green-bright);
+  font-family: var(--font-cond);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-save:hover {
+  background: rgba(0,230,118,0.18);
+  box-shadow: 0 0 10px rgba(0,230,118,0.2);
+}
+
+.btn-delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.btn-delete:hover {
+  color: var(--red);
+  border-color: var(--red-dim);
+  background: rgba(255,61,90,0.08);
+}
+
+/* Timestamp */
+.card-timestamp {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+/* ═══════════════════════════════════════════════
+   FAB — Floating Action Button
+═══════════════════════════════════════════════ */
+#fab {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--green-bright);
+  border: none;
+  color: var(--bg-void);
+  font-size: 24px;
+  font-weight: 300;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,230,118,0.5), 0 0 40px rgba(0,230,118,0.2);
+  transition: var(--transition);
+  z-index: 500;
+  line-height: 1;
+}
+
+#fab.visible { display: flex; }
+
+#fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 30px rgba(0,230,118,0.6), 0 0 60px rgba(0,230,118,0.3);
+}
+
+#fab:active { transform: scale(0.96); }
+
+/* ═══════════════════════════════════════════════
+   MODAL — Add Watchlist Item
+═══════════════════════════════════════════════ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5,7,8,0.85);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fade-in 0.2s ease;
+}
+
+.modal-backdrop.open { display: flex; }
+
 @keyframes fade-in { from{opacity:0} to{opacity:1} }
-.modal { background:var(--bg-card); border:1px solid var(--border-dim); border-radius:var(--radius-lg); width:100%; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,.6),var(--glow-md); animation:modal-in .25s cubic-bezier(.34,1.56,.64,1); overflow:hidden; }
-@keyframes modal-in { from{opacity:0;transform:scale(.92) translateY(10px)} to{opacity:1;transform:scale(1) translateY(0)} }
-.modal-header { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border-base); background:var(--bg-elevated); }
-.modal-title  { font-family:var(--font-cond); font-size:16px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--green-bright); text-shadow:var(--glow-sm); }
-.modal-close  { display:flex; align-items:center; justify-content:center; width:28px; height:28px; background:none; border:none; color:var(--text-secondary); font-size:18px; cursor:pointer; border-radius:4px; transition:var(--transition); }
-.modal-close:hover { color:var(--text-primary); background:var(--bg-elevated); }
-.modal-body  { padding:20px; display:flex; flex-direction:column; gap:16px; }
-.form-group  { display:flex; flex-direction:column; gap:6px; }
-.form-label  { font-family:var(--font-mono); font-size:9px; letter-spacing:.18em; text-transform:uppercase; color:var(--text-muted); display:flex; align-items:center; gap:6px; }
-.form-label .required { color:var(--red); font-size:11px; }
-.form-input  { background:var(--bg-elevated); border:1px solid var(--border-base); border-radius:var(--radius-sm); color:var(--text-primary); font-family:var(--font-mono); font-size:13px; letter-spacing:.05em; padding:9px 12px; outline:none; transition:var(--transition); }
-.form-input:focus { border-color:var(--border-glow); box-shadow:0 0 0 3px rgba(0,230,118,.08); background:var(--bg-card); }
-.form-input::placeholder { color:var(--text-muted); font-size:11px; }
-.form-textarea { resize:vertical; min-height:70px; line-height:1.5; }
-.modal-preview { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--bg-surface); border:1px solid var(--border-base); border-radius:var(--radius-sm); min-height:38px; }
-.preview-label  { font-family:var(--font-mono); font-size:9px; letter-spacing:.12em; color:var(--text-muted); text-transform:uppercase; flex-shrink:0; }
-.preview-ticker { font-family:var(--font-cond); font-size:18px; font-weight:800; color:var(--text-bright); letter-spacing:.05em; }
-.modal-footer { padding:14px 20px; border-top:1px solid var(--border-base); display:flex; gap:10px; justify-content:flex-end; }
-.btn-primary   { display:flex; align-items:center; gap:7px; padding:9px 22px; background:var(--green-bright); border:none; border-radius:var(--radius-sm); color:var(--bg-void); font-family:var(--font-cond); font-size:14px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; transition:var(--transition); box-shadow:0 0 20px rgba(0,230,118,.3); }
-.btn-primary:hover { background:var(--green-glow); box-shadow:0 0 30px rgba(0,255,136,.4); transform:translateY(-1px); }
-.btn-secondary { padding:9px 18px; background:none; border:1px solid var(--border-base); border-radius:var(--radius-sm); color:var(--text-secondary); font-family:var(--font-cond); font-size:14px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; transition:var(--transition); }
-.btn-secondary:hover { border-color:var(--border-dim); color:var(--text-primary); }
 
-/* ── SETTINGS ── */
-#settings-backdrop { position:fixed; inset:0; background:rgba(5,7,8,.75); backdrop-filter:blur(4px); z-index:800; display:none; }
-#settings-backdrop.open { display:block; }
-#settings-panel { position:fixed; top:0; right:0; bottom:0; width:min(380px,100vw); background:var(--bg-card); border-left:1px solid var(--border-dim); box-shadow:-20px 0 60px rgba(0,0,0,.5); z-index:900; transform:translateX(100%); transition:transform .35s cubic-bezier(.4,0,.2,1); display:flex; flex-direction:column; overflow:hidden; }
-#settings-panel.open { transform:translateX(0); }
-.settings-header { display:flex; align-items:center; justify-content:space-between; padding:18px 20px; border-bottom:1px solid var(--border-base); background:var(--bg-elevated); flex-shrink:0; }
-.settings-title { font-family:var(--font-cond); font-size:16px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--text-primary); }
-.settings-body { flex:1; overflow-y:auto; padding:24px 20px; display:flex; flex-direction:column; gap:20px; }
-.settings-section-title { font-family:var(--font-mono); font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--green-bright); text-shadow:var(--glow-sm); padding-bottom:8px; border-bottom:1px solid var(--border-dim); }
-.settings-help { font-family:var(--font-mono); font-size:10px; line-height:1.6; color:var(--text-muted); letter-spacing:.03em; }
-.settings-help a { color:var(--green-bright); text-decoration:none; }
-.settings-footer { padding:16px 20px; border-top:1px solid var(--border-base); display:flex; flex-direction:column; gap:10px; }
-.status-indicator { display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:var(--radius-sm); font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; }
-.status-indicator.ok   { background:rgba(0,230,118,.08); border:1px solid rgba(0,230,118,.2); color:var(--green-bright); }
-.status-indicator.err  { background:rgba(255,61,90,.08);  border:1px solid rgba(255,61,90,.2);  color:var(--red); }
-.status-indicator.idle { background:var(--bg-elevated);   border:1px solid var(--border-base);  color:var(--text-secondary); }
-.status-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
-.status-indicator.ok  .status-dot { background:var(--green-bright); box-shadow:0 0 6px var(--green-bright); }
-.status-indicator.err .status-dot { background:var(--red); }
-.status-indicator.idle .status-dot { background:var(--text-muted); }
-
-/* ── CONN BAR ── */
-#conn-bar { display:flex; align-items:center; gap:8px; padding:4px 16px; background:rgba(255,179,0,.08); border-bottom:1px solid rgba(255,179,0,.2); font-family:var(--font-mono); font-size:9px; letter-spacing:.12em; color:var(--amber); flex-shrink:0; text-transform:uppercase; }
-#conn-bar.hidden { display:none; }
-#conn-bar.ok { background:rgba(0,230,118,.05); border-color:rgba(0,230,118,.15); color:var(--green-bright); }
-
-/* ── TOAST ── */
-#toast-container { position:fixed; bottom:80px; left:50%; transform:translateX(-50%); z-index:2000; display:flex; flex-direction:column; gap:8px; align-items:center; pointer-events:none; }
-.toast { display:flex; align-items:center; gap:10px; padding:10px 18px; border-radius:var(--radius-md); font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; white-space:nowrap; animation:toast-in .3s cubic-bezier(.34,1.56,.64,1); box-shadow:0 8px 24px rgba(0,0,0,.4); }
-.toast.success { background:var(--green-mid); border:1px solid var(--green-bright); color:var(--green-text); }
-.toast.error   { background:var(--red-dim);   border:1px solid var(--red);          color:#ffb3c0; }
-.toast.info    { background:var(--bg-elevated);border:1px solid var(--border-dim);  color:var(--text-secondary); }
-@keyframes toast-in  { from{opacity:0;transform:translateY(20px) scale(.9)} to{opacity:1;transform:translateY(0) scale(1)} }
-@keyframes toast-out { to{opacity:0;transform:translateY(10px) scale(.95)} }
-
-/* ── MISC ── */
-.corner-tl,.corner-tr { position:absolute; width:12px; height:12px; pointer-events:none; }
-.corner-tl { top:6px;left:6px;  border-top:1px solid var(--green-bright); border-left:1px solid var(--green-bright);  opacity:.4; }
-.corner-tr { top:6px;right:6px; border-top:1px solid var(--green-bright); border-right:1px solid var(--green-bright); opacity:.4; }
-.boot-flash { position:fixed;inset:0;background:var(--green-bright);z-index:9998;animation:boot-flash .15s ease-out forwards;pointer-events:none; }
-@keyframes boot-flash { from{opacity:.12} to{opacity:0} }
-
-@media(max-width:640px){
-  .logo-sub,.live-badge { display:none; }
-  .tab-btn { padding:10px 12px; font-size:12px; gap:5px; }
-  .watchlist-grid,.memo-cards-grid { grid-template-columns:1fr; }
-  .launcher-grid { grid-template-columns:1fr; }
-  .modal { max-width:100%; }
-  #settings-panel { width:100vw; }
-  .memo-form-row { grid-template-columns:1fr 1fr; }
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6), var(--glow-md);
+  animation: modal-in 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  overflow: hidden;
 }
-@media(max-width:400px){
-  #topbar { padding:0 10px; }
-  .tab-btn .tab-label { display:none; }
-  .tab-btn { padding:10px 14px; }
-  .tab-icon { font-size:16px!important; }
-  .memo-form-row { grid-template-columns:1fr; }
+
+@keyframes modal-in {
+  from { opacity:0; transform: scale(0.92) translateY(10px); }
+  to   { opacity:1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-base);
+  background: var(--bg-elevated);
+}
+
+.modal-title {
+  font-family: var(--font-cond);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--green-bright);
+  text-shadow: var(--glow-sm);
+}
+
+.modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: var(--transition);
+}
+
+.modal-close:hover { color: var(--text-primary); background: var(--bg-elevated); }
+
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-label .required {
+  color: var(--red);
+  font-size: 11px;
+}
+
+.form-input {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  padding: 9px 12px;
+  outline: none;
+  transition: var(--transition);
+}
+
+.form-input:focus {
+  border-color: var(--border-glow);
+  box-shadow: 0 0 0 3px rgba(0,230,118,0.08);
+  background: var(--bg-card);
+}
+
+.form-input::placeholder { color: var(--text-muted); font-size: 11px; }
+
+.form-textarea {
+  resize: vertical;
+  min-height: 70px;
+  line-height: 1.5;
+}
+
+/* Preview strip */
+.modal-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-sm);
+  min-height: 38px;
+}
+
+.preview-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.preview-ticker {
+  font-family: var(--font-cond);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-bright);
+  letter-spacing: 0.05em;
+}
+
+.modal-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-base);
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 22px;
+  background: var(--green-bright);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--bg-void);
+  font-family: var(--font-cond);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 0 20px rgba(0,230,118,0.3);
+}
+
+.btn-primary:hover {
+  background: var(--green-glow);
+  box-shadow: 0 0 30px rgba(0,255,136,0.4);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  padding: 9px 18px;
+  background: none;
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-cond);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-secondary:hover {
+  border-color: var(--border-dim);
+  color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════════════
+   SETTINGS PANEL (slide-in)
+═══════════════════════════════════════════════ */
+#settings-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5,7,8,0.75);
+  backdrop-filter: blur(4px);
+  z-index: 800;
+  display: none;
+}
+
+#settings-backdrop.open { display: block; }
+
+#settings-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(380px, 100vw);
+  background: var(--bg-card);
+  border-left: 1px solid var(--border-dim);
+  box-shadow: -20px 0 60px rgba(0,0,0,0.5);
+  z-index: 900;
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#settings-panel.open { transform: translateX(0); }
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border-base);
+  background: var(--bg-elevated);
+  flex-shrink: 0;
+}
+
+.settings-title {
+  font-family: var(--font-cond);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.settings-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings-section-title {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--green-bright);
+  text-shadow: var(--glow-sm);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-dim);
+}
+
+.settings-help {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+}
+
+.settings-help a {
+  color: var(--green-bright);
+  text-decoration: none;
+}
+
+.settings-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border-base);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.status-indicator.ok {
+  background: rgba(0,230,118,0.08);
+  border: 1px solid rgba(0,230,118,0.2);
+  color: var(--green-bright);
+}
+
+.status-indicator.err {
+  background: rgba(255,61,90,0.08);
+  border: 1px solid rgba(255,61,90,0.2);
+  color: var(--red);
+}
+
+.status-indicator.idle {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-base);
+  color: var(--text-secondary);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-indicator.ok .status-dot  { background: var(--green-bright); box-shadow: 0 0 6px var(--green-bright); }
+.status-indicator.err .status-dot { background: var(--red); }
+.status-indicator.idle .status-dot{ background: var(--text-muted); }
+
+/* ═══════════════════════════════════════════════
+   TOAST NOTIFICATIONS
+═══════════════════════════════════════════════ */
+#toast-container {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  animation: toast-in 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.toast.success {
+  background: var(--green-mid);
+  border: 1px solid var(--green-bright);
+  color: var(--green-text);
+}
+
+.toast.error {
+  background: var(--red-dim);
+  border: 1px solid var(--red);
+  color: #ffb3c0;
+}
+
+.toast.info {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-dim);
+  color: var(--text-secondary);
+}
+
+@keyframes toast-in {
+  from { opacity:0; transform: translateY(20px) scale(0.9); }
+  to   { opacity:1; transform: translateY(0) scale(1); }
+}
+
+@keyframes toast-out {
+  to { opacity:0; transform: translateY(10px) scale(0.95); }
+}
+
+/* ═══════════════════════════════════════════════
+   SUPABASE CONNECTION STATUS BAR
+═══════════════════════════════════════════════ */
+#conn-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 16px;
+  background: rgba(255,179,0,0.08);
+  border-bottom: 1px solid rgba(255,179,0,0.2);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--amber);
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+#conn-bar.hidden { display: none; }
+#conn-bar.ok {
+  background: rgba(0,230,118,0.05);
+  border-color: rgba(0,230,118,0.15);
+  color: var(--green-bright);
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .logo-sub { display: none; }
+  .live-badge { display: none; }
+  .tab-btn { padding: 10px 12px; font-size: 12px; gap: 5px; }
+  .watchlist-grid { grid-template-columns: 1fr; padding: 10px 10px 80px; }
+  .wl-stats { gap: 12px; }
+  .modal { max-width: 100%; }
+  #settings-panel { width: 100vw; }
+  .card-actions { flex-wrap: wrap; }
+  .btn-link { padding: 5px 8px; font-size: 10px; }
+}
+
+@media (max-width: 400px) {
+  #topbar { padding: 0 10px; }
+  .tab-btn .tab-label { display: none; }
+  .tab-btn { padding: 10px 14px; }
+  .tab-icon { font-size: 16px !important; }
+}
+
+/* ═══════════════════════════════════════════════
+   TICKER CORNER DECORATION
+═══════════════════════════════════════════════ */
+.corner-tl, .corner-tr {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+}
+.corner-tl {
+  top: 6px; left: 6px;
+  border-top: 1px solid var(--green-bright);
+  border-left: 1px solid var(--green-bright);
+  opacity: 0.4;
+}
+.corner-tr {
+  top: 6px; right: 6px;
+  border-top: 1px solid var(--green-bright);
+  border-right: 1px solid var(--green-bright);
+  opacity: 0.4;
+}
+
+/* ═══════════════════════════════════════════════
+   IPO・TOB PANEL
+═══════════════════════════════════════════════ */
+#panel-ipo {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── ヘッダーバー ── */
+.ipo-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-base);
+  flex-shrink: 0;
+}
+
+.ipo-cat-tabs {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.ipo-cat-btn {
+  padding: 4px 11px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-cond);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+.ipo-cat-btn:hover {
+  border-color: var(--border-dim);
+  color: var(--text-primary);
+}
+.ipo-cat-btn.active {
+  background: var(--green-mid);
+  border-color: var(--green-bright);
+  color: var(--green-bright);
+  box-shadow: var(--glow-sm);
+}
+.ipo-cat-btn[data-cat="fav"].active {
+  background: rgba(255,179,0,0.12);
+  border-color: var(--amber);
+  color: var(--amber);
+  box-shadow: 0 0 8px rgba(255,179,0,0.3);
+}
+
+.ipo-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-sm);
+  padding: 0 10px;
+  transition: var(--transition);
+}
+.ipo-search-wrap:focus-within {
+  border-color: var(--border-dim);
+  box-shadow: var(--glow-sm);
+}
+.ipo-search-wrap span { color: var(--text-muted); font-size: 12px; }
+.ipo-search {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 5px 0;
+  width: 160px;
+}
+.ipo-search::placeholder { color: var(--text-muted); }
+
+/* ── カードグリッド ── */
+.ipo-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.ipo-section {
+  margin-bottom: 24px;
+}
+
+.ipo-section-title {
+  font-family: var(--font-cond);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border-base);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ipo-section-title .sec-flag { font-size: 14px; }
+.ipo-section-count {
+  font-size: 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-base);
+  border-radius: 10px;
+  padding: 1px 8px;
+  color: var(--text-muted);
+}
+
+.ipo-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+/* ── 個別カード ── */
+.ipo-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.ipo-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--card-accent, var(--green-bright));
+  opacity: 0.6;
+}
+.ipo-card:hover {
+  border-color: var(--border-dim);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  transform: translateY(-1px);
+}
+.ipo-card.is-fav {
+  border-color: rgba(255,179,0,0.28);
+}
+.ipo-card.is-fav::before {
+  background: var(--amber);
+}
+
+.ipo-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* ロールバッジ */
+.ipo-role {
+  font-family: var(--font-cond);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ipo-role.main    { background: rgba(0,230,118,0.15); color: var(--green-bright); border: 1px solid rgba(0,230,118,0.35); }
+.ipo-role.sub     { background: rgba(255,179,0,0.12);  color: var(--amber);       border: 1px solid rgba(255,179,0,0.3); }
+.ipo-role.official{ background: rgba(2,136,209,0.15);  color: #4fc3f7;            border: 1px solid rgba(2,136,209,0.35); }
+.ipo-role.notify  { background: rgba(124,77,255,0.15); color: #b39dff;            border: 1px solid rgba(124,77,255,0.35); }
+
+/* お気に入りボタン */
+.fav-btn {
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  line-height: 1;
+  transition: var(--transition);
+  opacity: 0.35;
+  flex-shrink: 0;
+  padding: 2px;
+}
+.fav-btn:hover { opacity: 0.8; transform: scale(1.2); }
+.fav-btn.active { opacity: 1; filter: drop-shadow(0 0 4px rgba(255,179,0,0.7)); }
+
+.ipo-card-name {
+  font-family: var(--font-cond);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--text-bright);
+  line-height: 1.3;
+}
+
+.ipo-card-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  flex: 1;
+}
+
+.ipo-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 4px;
+  border-top: 1px solid var(--border-base);
+}
+
+.ipo-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 13px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-dim);
+  border-radius: var(--radius-sm);
+  color: var(--green-text);
+  font-family: var(--font-cond);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+.ipo-link-btn:hover {
+  background: var(--green-deep);
+  border-color: var(--green-bright);
+  color: var(--green-bright);
+  box-shadow: var(--glow-sm);
+  text-decoration: none;
+}
+
+/* 空状態 */
+.ipo-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  font-family: var(--font-cond);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+}
+
+/* カテゴリ別アクセントカラー変数 */
+.ipo-card[data-cat="jp-ipo"]    { --card-accent: #69f0ae; }
+.ipo-card[data-cat="jp-tob"]    { --card-accent: #ffb300; }
+.ipo-card[data-cat="us-ipo"]    { --card-accent: #40c4ff; }
+.ipo-card[data-cat="us-tender"] { --card-accent: #b39dff; }
+
+/* レスポンシブ */
+@media (max-width: 640px) {
+  .ipo-header { padding: 7px 10px; gap: 7px; }
+  .ipo-search { width: 120px; }
+  .ipo-content { padding: 10px; }
+  .ipo-card-grid { grid-template-columns: 1fr; }
+  .ipo-cat-btn { font-size: 10px; padding: 3px 8px; }
+}
+
+/* Animated boot sequence */
+.boot-flash {
+  position: fixed;
+  inset: 0;
+  background: var(--green-bright);
+  z-index: 9998;
+  animation: boot-flash 0.15s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes boot-flash {
+  from { opacity: 0.12; }
+  to   { opacity: 0; }
 }
 </style>
 </head>
 <body>
+
+<!-- Boot flash -->
 <div class="boot-flash" id="boot-flash"></div>
 
+<!-- App shell -->
 <div id="app">
-  <div id="conn-bar"><span>⚠</span><span id="conn-msg">Supabase 未設定 — 右上の ⚙️ 設定からURLとAnon Keyを入力してください</span></div>
 
+  <!-- Connection warning bar -->
+  <div id="conn-bar">
+    <span>⚠</span>
+    <span id="conn-msg">Supabase 未設定 — 右上の ⚙️ 設定からURLとAnon Keyを入力してください</span>
+  </div>
+
+  <!-- Topbar -->
   <header id="topbar">
     <div class="logo-wrap">
       <div class="logo-icon">
@@ -458,362 +1757,211 @@ body::after {
           <circle cx="14" cy="14" r="1.5" fill="#00e676"/>
         </svg>
       </div>
-      <div><div class="logo-text">APEX TERMINAL</div><div class="logo-sub">Breakout Monitor v8.0</div></div>
+      <div>
+        <div class="logo-text">APEX TERMINAL</div>
+        <div class="logo-sub">Breakout Monitor v2.0</div>
+      </div>
     </div>
-    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
-    <div class="topbar-actions"><button class="btn-icon" onclick="openSettings()" title="設定">⚙️</button></div>
+
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      LIVE
+    </div>
+
+    <div class="topbar-actions">
+      <button class="btn-icon" onclick="openSettings()" title="設定">⚙️</button>
+    </div>
   </header>
 
+  <!-- Tab nav -->
   <nav id="tab-nav">
-    <button class="tab-btn active" onclick="switchTab('screener')" id="tab-screener"><span class="tab-icon">🚀</span><span class="tab-label">スクリーナー</span></button>
-    <button class="tab-btn" onclick="switchTab('heatmap')" id="tab-heatmap"><span class="tab-icon">🔥</span><span class="tab-label">セクター熱量</span></button>
-    <button class="tab-btn" onclick="switchTab('watchlist')" id="tab-watchlist"><span class="tab-icon">👁️</span><span class="tab-label">監視リスト</span><span class="tab-badge" id="wl-count-badge">0</span></button>
+    <button class="tab-btn active" onclick="switchTab('breakout')" id="tab-breakout">
+      <span class="tab-icon">🚀</span>
+      <span class="tab-label">スクリーナー</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('heatmap')" id="tab-heatmap">
+      <span class="tab-icon">🔥</span>
+      <span class="tab-label">セクター熱量</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('watchlist')" id="tab-watchlist">
+      <span class="tab-icon">👁️</span>
+      <span class="tab-label">監視リスト</span>
+      <span class="tab-badge" id="wl-count-badge">0</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('ipo')" id="tab-ipo">
+      <span class="tab-icon">📋</span>
+      <span class="tab-label">IPO・TOB</span>
+    </button>
   </nav>
 
+  <!-- Main content -->
   <main id="content">
 
-    <!-- ══ TAB 1: SCREENER ══ -->
-    <div class="tab-panel active" id="panel-screener">
-      <div class="panel-header"><div class="panel-title"><span>◈</span>4大戦略レーダー & ファンダメンタルズメモ</div></div>
-      <div class="screener-body">
+    <!-- ── TAB 1: SCREENER ── -->
+    <div class="tab-panel active" id="panel-breakout">
+      <div class="panel-header">
 
-        <!-- ════════════════════════════════════
-             1. モメンタム戦略（高値ブレイク）
-        ════════════════════════════════════ -->
-        <div class="strategy-block">
-          <div class="strategy-header sh-momentum">
-            <div class="sh-icon">🚀</div>
-            <div>
-              <div class="sh-title">モメンタム戦略（高値ブレイク）</div>
-              <div class="sh-sub">トレンドフォロー · 出来高急増 · ROE重視</div>
-            </div>
+        <!-- ── 行1: スクリーナー ── -->
+        <div class="panel-header-row">
+          <div class="panel-title"><span>◈</span>高値ブレイク スクリーナー</div>
+          <div class="screener-shortcuts">
+            <a class="scr-link"
+               href="https://jp.tradingview.com/screener/V07CTgF3/"
+               target="_blank" rel="noopener"
+               title="日本株 先回り高値ブレイク候補">
+              <span class="scr-flag">🗾</span> JP 先回り <span class="scr-arrow">↗</span>
+            </a>
+            <a class="scr-link"
+               href="https://jp.tradingview.com/screener/6gsFcso2/"
+               target="_blank" rel="noopener"
+               title="米国株 先回り高値ブレイク候補">
+              <span class="scr-flag">🇺🇸</span> US 先回り <span class="scr-arrow">↗</span>
+            </a>
+            <span class="scr-divider"></span>
+            <a class="scr-link scr-link--cyclic"
+               href="https://jp.tradingview.com/screener/qxtSEtnR/"
+               target="_blank" rel="noopener"
+               title="日本 シクリカルバリュー スクリーナー">
+              <span class="scr-flag">🗾</span> JP シクリカル <span class="scr-arrow">↗</span>
+            </a>
+            <a class="scr-link scr-link--cyclic"
+               href="https://jp.tradingview.com/screener/rfyeTRe2/"
+               target="_blank" rel="noopener"
+               title="米国 シクリカルバリュー スクリーナー">
+              <span class="scr-flag">🇺🇸</span> US シクリカル <span class="scr-arrow">↗</span>
+            </a>
           </div>
-          <div class="launcher-grid">
+          <div class="panel-meta" id="screener-ts">TradingView Screener Widget</div>
+        </div>
 
-            <a class="launcher-card" href="https://jp.tradingview.com/screener/f4OK5E8a/" target="_blank" rel="noopener">
-              <span class="lc-arrow">↗</span>
-              <div class="lc-icon">🗾</div>
-              <div class="lc-title">日本株 高値ブレイク</div>
-              <div class="lc-sub">スピード重視 · 52週高値更新</div>
-              <div class="lc-badge green">JP · モメンタム</div>
+        <!-- ── 行2: アクティビスト銘柄サーチ ── -->
+        <div class="panel-header-row panel-header-row--activist">
+          <div class="activist-label"><span>◈</span>アクティビスト銘柄サーチ</div>
+          <div class="activist-shortcuts">
+            <a class="scr-link scr-link--irbank"
+               href="https://irbank.net/share"
+               target="_blank" rel="noopener"
+               title="IR Bank — 大量保有報告書">
+              📋 IR Bank 大量保有 <span class="scr-arrow">↗</span>
             </a>
-
-            <a class="launcher-card lc-blue" href="https://jp.tradingview.com/screener/9fJDxaD6/" target="_blank" rel="noopener">
-              <span class="lc-arrow">↗</span>
-              <div class="lc-icon">🇺🇸</div>
-              <div class="lc-title">米国株 高値ブレイク</div>
-              <div class="lc-sub">スピード重視 · 52週高値更新</div>
-              <div class="lc-badge blue">US · モメンタム</div>
-              <div class="lc-annotation"><strong>中小型:</strong> 機関投資家の死角、大化け候補</div>
+            <span class="scr-divider"></span>
+            <a class="scr-link scr-link--activist"
+               href="https://stracap.jp/"
+               target="_blank" rel="noopener"
+               title="ストラテジックキャピタル">
+              🎯 ストラテジック <span class="scr-arrow">↗</span>
             </a>
-
-            <a class="launcher-card" href="https://jp.tradingview.com/screener/aeNdKhW3/" target="_blank" rel="noopener">
-              <span class="lc-arrow">↗</span>
-              <div class="lc-icon">📈</div>
-              <div class="lc-title">日本株 業績ブレイク</div>
-              <div class="lc-sub">Kenmo流 · ROE 10%超</div>
-              <div class="lc-badge green">JP · 業績</div>
+            <a class="scr-link scr-link--activist"
+               href="https://ja.oasiscm.com/press-releases/"
+               target="_blank" rel="noopener"
+               title="オアシス・マネジメント">
+              🌊 オアシス <span class="scr-arrow">↗</span>
             </a>
-
-            <a class="launcher-card lc-blue" href="https://jp.tradingview.com/screener/5LVSUsK2/" target="_blank" rel="noopener">
-              <span class="lc-arrow">↗</span>
-              <div class="lc-icon">💡</div>
-              <div class="lc-title">米国株 業績ブレイク</div>
-              <div class="lc-sub">Kenmo流 · ROE 10%超</div>
-              <div class="lc-badge blue">US · 業績</div>
-              <div class="lc-annotation"><strong>小型グロース:</strong> EPS急加速が重なると爆発力大</div>
+            <a class="scr-link scr-link--activist"
+               href="https://www.daltoninvestments.co.jp/"
+               target="_blank" rel="noopener"
+               title="ダルトン・インベストメンツ">
+              🏔️ ダルトン <span class="scr-arrow">↗</span>
             </a>
-
           </div>
         </div>
 
-        <!-- ════════════════════════════════════
-             2. バリュー戦略（資産・収益）
-        ════════════════════════════════════ -->
-        <div class="strategy-block">
-          <div class="strategy-header sh-value">
-            <div class="sh-icon">💰</div>
-            <div>
-              <div class="sh-title">バリュー戦略（資産・収益）</div>
-              <div class="sh-sub">グレアム指数 · 含み益 · 稼ぐ力重視</div>
-            </div>
-          </div>
-          <div class="launcher-grid">
-
-            <a class="launcher-card lc-amber" href="https://jp.tradingview.com/screener/6AutlRjh/" target="_blank" rel="noopener">
-              <span class="lc-arrow">↗</span>
-              <div class="lc-icon">🏦</div>
-              <div class="lc-title">日本株 資産バリュー</div>
-              <div class="lc-sub">含み益 · カタリスト狙い</div>
-              <div class="lc-badge amber">JP · 資産</div>
-              <div class="lc-annotation"><strong>狙い目:</strong> 賃貸不動産含み益・自社株買い期待</div>
-            </a>
-
-            <a class="launcher-card lc-amber" href="https://jp.tradingview.com/screener/XdmvwO3T/" target="_blank" rel="noopener">
-              <span class="lc-arrow">↗</span>
-              <div class="lc-icon">⚙️</div>
-              <div class="lc-title">日本株 収益バリュー</div>
-              <div class="lc-sub">中小型 · 稼ぐ力重視</div>
-              <div class="lc-badge amber">JP · 収益</div>
-              <div class="lc-annotation"><strong>中小型:</strong> グレアム指数22.5以下が鉄則</div>
-            </a>
-
-            <a class="launcher-card lc-blue" href="https://jp.tradingview.com/screener/fOfVvhUi/" target="_blank" rel="noopener">
-              <span class="lc-arrow">↗</span>
-              <div class="lc-icon">🔬</div>
-              <div class="lc-title">米国株 資産・収益バリュー</div>
-              <div class="lc-sub">中小型 · 攻め</div>
-              <div class="lc-badge blue">US · バリュー</div>
-              <div class="lc-annotation"><strong>中小型:</strong> 機関投資家の死角、大化け候補</div>
-            </a>
-
-          </div>
-        </div>
-
-        <!-- ════════════════════════════════════
-             3. インカム&シクリカル戦略
-        ════════════════════════════════════ -->
-        <div class="strategy-block">
-          <div class="strategy-header sh-cyclical">
-            <div class="sh-icon">🔄</div>
-            <div>
-              <div class="sh-title">インカム &amp; シクリカル戦略</div>
-              <div class="sh-sub">配当 · 景気敏感 · オプション活用</div>
-            </div>
-          </div>
-          <div class="launcher-grid">
-
-            <a class="launcher-card lc-blue" href="https://jp.tradingview.com/screener/4ZJUwxBU/" target="_blank" rel="noopener">
-              <span class="lc-arrow">↗</span>
-              <div class="lc-icon">🛡️</div>
-              <div class="lc-title">米国株 大型高配当バリュー</div>
-              <div class="lc-sub">守り · オプション用</div>
-              <div class="lc-badge blue">US · インカム</div>
-              <div class="lc-annotation"><strong>大型:</strong> Put Sell / Cash Secured Putに最適</div>
-            </a>
-
-            <!--
-              ★ 日本株シクリカル — URL設定待ち
-              URLが決まったら href="#" を実際のURLに置き換えてください
-            -->
-            <div class="launcher-card lc-pending">
-              <div class="lc-icon">🏭</div>
-              <div class="lc-title">日本株 シクリカル</div>
-              <div class="lc-sub">景気敏感 · 高配当</div>
-              <div class="lc-pending-badge">🔧 URL設定待ち</div>
-              <div class="lc-annotation"><strong>準備中:</strong> URLをコード内 href に追加してください</div>
-            </div>
-
-            <!--
-              ★ 米国株シクリカル — URL設定待ち
-              URLが決まったら href="#" を実際のURLに置き換えてください
-            -->
-            <div class="launcher-card lc-pending">
-              <div class="lc-icon">⛽</div>
-              <div class="lc-title">米国株 シクリカル</div>
-              <div class="lc-sub">景気敏感 · 高配当</div>
-              <div class="lc-pending-badge">🔧 URL設定待ち</div>
-              <div class="lc-annotation"><strong>準備中:</strong> URLをコード内 href に追加してください</div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- ════════════════════════════════════
-             4. 逆張り戦略（急落パニック）
-        ════════════════════════════════════ -->
-        <div class="strategy-block">
-          <div class="strategy-header sh-contrarian">
-            <div class="sh-icon">📉</div>
-            <div>
-              <div class="sh-title">逆張り戦略（急落パニック・売られすぎ）</div>
-              <div class="sh-sub">RSI30以下 · 狼狽売り · リバウンド狙い</div>
-            </div>
-          </div>
-          <div class="launcher-grid">
-
-            <a class="launcher-card lc-red" href="https://jp.tradingview.com/screener/SOkTt546/" target="_blank" rel="noopener">
-              <span class="lc-arrow">↗</span>
-              <div class="lc-icon">🗾</div>
-              <div class="lc-title">日本株 急落パニック</div>
-              <div class="lc-sub">RSI30以下 · 狼狽売り</div>
-              <div class="lc-badge red">JP · 逆張り</div>
-              <div class="lc-annotation"><strong>注意:</strong> ファンダ確認必須 · 損切りライン厳守</div>
-            </a>
-
-            <a class="launcher-card lc-red" href="https://jp.tradingview.com/screener/PAVxd178/" target="_blank" rel="noopener">
-              <span class="lc-arrow">↗</span>
-              <div class="lc-icon">🇺🇸</div>
-              <div class="lc-title">米国株 急落パニック</div>
-              <div class="lc-sub">RSI30以下 · 狼狽売り</div>
-              <div class="lc-badge red">US · 逆張り</div>
-              <div class="lc-annotation"><strong>大型優先:</strong> Put Sell エントリー機会としても活用可</div>
-            </a>
-
-          </div>
-        </div>
-
-        <!-- ════════════════════════════════════
-             ファンダメンタル調査リンク
-        ════════════════════════════════════ -->
-        <div class="section-label">📊 ファンダメンタル調査 & 株価情報</div>
-        <div class="launcher-grid">
-
-          <a class="launcher-card lc-amber" href="https://kabutan.jp/warning/?mode=2&market=1&profit=0&signal=3&sorttype=4&stc=1" target="_blank" rel="noopener">
-            <span class="lc-arrow">↗</span>
-            <div class="lc-icon">📋</div>
-            <div class="lc-title">株探 — 新高値更新</div>
-            <div class="lc-sub">kabutan.jp · JP 52週高値銘柄</div>
-            <div class="lc-badge amber">株探 · JP</div>
-          </a>
-
-          <a class="launcher-card lc-amber" href="https://kabutan.jp/" target="_blank" rel="noopener">
-            <span class="lc-arrow">↗</span>
-            <div class="lc-icon">🔍</div>
-            <div class="lc-title">株探 — トップ</div>
-            <div class="lc-sub">kabutan.jp · 財務・ニュース・決算</div>
-            <div class="lc-badge amber">株探 · JP</div>
-          </a>
-
-          <a class="launcher-card lc-blue" href="https://finance.yahoo.com/screener/new" target="_blank" rel="noopener">
-            <span class="lc-arrow">↗</span>
-            <div class="lc-icon">💹</div>
-            <div class="lc-title">Yahoo Finance スクリーナー</div>
-            <div class="lc-sub">finance.yahoo.com · US株</div>
-            <div class="lc-badge blue">Yahoo Finance · US</div>
-          </a>
-
-          <a class="launcher-card lc-blue" href="https://finviz.com/screener.ashx?v=111&f=ta_highoc20,ta_newhigh" target="_blank" rel="noopener">
-            <span class="lc-arrow">↗</span>
-            <div class="lc-icon">📡</div>
-            <div class="lc-title">Finviz — 新高値</div>
-            <div class="lc-sub">finviz.com · US 52週高値ブレイク</div>
-            <div class="lc-badge blue">Finviz · US</div>
-          </a>
-
-        </div>
-
-        <!-- ════════════════════════════════════
-             セクター / マクロ分析
-        ════════════════════════════════════ -->
-        <div class="section-label">🔥 セクター / マクロ分析</div>
-        <div class="launcher-grid">
-
-          <a class="launcher-card" href="https://jp.tradingview.com/markets/stocks-japan/sectorandindustry-sector/" target="_blank" rel="noopener">
-            <span class="lc-arrow">↗</span>
-            <div class="lc-icon">🗺</div>
-            <div class="lc-title">セクター分析（JP）</div>
-            <div class="lc-sub">TradingView · 日本株セクター別</div>
-            <div class="lc-badge green">TradingView · JP</div>
-          </a>
-
-          <a class="launcher-card lc-blue" href="https://jp.tradingview.com/markets/stocks-usa/sectorandindustry-sector/" target="_blank" rel="noopener">
-            <span class="lc-arrow">↗</span>
-            <div class="lc-icon">🌐</div>
-            <div class="lc-title">セクター分析（US）</div>
-            <div class="lc-sub">TradingView · 米国株セクター別</div>
-            <div class="lc-badge blue">TradingView · US</div>
-          </a>
-
-          <!-- ★ 経済指標カレンダー（既存カードと完全同一スタイル） -->
-          <a class="launcher-card" href="https://jp.investing.com/economic-calendar/" target="_blank" rel="noopener" style="border-color:rgba(206,147,216,0.2);">
-            <span class="lc-arrow" style="color:var(--purple);">↗</span>
-            <div class="lc-icon">📅</div>
-            <div class="lc-title">経済指標カレンダー</div>
-            <div class="lc-sub">jp.investing.com · 重要イベント確認</div>
-            <div class="lc-badge purple">Investing.com · Macro</div>
-            <div class="lc-annotation"><strong>確認必須:</strong> 雇用統計・CPI・FOMC・日銀会合</div>
-          </a>
-
-        </div>
-
-        <!-- ════════════════════════════════════
-             ★ クイックメモ（拡張版）
-             戦略別ドロップダウン + バリュー/シクリカル時
-             チェックリスト自動挿入 + クリックで☑切替
-        ════════════════════════════════════ -->
-        <div class="section-label">🗒 クイックメモ — ファンダメンタルズ調査（<span id="memo-count">0</span>件保存中）</div>
-
-        <div class="memo-section">
-          <div class="memo-form-card">
-
-            <div class="memo-form-row">
-              <div class="memo-form-field" style="grid-column:1/-1;">
-                <label>ティッカー / 銘柄コード <span style="color:var(--red)">*</span></label>
-                <input type="text" id="qm-ticker" placeholder="例: 7011 / NVDA / TSM" autocomplete="off">
-              </div>
-              <div class="memo-form-field">
-                <label>時価総額</label>
-                <input type="text" id="qm-mktcap" placeholder="例: 1.2兆円 / 2.5T">
-              </div>
-              <div class="memo-form-field">
-                <label>PER（倍）</label>
-                <input type="text" id="qm-per" placeholder="例: 18.5">
-              </div>
-              <div class="memo-form-field">
-                <label>投資戦略</label>
-                <select id="qm-strategy" onchange="onStrategyChange(this.value)">
-                  <option value="other">その他</option>
-                  <option value="momentum">🚀 モメンタム</option>
-                  <option value="value">💰 バリュー</option>
-                  <option value="cyclical">🔄 シクリカル</option>
-                  <option value="panic">📉 パニック逆張り</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- バリュー/シクリカル選択時のヒント -->
-            <div class="strategy-hint" id="strategy-hint">
-              💡 <strong>バリュー / シクリカル</strong> を選択しました。フリーメモにチェックリストを自動挿入します。
-              空のメモ欄に「チェックリスト挿入」ボタンで確認ステップを追加できます。
-            </div>
-
-            <div class="memo-form-field">
-              <label>ブレイク根拠 / フリーメモ</label>
-              <textarea id="qm-note" placeholder="根拠・リスク・目標株価などを記入..."></textarea>
-            </div>
-
-            <div class="memo-form-actions">
-              <button class="memo-clear-btn" onclick="clearMemoForm()">クリア</button>
-              <button class="memo-clear-btn" id="checklist-btn" onclick="insertChecklist()" style="display:none;border-color:rgba(255,179,0,.3);color:var(--amber);">📋 チェックリスト挿入</button>
-              <button class="memo-add-btn" onclick="addQuickMemo()">＋ メモを保存</button>
-            </div>
-
-          </div>
-
-          <div class="memo-cards-grid" id="memo-cards-grid">
-            <div class="memo-empty" id="memo-empty">
-              ティッカーと戦略を選択してメモを保存すると<br>
-              ここにカードが追加されます。<br>
-              データは localStorage に自動保存されます。
-            </div>
-          </div>
-        </div>
-
-        <div style="height:16px;flex-shrink:0;"></div>
       </div>
-    </div>
-
-    <!-- ══ TAB 2: HEATMAP ══ -->
-    <div class="tab-panel" id="panel-heatmap">
-      <div class="panel-header"><div class="panel-title"><span>◈</span>セクター熱量レーダー</div></div>
-      <div class="widget-shell">
-        <div class="tradingview-widget-container" style="position:absolute;inset:0;height:100%;width:100%;">
-          <div class="tradingview-widget-container__widget" style="height:100%;width:100%;"></div>
-          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js" async>
-          {"exchanges":[],"dataSource":"TOPIX","grouping":"sector","blockSize":"market_cap_basic","blockColor":"change","locale":"ja","symbolUrl":"","colorTheme":"dark","hasTopBar":true,"isDataSetEnabled":true,"isZoomEnabled":true,"hasSymbolTooltip":true,"isMonoSize":false,"width":"100%","height":"100%"}
+      <div class="widget-container" id="screener-container">
+        <div class="widget-loading" id="screener-loading">
+          <div class="loader-ring"></div>
+          <div class="loader-text">Loading Screener...</div>
+        </div>
+        <!-- TradingView Screener Widget BEGIN -->
+        <div class="tradingview-widget-container" style="height:100%;width:100%">
+          <div class="tradingview-widget-container__widget" style="height:calc(100%);width:100%"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>
+          {
+            "width": "100%",
+            "height": "100%",
+            "defaultColumn": "overview",
+            "defaultScreen": "top_gainers",
+            "market": "japan",
+            "showToolbar": true,
+            "colorTheme": "dark",
+            "locale": "ja",
+            "isTransparent": true,
+            "largeChartUrl": "https://jp.tradingview.com/chart/",
+            "displayCurrency": "JPY"
+          }
           </script>
         </div>
+        <!--
+          ╔══════════════════════════════════════════════════════════╗
+          ║  SCREENER CLICK → CHART URL LOGIC (how it works)        ║
+          ║                                                          ║
+          ║  When a ticker is clicked, TradingView widget fires:     ║
+          ║    1) postMessage  → caught by our window listener       ║
+          ║       → opens  https://jp.tradingview.com/chart/         ║
+          ║                    ?symbol=TSE:7011   (JP)               ║
+          ║                    ?symbol=NASDAQ:NVDA (US)              ║
+          ║    2) largeChartUrl fallback (if postMessage not fired)  ║
+          ║       → same URL, opened by TradingView widget itself    ║
+          ╚══════════════════════════════════════════════════════════╝
+        -->
+        <!-- TradingView Screener Widget END -->
       </div>
     </div>
 
-    <!-- ══ TAB 3: WATCHLIST ══ -->
+    <!-- ── TAB 2: HEATMAP ── -->
+    <div class="tab-panel" id="panel-heatmap">
+      <div class="panel-header">
+        <div class="panel-title"><span>◈</span>セクター熱量レーダー</div>
+        <div class="panel-meta">Stock Heatmap — 資金ローテーション</div>
+      </div>
+      <div class="widget-container" id="heatmap-container">
+        <div class="widget-loading" id="heatmap-loading">
+          <div class="loader-ring"></div>
+          <div class="loader-text">Loading Heatmap...</div>
+        </div>
+        <!-- TradingView Stock Heatmap Widget BEGIN -->
+        <div class="tradingview-widget-container" style="height:100%;width:100%">
+          <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js" async>
+          {
+            "exchanges": [],
+            "dataSource": "TOPIX",
+            "grouping": "sector",
+            "blockSize": "market_cap_basic",
+            "blockColor": "change",
+            "locale": "ja",
+            "symbolUrl": "",
+            "colorTheme": "dark",
+            "hasTopBar": true,
+            "isDataSetEnabled": true,
+            "isZoomEnabled": true,
+            "hasSymbolTooltip": true,
+            "isMonoSize": false,
+            "width": "100%",
+            "height": "100%"
+          }
+          </script>
+        </div>
+        <!-- TradingView Stock Heatmap Widget END -->
+      </div>
+    </div>
+
+    <!-- ── TAB 3: WATCHLIST ── -->
     <div class="tab-panel" id="panel-watchlist">
       <div class="watchlist-toolbar">
         <div class="wl-stats">
-          <div class="wl-stat"><div class="wl-stat-label">登録数</div><div class="wl-stat-val" id="stat-total">0</div></div>
-          <div class="wl-stat"><div class="wl-stat-label">JP株</div><div class="wl-stat-val" id="stat-jp" style="color:var(--amber)">0</div></div>
-          <div class="wl-stat"><div class="wl-stat-label">US株</div><div class="wl-stat-val" id="stat-us" style="color:var(--blue)">0</div></div>
+          <div class="wl-stat">
+            <div class="wl-stat-label">登録数</div>
+            <div class="wl-stat-val" id="stat-total">0</div>
+          </div>
+          <div class="wl-stat">
+            <div class="wl-stat-label">JP株</div>
+            <div class="wl-stat-val" id="stat-jp" style="color:var(--amber)">0</div>
+          </div>
+          <div class="wl-stat">
+            <div class="wl-stat-label">US株</div>
+            <div class="wl-stat-val" id="stat-us" style="color:#4fc3f7">0</div>
+          </div>
         </div>
         <div class="wl-search-wrap">
           <span class="search-icon">🔍</span>
@@ -829,462 +1977,1019 @@ body::after {
       </div>
     </div>
 
+    <!-- ── TAB 4: IPO・TOB ── -->
+    <div class="tab-panel" id="panel-ipo">
+
+      <!-- ヘッダー：カテゴリタブ + 検索 -->
+      <div class="ipo-header">
+        <div class="panel-title" style="flex-shrink:0"><span>◈</span>日米 IPO・TOB 管理</div>
+        <div class="ipo-cat-tabs" id="ipoCatTabs">
+          <button class="ipo-cat-btn active" data-cat="all">ALL</button>
+          <button class="ipo-cat-btn" data-cat="jp-ipo">🗾 日本 IPO</button>
+          <button class="ipo-cat-btn" data-cat="jp-tob">🗾 日本 TOB</button>
+          <button class="ipo-cat-btn" data-cat="us-ipo">🇺🇸 米国 IPO</button>
+          <button class="ipo-cat-btn" data-cat="us-tender">🇺🇸 米 Tender/M&amp;A</button>
+          <button class="ipo-cat-btn" data-cat="fav">⭐ お気に入り</button>
+        </div>
+        <div class="ipo-search-wrap">
+          <span>🔍</span>
+          <input class="ipo-search" id="ipoSearch" type="text"
+                 placeholder="サイト名・用途で検索..." autocomplete="off">
+        </div>
+      </div>
+
+      <!-- カードグリッド（JSで生成） -->
+      <div class="ipo-content" id="ipoContent"></div>
+
+    </div>
+
   </main>
 </div>
 
+<!-- FAB -->
 <button id="fab" onclick="openAddModal()" title="銘柄を追加">＋</button>
 
-<!-- ADD MODAL -->
+<!-- ══════════ ADD MODAL ══════════ -->
 <div class="modal-backdrop" id="add-modal">
   <div class="modal">
-    <div class="modal-header"><div class="modal-title">銘柄を追加</div><button class="modal-close" onclick="closeAddModal()">✕</button></div>
+    <div class="modal-header">
+      <div class="modal-title">銘柄を追加</div>
+      <button class="modal-close" onclick="closeAddModal()">✕</button>
+    </div>
     <div class="modal-body">
       <div class="form-group">
         <label class="form-label">銘柄コード <span class="required">*</span></label>
-        <input type="text" class="form-input" id="modal-ticker" placeholder="例: 7011 / NVDA / TSM" oninput="updateModalPreview(this.value)" onkeydown="if(event.key==='Enter') document.getElementById('modal-name').focus()">
+        <input type="text" class="form-input" id="modal-ticker"
+               placeholder="例: 7011 / NVDA / TSM"
+               oninput="updateModalPreview(this.value)"
+               onkeydown="if(event.key==='Enter') document.getElementById('modal-name').focus()">
       </div>
-      <div class="modal-preview">
-        <span class="preview-label">判定→</span><span class="preview-ticker" id="preview-ticker">—</span><span id="preview-badge"></span>
+
+      <div class="modal-preview" id="modal-preview">
+        <span class="preview-label">判定→</span>
+        <span class="preview-ticker" id="preview-ticker">—</span>
+        <span id="preview-badge"></span>
       </div>
+
       <div class="form-group">
         <label class="form-label">銘柄名（任意）</label>
-        <input type="text" class="form-input" id="modal-name" placeholder="例: 三菱重工業 / NVIDIA Corp" onkeydown="if(event.key==='Enter') document.getElementById('modal-memo').focus()">
+        <input type="text" class="form-input" id="modal-name"
+               placeholder="例: 三菱重工業 / NVIDIA Corp"
+               onkeydown="if(event.key==='Enter') document.getElementById('modal-memo').focus()">
       </div>
+
       <div class="form-group">
         <label class="form-label">注目理由・メモ（任意）</label>
-        <textarea class="form-input form-textarea" id="modal-memo" placeholder="例: 高値ブレイク、出来高急増、決算ブレイク..."></textarea>
+        <textarea class="form-input form-textarea" id="modal-memo"
+                  placeholder="例: 52週高値更新、出来高急増、決算ブレイク..."></textarea>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeAddModal()">キャンセル</button>
-      <button class="btn-primary" onclick="addToWatchlist()"><span>＋</span> 追加する</button>
+      <button class="btn-primary" onclick="addToWatchlist()">
+        <span>＋</span> 追加する
+      </button>
     </div>
   </div>
 </div>
 
-<!-- SETTINGS -->
+<!-- ══════════ SETTINGS PANEL ══════════ -->
 <div id="settings-backdrop" onclick="closeSettings()"></div>
 <div id="settings-panel">
-  <div class="settings-header"><div class="settings-title">⚙️ システム設定</div><button class="modal-close" onclick="closeSettings()">✕</button></div>
+  <div class="settings-header">
+    <div class="settings-title">⚙️ システム設定</div>
+    <button class="modal-close" onclick="closeSettings()">✕</button>
+  </div>
   <div class="settings-body">
     <div class="settings-section-title">Supabase 接続設定</div>
+
     <div class="settings-help">
-      <a href="https://supabase.com" target="_blank">supabase.com</a> でプロジェクトを作成し、Settings → API から URL と anon key を取得してください。<br><br>
+      <a href="https://supabase.com" target="_blank">supabase.com</a> でプロジェクトを作成し、
+      Settings → API から Project URL と anon key を取得してください。<br><br>
       テーブル: <code style="color:var(--green-bright)">breakout_watchlist</code><br>
-      カラム: <code style="color:var(--text-code)">id (uuid), ticker (text), name (text), memo (text), created_at (timestamp)</code>
+      必要カラム: <code style="color:var(--text-code)">id (uuid), ticker (text), name (text), memo (text), created_at (timestamp)</code>
     </div>
-    <div class="form-group"><label class="form-label">Project URL</label><input type="text" class="form-input" id="sb-url" placeholder="https://xxxxxxxxxxxx.supabase.co"></div>
-    <div class="form-group"><label class="form-label">Anon Key</label><input type="password" class="form-input" id="sb-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..."></div>
+
+    <div class="form-group">
+      <label class="form-label">Project URL</label>
+      <input type="text" class="form-input" id="sb-url"
+             placeholder="https://xxxxxxxxxxxx.supabase.co">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Anon Key</label>
+      <input type="password" class="form-input" id="sb-key"
+             placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6...">
+    </div>
+
+    <div class="settings-section-title" style="margin-top:8px">TradingView スクリーナー設定</div>
+    <div class="form-group">
+      <label class="form-label">対象市場</label>
+      <select class="form-input" id="tv-market" style="cursor:pointer">
+        <option value="japan">日本株 (TOPIX/JPX)</option>
+        <option value="US">米国株 (NYSE/NASDAQ)</option>
+        <option value="crypto">暗号通貨</option>
+      </select>
+    </div>
+
   </div>
   <div class="settings-footer">
-    <div class="status-indicator idle" id="supabase-status"><div class="status-dot"></div><span id="supabase-status-text">未接続</span></div>
-    <button class="btn-primary" onclick="saveSettings()" style="width:100%;justify-content:center">💾 保存して接続テスト</button>
-    <button class="btn-secondary" onclick="clearAllData()" style="font-size:11px;color:var(--red);border-color:var(--red-dim)">🗑 全データをリセット</button>
+    <div class="status-indicator idle" id="supabase-status">
+      <div class="status-dot"></div>
+      <span id="supabase-status-text">未接続</span>
+    </div>
+    <button class="btn-primary" onclick="saveSettings()" style="width:100%;justify-content:center">
+      💾 保存して接続テスト
+    </button>
+    <button class="btn-secondary" onclick="clearAllData()" style="font-size:11px;color:var(--red);border-color:var(--red-dim)">
+      🗑 全データをリセット
+    </button>
   </div>
 </div>
 
+<!-- Toast container -->
 <div id="toast-container"></div>
 
-<!-- ================================================================
-     APPLICATION SCRIPT
-================================================================ -->
+<!-- ══════════════════════════════════════════════
+   MAIN APPLICATION LOGIC
+══════════════════════════════════════════════ -->
 <script>
 'use strict';
 
-/* ── CONSTANTS ── */
-var APP_KEY = 'apex_terminal_';
-var LS = {
-  get: function(k)    { try { return JSON.parse(localStorage.getItem(APP_KEY+k)); } catch(e) { return null; } },
-  set: function(k, v) { localStorage.setItem(APP_KEY+k, JSON.stringify(v)); }
+/* ─────────────────────────────────────────────
+   CONSTANTS & STATE
+───────────────────────────────────────────── */
+const APP_KEY   = 'apex_terminal_';
+const LS = {
+  get: k  => { try { return JSON.parse(localStorage.getItem(APP_KEY+k)); } catch(e) { return null; } },
+  set: (k,v) => localStorage.setItem(APP_KEY+k, JSON.stringify(v)),
+  del: k  => localStorage.removeItem(APP_KEY+k),
 };
 
-/* バリュー/シクリカル株 検証チェックリスト */
-var VALUE_CHECKLIST =
-  '□ 有報「設備の状況」で賃貸不動産の含み益を確認\n' +
-  '□ 有報「投資株式」で現在の時価との乖離をチェック\n' +
-  '□ グレアム指数(PER×PBR)が22.5以下か確認\n' +
-  '□ 自社株買い・増配・アクティビスト介入の可能性\n' +
-  '□ セクターローテーションの現在地を確認(Notion連動)';
-
-/* 戦略メタデータ */
-var STRATEGY_META = {
-  'momentum': { label:'モメンタム', cls:'momentum', icon:'🚀' },
-  'value':    { label:'バリュー',   cls:'value',    icon:'💰' },
-  'cyclical': { label:'シクリカル', cls:'cyclical', icon:'🔄' },
-  'panic':    { label:'パニック逆張り', cls:'panic', icon:'📉' },
-  'other':    { label:'その他',     cls:'other',    icon:'📌' }
+let state = {
+  tab: 'breakout',
+  items: [],        // watchlist items
+  filtered: null,   // null = no filter
+  sbUrl: '',
+  sbKey: '',
 };
 
-/* ── STATE ── */
-var state = {
-  tab:      'screener',
-  items:    [],
-  filtered: null,
-  memos:    [],
-  sbUrl:    '',
-  sbKey:    ''
-};
+/* ─────────────────────────────────────────────
+   BOOT
+───────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', async () => {
+  // Remove boot flash after tiny delay
+  setTimeout(() => {
+    const bf = document.getElementById('boot-flash');
+    if (bf) bf.remove();
+  }, 300);
 
-/* ── BOOT ── */
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(function() { var bf=document.getElementById('boot-flash'); if(bf) bf.remove(); }, 300);
+  // Load settings
   state.sbUrl = LS.get('sbUrl') || '';
   state.sbKey = LS.get('sbKey') || '';
-  document.getElementById('sb-url').value = state.sbUrl;
-  document.getElementById('sb-key').value = state.sbKey;
+  document.getElementById('sb-url').value  = state.sbUrl;
+  document.getElementById('sb-key').value  = state.sbKey;
+
   updateConnBar();
-  loadWatchlist();
-  state.memos = LS.get('qmemos') || [];
-  renderMemoCards();
+
+  // Load watchlist (from Supabase or localStorage fallback)
+  await loadWatchlist();
+
+  // Hide loading spinners after 2s (TradingView loads async)
+  setTimeout(() => {
+    document.querySelectorAll('.widget-loading').forEach(el => el.classList.add('hidden'));
+  }, 2500);
+
+  // Clock in topbar
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // ── TradingView widget postMessage interceptor ──────────────────────────
+  // TradingView screener/heatmap widgets emit postMessage events when a
+  // symbol is clicked. We intercept these to open the chart in a new tab
+  // with the correctly formatted URL (TSE:XXXX for JP, raw ticker for US).
+  window.addEventListener('message', (evt) => {
+    try {
+      // Accept messages only from TradingView origins
+      if (!evt.origin.includes('tradingview.com')) return;
+
+      const data = typeof evt.data === 'string' ? JSON.parse(evt.data) : evt.data;
+      if (!data) return;
+
+      // Different TradingView widget versions use different event shapes
+      // Shape A: { name: "...", data: { symbol: "TSE:7011" } }
+      // Shape B: { symbol_name: "TSE:7011" }
+      // Shape C: { type: "symbol", symbol: "TSE:7011" }
+      const symbolRaw =
+        data?.data?.symbol ||
+        data?.symbol_name  ||
+        data?.symbol       || '';
+
+      if (!symbolRaw) return;
+
+      // Normalise: strip any leading exchange prefix for our detector,
+      // but pass the FULL prefixed symbol directly to TradingView
+      const sym = symbolRaw.trim().toUpperCase();
+      const url = `https://jp.tradingview.com/chart/?symbol=${sym}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } catch (_) {
+      // Silently ignore parse errors from unrelated postMessages
+    }
+  });
 });
 
-/* ── TAB SWITCHING ── */
+function updateClock() {
+  const now = new Date();
+  const ts = now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const el = document.getElementById('screener-ts');
+  if (el) el.textContent = `TradingView Screener · ${ts}`;
+}
+
+/* ─────────────────────────────────────────────
+   TAB SWITCHING
+───────────────────────────────────────────── */
 function switchTab(tab) {
   state.tab = tab;
-  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
-  document.querySelectorAll('.tab-btn').forEach(function(b)   { b.classList.remove('active'); });
-  document.getElementById('panel-'+tab).classList.add('active');
-  document.getElementById('tab-'+tab).classList.add('active');
-  document.getElementById('fab').classList.toggle('visible', tab==='watchlist');
+
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+  document.getElementById(`panel-${tab}`).classList.add('active');
+  document.getElementById(`tab-${tab}`).classList.add('active');
+
+  const fab = document.getElementById('fab');
+  fab.classList.toggle('visible', tab === 'watchlist');
 }
 
-/* ════════════════════════════════════════════════════════════════
-   ★ STRATEGY CHANGE HANDLER
-   バリューまたはシクリカルが選択されたとき:
-   - ヒントバナーを表示
-   - チェックリスト挿入ボタンを表示
-   - フリーメモ欄が空なら自動挿入
-════════════════════════════════════════════════════════════════ */
-function onStrategyChange(val) {
-  var hint        = document.getElementById('strategy-hint');
-  var checkBtn    = document.getElementById('checklist-btn');
-  var needChecklist = (val === 'value' || val === 'cyclical');
-
-  hint.classList.toggle('visible', needChecklist);
-  checkBtn.style.display = needChecklist ? 'flex' : 'none';
-
-  /* メモ欄が空の場合のみ自動挿入 */
-  if (needChecklist) {
-    var noteField = document.getElementById('qm-note');
-    if (!noteField.value.trim()) {
-      noteField.value = VALUE_CHECKLIST;
-    }
-  }
-}
-
-/* チェックリスト手動挿入ボタン */
-function insertChecklist() {
-  var noteField = document.getElementById('qm-note');
-  /* 既存テキストがあれば末尾に追加、なければ置換 */
-  if (noteField.value.trim()) {
-    noteField.value = noteField.value.trimEnd() + '\n\n' + VALUE_CHECKLIST;
-  } else {
-    noteField.value = VALUE_CHECKLIST;
-  }
-  noteField.focus();
-  toast('チェックリストを挿入しました', 'success');
-}
-
-/* ════════════════════════════════════════════════════════════════
-   ★ QUICK MEMO CRUD
-════════════════════════════════════════════════════════════════ */
-function addQuickMemo() {
-  var ticker   = document.getElementById('qm-ticker').value.trim().toUpperCase();
-  var mktcap   = document.getElementById('qm-mktcap').value.trim();
-  var per      = document.getElementById('qm-per').value.trim();
-  var note     = document.getElementById('qm-note').value.trim();
-  var strategy = document.getElementById('qm-strategy').value || 'other';
-
-  if (!ticker) { toast('ティッカーを入力してください', 'error'); document.getElementById('qm-ticker').focus(); return; }
-
-  /* バリュー/シクリカルで、メモが空かつチェックリスト未挿入の場合は自動挿入 */
-  if ((strategy === 'value' || strategy === 'cyclical') && !note) {
-    note = VALUE_CHECKLIST;
-  }
-
-  var memo = {
-    id:         Date.now().toString(36) + Math.random().toString(36).slice(2,6),
-    ticker:     ticker,
-    mktcap:     mktcap,
-    per:        per,
-    note:       note,
-    strategy:   strategy,
-    created_at: new Date().toISOString()
-  };
-
-  state.memos.unshift(memo);
-  LS.set('qmemos', state.memos);
-  renderMemoCards();
-  clearMemoForm();
-  toast(ticker + ' のメモを保存しました', 'success');
-}
-
-function deleteMemo(id) {
-  state.memos = state.memos.filter(function(m) { return m.id !== id; });
-  LS.set('qmemos', state.memos);
-  renderMemoCards();
-  toast('メモを削除しました', 'info');
-}
-
-function clearMemoForm() {
-  document.getElementById('qm-ticker').value  = '';
-  document.getElementById('qm-mktcap').value  = '';
-  document.getElementById('qm-per').value     = '';
-  document.getElementById('qm-note').value    = '';
-  document.getElementById('qm-strategy').value = 'other';
-  document.getElementById('strategy-hint').classList.remove('visible');
-  document.getElementById('checklist-btn').style.display = 'none';
-  document.getElementById('qm-ticker').focus();
-}
-
-/* ════════════════════════════════════════════════════════════════
-   ★ CHECKBOX TOGGLE
-   □ / ☑ を行頭に持つ行をクリックで切り替え、localStorage 保存
-════════════════════════════════════════════════════════════════ */
-function toggleCheckbox(memoId, lineIdx) {
-  var memo = null;
-  for (var i=0; i<state.memos.length; i++) { if (state.memos[i].id===memoId) { memo=state.memos[i]; break; } }
-  if (!memo || !memo.note) return;
-  var lines = memo.note.split('\n');
-  if (lineIdx >= lines.length) return;
-  var line = lines[lineIdx];
-  if (line.charAt(0) === '□') { lines[lineIdx] = '☑' + line.slice(1); }
-  else if (line.charAt(0) === '☑') { lines[lineIdx] = '□' + line.slice(1); }
-  memo.note = lines.join('\n');
-  LS.set('qmemos', state.memos);
-  /* カード全体を再描画せず対象カードのみ更新 */
-  var card = document.querySelector('[data-memo-id="'+memoId+'"]');
-  if (card) {
-    var noteWrap = card.querySelector('.memo-card-note');
-    if (noteWrap) noteWrap.outerHTML = buildNoteHtml(memo.note, memoId);
-  }
-}
-
-/* ── RENDER MEMO NOTE WITH CLICKABLE CHECKBOXES ── */
-function buildNoteHtml(note, memoId) {
-  if (!note) return '';
-  var lines = note.split('\n');
-  var html  = '<div class="memo-card-note">';
-  for (var i=0; i<lines.length; i++) {
-    var line = lines[i];
-    if (line.length > 0 && (line.charAt(0)==='□' || line.charAt(0)==='☑')) {
-      var isChecked = (line.charAt(0)==='☑');
-      var text = escHtml(line.slice(1).trim());
-      html += '<div class="memo-cb-line" onclick="toggleCheckbox(\''+memoId+'\','+i+')">'
-            + '<span class="cb-icon' + (isChecked?' checked':'') + '">' + (isChecked?'☑':'□') + '</span>'
-            + '<span class="cb-text' + (isChecked?' checked':'') + '">' + text + '</span>'
-            + '</div>';
-    } else if (line.length > 0) {
-      html += '<div class="memo-text-line">' + escHtml(line) + '</div>';
-    }
-  }
-  html += '</div>';
-  return html;
-}
-
-function renderMemoCards() {
-  var grid  = document.getElementById('memo-cards-grid');
-  var empty = document.getElementById('memo-empty');
-  document.getElementById('memo-count').textContent = state.memos.length;
-  grid.querySelectorAll('.memo-card').forEach(function(c) { c.remove(); });
-  if (state.memos.length === 0) { empty.style.display=''; return; }
-  empty.style.display = 'none';
-  for (var i=0; i<state.memos.length; i++) { grid.insertAdjacentHTML('beforeend', buildMemoCard(state.memos[i])); }
-}
-
-function buildMemoCard(m) {
-  var meta = STRATEGY_META[m.strategy] || STRATEGY_META['other'];
-  var dt   = m.created_at ? new Date(m.created_at).toLocaleString('ja-JP',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
-  var stratClass = 'strat-' + (m.strategy||'other');
-
-  var mktcapHtml = m.mktcap
-    ? '<div class="memo-stat"><div class="memo-stat-label">時価総額</div><div class="memo-stat-val">'+escHtml(m.mktcap)+'</div></div>'
-    : '<div class="memo-stat"><div class="memo-stat-label">時価総額</div><div class="memo-stat-val empty">—</div></div>';
-
-  var perHtml = m.per
-    ? '<div class="memo-stat"><div class="memo-stat-label">PER</div><div class="memo-stat-val">'+escHtml(m.per)+'<span style="font-size:10px;color:var(--text-muted)"> 倍</span></div></div>'
-    : '<div class="memo-stat"><div class="memo-stat-label">PER</div><div class="memo-stat-val empty">—</div></div>';
-
-  return '<div class="memo-card '+stratClass+'" data-memo-id="'+m.id+'">'
-    + '<div class="memo-card-header">'
-    +   '<div>'
-    +     '<div class="memo-card-ticker">'+escHtml(m.ticker)+'</div>'
-    +     '<div style="margin-top:4px;"><span class="lc-badge ' + (m.strategy==='momentum'?'green':m.strategy==='value'?'amber':m.strategy==='cyclical'?'blue':m.strategy==='panic'?'red':'muted') + '" style="font-size:8px;">' + meta.icon + ' ' + meta.label + '</span></div>'
-    +   '</div>'
-    +   '<button class="memo-card-del" onclick="deleteMemo(\''+m.id+'\')" title="削除">✕</button>'
-    + '</div>'
-    + '<div class="memo-card-stats">' + mktcapHtml + perHtml + '</div>'
-    + buildNoteHtml(m.note, m.id)
-    + (dt ? '<div class="memo-card-ts">📝 '+dt+'</div>' : '')
-    + '</div>';
-}
-
-/* ── MARKET DETECTION ── */
+/* ─────────────────────────────────────────────
+   MARKET TYPE DETECTION
+───────────────────────────────────────────── */
 function detectMarket(ticker) {
-  var t = ticker.trim().toUpperCase();
-  return (/^\d{4}$/.test(t) || /^\d{4}\.(T|OS)$/.test(t)) ? 'JP' : 'US';
+  const t = ticker.trim().toUpperCase();
+  // JP: 4-digit number (also sometimes with suffix like .T)
+  if (/^\d{4}$/.test(t) || /^\d{4}\.(T|OS)$/.test(t)) return 'JP';
+  // US: letters, possibly numbers
+  return 'US';
 }
 
-/* ── URL GENERATION ── */
+function getKabutanUrl(ticker, market) {
+  const t = ticker.trim().replace(/\.(T|OS)$/i, '');
+  if (market === 'JP') return `https://kabutan.jp/stock/?code=${t}`;
+  return `https://us.kabutan.jp/stocks/${t.toUpperCase()}`;
+}
+
 function getTradingViewUrl(ticker, market) {
-  var raw = ticker.trim().toUpperCase().replace(/\.(T|OS|N|NK)$/i,'');
-  var sym;
-  if (raw.indexOf(':')!==-1) { sym=raw; }
-  else if (market==='JP'||/^\d{4,5}$/.test(raw)) { sym='TSE:'+raw; }
-  else { sym=raw; }
-  return 'https://jp.tradingview.com/chart/?symbol='+sym;
-}
-function getResearchUrl(ticker, market) {
-  var t = ticker.trim().replace(/\.(T|OS)$/i,'');
-  return (market==='JP') ? 'https://kabutan.jp/stock/?code='+t : 'https://finance.yahoo.com/quote/'+t.toUpperCase();
+  // Strip exchange suffixes (.T = Tokyo, .OS = Osaka) before processing
+  const raw = ticker.trim().toUpperCase().replace(/\.(T|OS|N|NK)$/i, '');
+
+  let symbol;
+
+  if (raw.includes(':')) {
+    // Already in EXCHANGE:TICKER format (e.g. TSE:7011, NASDAQ:NVDA) — use as-is
+    symbol = raw;
+  } else if (market === 'JP' || /^\d{4,5}$/.test(raw)) {
+    // Japan stock: 4-digit (Prime/Standard/Growth) or 5-digit (ETF/REIT)
+    // TradingView requires TSE: prefix; without it the chart shows "symbol not found"
+    symbol = `TSE:${raw}`;
+  } else {
+    // US / Global: pass ticker as-is — TradingView resolves NVDA → NASDAQ:NVDA automatically
+    symbol = raw;
+  }
+
+  // IMPORTANT: Do NOT use encodeURIComponent() on the full symbol.
+  // TradingView chart URLs require a literal colon:  ?symbol=TSE:7011
+  // encodeURIComponent would produce TSE%3A7011 which TradingView rejects.
+  return `https://jp.tradingview.com/chart/?symbol=${symbol}`;
 }
 
-/* ── ADD MODAL ── */
+/* ─────────────────────────────────────────────
+   MODAL — ADD WATCHLIST ITEM
+───────────────────────────────────────────── */
 function openAddModal() {
-  ['modal-ticker','modal-name','modal-memo'].forEach(function(id) { document.getElementById(id).value=''; });
-  document.getElementById('preview-ticker').textContent='—'; document.getElementById('preview-badge').innerHTML='';
+  document.getElementById('modal-ticker').value = '';
+  document.getElementById('modal-name').value   = '';
+  document.getElementById('modal-memo').value   = '';
+  document.getElementById('preview-ticker').textContent = '—';
+  document.getElementById('preview-badge').innerHTML    = '';
   document.getElementById('add-modal').classList.add('open');
-  setTimeout(function() { document.getElementById('modal-ticker').focus(); }, 100);
+  setTimeout(() => document.getElementById('modal-ticker').focus(), 100);
 }
-function closeAddModal() { document.getElementById('add-modal').classList.remove('open'); }
-document.getElementById('add-modal').addEventListener('click', function(e) { if(e.target===e.currentTarget) closeAddModal(); });
+
+function closeAddModal() {
+  document.getElementById('add-modal').classList.remove('open');
+}
+
+// Close on backdrop click
+document.getElementById('add-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeAddModal();
+});
 
 function updateModalPreview(val) {
-  var t=val.trim().toUpperCase(); var ticker=document.getElementById('preview-ticker'); var badge=document.getElementById('preview-badge');
-  if (!t) { ticker.textContent='—'; badge.innerHTML=''; return; }
-  var mkt=detectMarket(t); ticker.textContent=t;
-  badge.innerHTML=(mkt==='JP') ? '<span class="card-market-badge jp">🗾 JP → 株探</span>' : '<span class="card-market-badge us">🇺🇸 US → Yahoo Finance</span>';
+  const t = val.trim().toUpperCase();
+  const ticker = document.getElementById('preview-ticker');
+  const badge  = document.getElementById('preview-badge');
+  if (!t) {
+    ticker.textContent = '—';
+    badge.innerHTML = '';
+    return;
+  }
+  const mkt = detectMarket(t);
+  ticker.textContent = t;
+  badge.innerHTML = mkt === 'JP'
+    ? `<span class="card-market-badge jp">🗾 JP</span>`
+    : `<span class="card-market-badge us">🇺🇸 US</span>`;
 }
 
-function addToWatchlist() {
-  var ticker=document.getElementById('modal-ticker').value.trim().toUpperCase();
-  var name=document.getElementById('modal-name').value.trim(); var memo=document.getElementById('modal-memo').value.trim();
-  if (!ticker) { toast('銘柄コードを入力してください','error'); document.getElementById('modal-ticker').focus(); return; }
-  var dup=false; for(var d=0;d<state.items.length;d++){if(state.items[d].ticker===ticker){dup=true;break;}}
-  if (dup) { toast(ticker+' は既に登録済みです','error'); return; }
-  var item={id:crypto.randomUUID(),ticker:ticker,name:name||'',memo:memo||'',created_at:new Date().toISOString(),market:detectMarket(ticker)};
-  state.items.unshift(item); renderWatchlist(); closeAddModal(); toast(ticker+' を追加しました','success'); persistItem(item);
+async function addToWatchlist() {
+  const ticker = document.getElementById('modal-ticker').value.trim().toUpperCase();
+  const name   = document.getElementById('modal-name').value.trim();
+  const memo   = document.getElementById('modal-memo').value.trim();
+
+  if (!ticker) {
+    toast('銘柄コードを入力してください', 'error');
+    document.getElementById('modal-ticker').focus();
+    return;
+  }
+
+  // Check duplicate
+  if (state.items.find(i => i.ticker === ticker)) {
+    toast(`${ticker} は既に登録済みです`, 'error');
+    return;
+  }
+
+  const item = {
+    id:         crypto.randomUUID(),
+    ticker,
+    name:       name || '',
+    memo:       memo || '',
+    created_at: new Date().toISOString(),
+    market:     detectMarket(ticker),
+  };
+
+  // Optimistic update
+  state.items.unshift(item);
+  renderWatchlist();
+  closeAddModal();
+  toast(`${ticker} を追加しました`, 'success');
+
+  // Persist
+  await persistItem(item);
 }
 
-/* ── SUPABASE ── */
-function sbHeaders() { return {'Content-Type':'application/json','apikey':state.sbKey,'Authorization':'Bearer '+state.sbKey}; }
-function sbReady()   { return !!(state.sbUrl&&state.sbKey); }
-
-function loadWatchlist() {
-  if (!sbReady()) { state.items=(LS.get('watchlist')||[]).map(function(i){return{id:i.id,ticker:i.ticker,name:i.name||'',memo:i.memo||'',created_at:i.created_at,market:detectMarket(i.ticker)};}); renderWatchlist(); return; }
-  fetch(state.sbUrl+'/rest/v1/breakout_watchlist?select=*&order=created_at.desc',{headers:sbHeaders()})
-    .then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
-    .then(function(d){state.items=d.map(function(i){return{id:i.id,ticker:i.ticker,name:i.name||'',memo:i.memo||'',created_at:i.created_at,market:detectMarket(i.ticker)};});renderWatchlist();updateConnBar(true);})
-    .catch(function(e){state.items=(LS.get('watchlist')||[]).map(function(i){return{id:i.id,ticker:i.ticker,name:i.name||'',memo:i.memo||'',created_at:i.created_at,market:detectMarket(i.ticker)};});renderWatchlist();updateConnBar(false,String(e));});
+/* ─────────────────────────────────────────────
+   SUPABASE INTEGRATION
+───────────────────────────────────────────── */
+function sbHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'apikey':        state.sbKey,
+    'Authorization': `Bearer ${state.sbKey}`,
+  };
 }
 
-function persistItem(item) {
-  LS.set('watchlist',state.items); if(!sbReady()) return;
-  var h=sbHeaders(); h['Prefer']='return=minimal';
-  fetch(state.sbUrl+'/rest/v1/breakout_watchlist',{method:'POST',headers:h,body:JSON.stringify({id:item.id,ticker:item.ticker,name:item.name,memo:item.memo,created_at:item.created_at})}).catch(function(){toast('Supabase保存エラー（ローカルに保存済み）','error');});
+function sbReady() {
+  return state.sbUrl && state.sbKey;
 }
-function updateItemRemote(item) {
-  LS.set('watchlist',state.items); if(!sbReady()) return;
-  var h=sbHeaders(); h['Prefer']='return=minimal';
-  fetch(state.sbUrl+'/rest/v1/breakout_watchlist?id=eq.'+item.id,{method:'PATCH',headers:h,body:JSON.stringify({name:item.name,memo:item.memo})}).catch(function(e){console.warn(e);});
+
+async function loadWatchlist() {
+  if (!sbReady()) {
+    // Load from localStorage
+    const cached = LS.get('watchlist') || [];
+    state.items = cached.map(i => ({ ...i, market: detectMarket(i.ticker) }));
+    renderWatchlist();
+    return;
+  }
+
+  try {
+    const res = await fetch(
+      `${state.sbUrl}/rest/v1/breakout_watchlist?select=*&order=created_at.desc`,
+      { headers: sbHeaders() }
+    );
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+    state.items = data.map(i => ({ ...i, market: detectMarket(i.ticker) }));
+    renderWatchlist();
+    updateConnBar(true);
+  } catch(e) {
+    console.warn('Supabase load error:', e);
+    // Fallback to localStorage
+    const cached = LS.get('watchlist') || [];
+    state.items = cached.map(i => ({ ...i, market: detectMarket(i.ticker) }));
+    renderWatchlist();
+    updateConnBar(false, e.message);
+  }
 }
-function deleteItemRemote(id) {
-  LS.set('watchlist',state.items); if(!sbReady()) return;
-  fetch(state.sbUrl+'/rest/v1/breakout_watchlist?id=eq.'+id,{method:'DELETE',headers:sbHeaders()}).catch(function(e){console.warn(e);});
+
+async function persistItem(item) {
+  // Always save to localStorage as backup
+  LS.set('watchlist', state.items);
+
+  if (!sbReady()) return;
+
+  try {
+    const payload = {
+      id:         item.id,
+      ticker:     item.ticker,
+      name:       item.name,
+      memo:       item.memo,
+      created_at: item.created_at,
+    };
+    const res = await fetch(
+      `${state.sbUrl}/rest/v1/breakout_watchlist`,
+      {
+        method: 'POST',
+        headers: { ...sbHeaders(), 'Prefer': 'return=minimal' },
+        body: JSON.stringify(payload),
+      }
+    );
+    if (!res.ok) throw new Error(await res.text());
+  } catch(e) {
+    console.warn('Supabase persist error:', e);
+    toast('Supabase保存エラー（ローカルに保存済み）', 'error');
+  }
 }
-function deleteItem(id) {
-  var item=null; for(var i=0;i<state.items.length;i++){if(state.items[i].id===id){item=state.items[i];break;}}
-  if (!item||!confirm('「'+item.ticker+'」を削除しますか？')) return;
-  state.items=state.items.filter(function(x){return x.id!==id;}); renderWatchlist(); toast(item.ticker+' を削除しました','info'); deleteItemRemote(id);
+
+async function updateItemRemote(item) {
+  LS.set('watchlist', state.items);
+
+  if (!sbReady()) return;
+
+  try {
+    const res = await fetch(
+      `${state.sbUrl}/rest/v1/breakout_watchlist?id=eq.${item.id}`,
+      {
+        method: 'PATCH',
+        headers: { ...sbHeaders(), 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ name: item.name, memo: item.memo }),
+      }
+    );
+    if (!res.ok) throw new Error(await res.text());
+  } catch(e) {
+    console.warn('Supabase update error:', e);
+  }
 }
-function saveItem(id) {
-  var item=null; for(var i=0;i<state.items.length;i++){if(state.items[i].id===id){item=state.items[i];break;}}
+
+async function deleteItemRemote(id) {
+  LS.set('watchlist', state.items);
+
+  if (!sbReady()) return;
+
+  try {
+    const res = await fetch(
+      `${state.sbUrl}/rest/v1/breakout_watchlist?id=eq.${id}`,
+      { method: 'DELETE', headers: sbHeaders() }
+    );
+    if (!res.ok) throw new Error(await res.text());
+  } catch(e) {
+    console.warn('Supabase delete error:', e);
+  }
+}
+
+async function deleteItem(id) {
+  const item = state.items.find(i => i.id === id);
   if (!item) return;
-  var card=document.querySelector('[data-id="'+id+'"]');
-  if (card){item.name=card.querySelector('.card-name-input').value.trim();item.memo=card.querySelector('.card-memo-input').value.trim();}
-  toast(item.ticker+' を保存しました','success'); updateItemRemote(item);
+
+  if (!confirm(`「${item.ticker}」を削除しますか？`)) return;
+
+  state.items = state.items.filter(i => i.id !== id);
+  renderWatchlist();
+  toast(`${item.ticker} を削除しました`, 'info');
+  await deleteItemRemote(id);
 }
 
-/* ── RENDER WATCHLIST ── */
+async function saveItem(id) {
+  const item = state.items.find(i => i.id === id);
+  if (!item) return;
+
+  const card = document.querySelector(`[data-id="${id}"]`);
+  if (card) {
+    item.name = card.querySelector('.card-name-input').value.trim();
+    item.memo = card.querySelector('.card-memo-input').value.trim();
+  }
+
+  toast(`${item.ticker} を保存しました`, 'success');
+  await updateItemRemote(item);
+}
+
+/* ─────────────────────────────────────────────
+   RENDER WATCHLIST
+───────────────────────────────────────────── */
 function renderWatchlist() {
-  var grid=document.getElementById('watchlist-grid'); var items=(state.filtered!==null)?state.filtered:state.items;
-  var jp=0,us=0; for(var k=0;k<state.items.length;k++){if(state.items[k].market==='JP')jp++;else us++;}
-  document.getElementById('stat-total').textContent=state.items.length; document.getElementById('stat-jp').textContent=jp; document.getElementById('stat-us').textContent=us; document.getElementById('wl-count-badge').textContent=state.items.length;
-  grid.querySelectorAll('.wl-card').forEach(function(c){c.remove();});
-  if (items.length===0){document.getElementById('wl-empty').style.display='';return;} document.getElementById('wl-empty').style.display='none';
-  for(var j=0;j<items.length;j++){grid.insertAdjacentHTML('beforeend',buildCard(items[j]));}
+  const grid  = document.getElementById('watchlist-grid');
+  const empty = document.getElementById('wl-empty');
+  const items = state.filtered !== null ? state.filtered : state.items;
+
+  // Update stats
+  const jp = state.items.filter(i => i.market === 'JP').length;
+  const us = state.items.filter(i => i.market === 'US').length;
+  document.getElementById('stat-total').textContent  = state.items.length;
+  document.getElementById('stat-jp').textContent     = jp;
+  document.getElementById('stat-us').textContent     = us;
+  document.getElementById('wl-count-badge').textContent = state.items.length;
+
+  // Clear existing cards (not empty state)
+  grid.querySelectorAll('.wl-card').forEach(c => c.remove());
+
+  if (items.length === 0) {
+    empty.style.display = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  items.forEach(item => {
+    grid.insertAdjacentHTML('beforeend', buildCard(item));
+  });
 }
+
 function buildCard(item) {
-  var tvUrl=getTradingViewUrl(item.ticker,item.market); var researchUrl=getResearchUrl(item.ticker,item.market);
-  var ri=(item.market==='JP')?'📊':'💹'; var rl=(item.market==='JP')?'株探':'Yahoo Finance'; var rc=(item.market==='JP')?'kabutan':'yahoo';
-  var dt=item.created_at?new Date(item.created_at).toLocaleString('ja-JP',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
-  var badge=(item.market==='JP')?'<span class="card-market-badge jp">🗾 JP</span>':'<span class="card-market-badge us">🇺🇸 US</span>';
-  return '<div class="wl-card '+item.market.toLowerCase()+'-stock" data-id="'+item.id+'"><div class="corner-tl"></div><div class="corner-tr"></div>'
-    +'<div class="card-header"><div class="card-ticker-wrap"><div class="card-ticker">'+escHtml(item.ticker)+'</div>'+badge+'</div>'
-    +'<input class="card-name-input" value="'+escHtml(item.name)+'" placeholder="銘柄名を入力..." onblur="autoSaveItem(\''+item.id+'\')"></div>'
-    +'<div class="card-memo-wrap"><div class="memo-label">注目理由・メモ</div><textarea class="card-memo-input" placeholder="例: 高値ブレイク..." onblur="autoSaveItem(\''+item.id+'\')">'+escHtml(item.memo)+'</textarea></div>'
-    +'<div class="card-links"><a class="card-link tv" href="'+tvUrl+'" target="_blank" rel="noopener">📈 TradingView</a>'
-    +'<a class="card-link '+rc+'" href="'+researchUrl+'" target="_blank" rel="noopener">'+ri+' '+rl+'</a>'
-    +'<button class="card-link del" onclick="deleteItem(\''+item.id+'\')" title="削除">🗑</button></div>'
-    +(dt?'<div class="card-timestamp">登録: '+dt+'</div>':'')
-    +'</div>';
+  const mkt     = item.market;
+  const kabuUrl = getKabutanUrl(item.ticker, mkt);
+  const tvUrl   = getTradingViewUrl(item.ticker, mkt);
+  const dtLabel = item.created_at
+    ? new Date(item.created_at).toLocaleString('ja-JP', { year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit' })
+    : '';
+
+  const marketBadge = mkt === 'JP'
+    ? `<span class="card-market-badge jp">🗾 JP</span>`
+    : `<span class="card-market-badge us">🇺🇸 US</span>`;
+
+  return `
+    <div class="wl-card ${mkt.toLowerCase()}-stock" data-id="${item.id}" data-ticker="${item.ticker}">
+      <div class="corner-tl"></div>
+      <div class="corner-tr"></div>
+
+      <div class="card-header">
+        <div class="card-ticker-wrap">
+          <div class="card-ticker">${escHtml(item.ticker)}</div>
+          ${marketBadge}
+        </div>
+        <input class="card-name-input"
+               value="${escHtml(item.name)}"
+               placeholder="銘柄名を入力..."
+               onblur="autoSaveItem('${item.id}')">
+      </div>
+
+      <div class="card-memo">
+        <div class="memo-label">注目理由・メモ</div>
+        <textarea class="card-memo-input"
+                  placeholder="例: 52週高値更新、出来高急増、決算ブレイク待ち..."
+                  onblur="autoSaveItem('${item.id}')">${escHtml(item.memo)}</textarea>
+      </div>
+
+      <div class="card-actions">
+        <a class="btn-link" href="${kabuUrl}" target="_blank" rel="noopener" title="株探で財務確認">
+          📊 財務
+        </a>
+        <a class="btn-link chart" href="${tvUrl}" target="_blank" rel="noopener" title="TradingViewでチャート表示">
+          📈 チャート
+        </a>
+        <button class="btn-save" onclick="saveItem('${item.id}')">💾 保存</button>
+        <button class="btn-delete" onclick="deleteItem('${item.id}')" title="削除">🗑</button>
+      </div>
+
+      ${dtLabel ? `<div class="card-timestamp">登録: ${dtLabel}</div>` : ''}
+    </div>`;
 }
-var autoSaveTimer={};
+
+let autoSaveTimer = {};
 function autoSaveItem(id) {
   clearTimeout(autoSaveTimer[id]);
-  var item=null; for(var i=0;i<state.items.length;i++){if(state.items[i].id===id){item=state.items[i];break;}}
-  var card=document.querySelector('[data-id="'+id+'"]');
-  if(item&&card){item.name=card.querySelector('.card-name-input').value.trim();item.memo=card.querySelector('.card-memo-input').value.trim();LS.set('watchlist',state.items);}
-  autoSaveTimer[id]=setTimeout(function(){var it=null;for(var j=0;j<state.items.length;j++){if(state.items[j].id===id){it=state.items[j];break;}}updateItemRemote(it||{});},2000);
+  autoSaveTimer[id] = setTimeout(() => updateItemRemote(
+    state.items.find(i => i.id === id) || {}
+  ), 2000);
+
+  // Sync to state
+  const item = state.items.find(i => i.id === id);
+  const card = document.querySelector(`[data-id="${id}"]`);
+  if (item && card) {
+    item.name = card.querySelector('.card-name-input').value.trim();
+    item.memo = card.querySelector('.card-memo-input').value.trim();
+    LS.set('watchlist', state.items);
+  }
 }
+
+/* ─────────────────────────────────────────────
+   SEARCH / FILTER
+───────────────────────────────────────────── */
 function filterWatchlist(q) {
-  var query=q.trim().toUpperCase();
-  if(!query){state.filtered=null;}else{state.filtered=state.items.filter(function(i){return i.ticker.indexOf(query)!==-1||(i.name&&i.name.toUpperCase().indexOf(query)!==-1)||(i.memo&&i.memo.toUpperCase().indexOf(query)!==-1);});}
+  const query = q.trim().toUpperCase();
+  if (!query) {
+    state.filtered = null;
+  } else {
+    state.filtered = state.items.filter(i =>
+      i.ticker.includes(query) ||
+      (i.name && i.name.toUpperCase().includes(query)) ||
+      (i.memo && i.memo.toUpperCase().includes(query))
+    );
+  }
   renderWatchlist();
 }
 
-/* ── SETTINGS ── */
-function openSettings()  {document.getElementById('settings-panel').classList.add('open');   document.getElementById('settings-backdrop').classList.add('open');}
-function closeSettings() {document.getElementById('settings-panel').classList.remove('open');document.getElementById('settings-backdrop').classList.remove('open');}
-function saveSettings() {
-  var url=document.getElementById('sb-url').value.trim().replace(/\/+$/,''); var key=document.getElementById('sb-key').value.trim();
-  if(!url||!key){toast('URLとAnon Keyを入力してください','error');return;}
-  state.sbUrl=url;state.sbKey=key;LS.set('sbUrl',url);LS.set('sbKey',key);
-  var sEl=document.getElementById('supabase-status');var sTx=document.getElementById('supabase-status-text');
-  sEl.className='status-indicator idle';sTx.textContent='接続テスト中...';
-  fetch(url+'/rest/v1/breakout_watchlist?select=id&limit=1',{headers:{'apikey':key,'Authorization':'Bearer '+key}})
-    .then(function(r){if(r.ok){sEl.className='status-indicator ok';sTx.textContent='接続成功 ✓ ('+new Date().toLocaleTimeString('ja-JP')+')';toast('Supabase 接続成功！','success');updateConnBar(true);loadWatchlist();}else{throw new Error(r.status);}})
-    .catch(function(e){sEl.className='status-indicator err';sTx.textContent='接続失敗: '+String(e).slice(0,60);toast('接続失敗 — URLとキーを確認してください','error');updateConnBar(false,String(e));});
+/* ─────────────────────────────────────────────
+   SETTINGS
+───────────────────────────────────────────── */
+function openSettings() {
+  document.getElementById('settings-panel').classList.add('open');
+  document.getElementById('settings-backdrop').classList.add('open');
 }
-function updateConnBar(ok,errMsg) {
-  var bar=document.getElementById('conn-bar');var msg=document.getElementById('conn-msg');
-  if(ok===true){bar.className='ok';msg.textContent='Supabase 接続済み — '+state.sbUrl;setTimeout(function(){bar.classList.add('hidden');},4000);}
-  else if(ok===false){bar.className='';msg.textContent='Supabase 接続エラー — ローカルモードで動作中 ('+(errMsg?String(errMsg).slice(0,50):'')+')'; }
-  else{if(!state.sbUrl||!state.sbKey){bar.className='';msg.textContent='Supabase 未設定 — 右上の ⚙️ 設定からURLとAnon Keyを入力してください';}else{bar.classList.add('hidden');}}
+
+function closeSettings() {
+  document.getElementById('settings-panel').classList.remove('open');
+  document.getElementById('settings-backdrop').classList.remove('open');
 }
+
+async function saveSettings() {
+  const url = document.getElementById('sb-url').value.trim().replace(/\/+$/, '');
+  const key = document.getElementById('sb-key').value.trim();
+
+  if (!url || !key) {
+    toast('URLとAnon Keyを入力してください', 'error');
+    return;
+  }
+
+  state.sbUrl = url;
+  state.sbKey = key;
+  LS.set('sbUrl', url);
+  LS.set('sbKey', key);
+
+  // Connection test
+  const statusEl   = document.getElementById('supabase-status');
+  const statusText = document.getElementById('supabase-status-text');
+  statusEl.className   = 'status-indicator idle';
+  statusText.textContent = '接続テスト中...';
+
+  try {
+    const res = await fetch(
+      `${url}/rest/v1/breakout_watchlist?select=id&limit=1`,
+      { headers: { 'apikey': key, 'Authorization': `Bearer ${key}` } }
+    );
+
+    if (res.ok) {
+      statusEl.className   = 'status-indicator ok';
+      statusText.textContent = `接続成功 ✓ (${new Date().toLocaleTimeString('ja-JP')})`;
+      toast('Supabase 接続成功！', 'success');
+      updateConnBar(true);
+      await loadWatchlist();
+    } else {
+      const err = await res.text();
+      throw new Error(err);
+    }
+  } catch(e) {
+    statusEl.className   = 'status-indicator err';
+    statusText.textContent = `接続失敗: ${e.message.slice(0,60)}`;
+    toast('接続失敗 — URLとキーを確認してください', 'error');
+    updateConnBar(false, e.message);
+  }
+}
+
+function updateConnBar(ok, errMsg) {
+  const bar = document.getElementById('conn-bar');
+  const msg = document.getElementById('conn-msg');
+
+  if (ok === true) {
+    bar.classList.add('ok');
+    bar.classList.remove('hidden');
+    msg.textContent = `Supabase 接続済み — ${state.sbUrl}`;
+    setTimeout(() => bar.classList.add('hidden'), 4000);
+  } else if (ok === false) {
+    bar.classList.remove('ok', 'hidden');
+    msg.textContent = `Supabase 接続エラー — ローカルモードで動作中 (${errMsg ? errMsg.slice(0,50) : ''})`;
+  } else {
+    // Initial check
+    if (!state.sbUrl || !state.sbKey) {
+      bar.classList.remove('ok', 'hidden');
+      msg.textContent = 'Supabase 未設定 — 右上の ⚙️ 設定からURLとAnon Keyを入力してください';
+    } else {
+      bar.classList.add('hidden');
+    }
+  }
+}
+
 function clearAllData() {
-  if(!confirm('すべてのデータ（Watchlist・クイックメモ・設定）をリセットしますか？\nこの操作は取り消せません。')) return;
-  localStorage.clear(); location.reload();
+  if (!confirm('すべてのデータ（Watchlist・設定）をリセットしますか？\nこの操作は取り消せません。')) return;
+  localStorage.clear();
+  location.reload();
 }
 
-/* ── TOAST ── */
-function toast(msg,type) {
-  type=type||'info';var el=document.createElement('div');el.className='toast '+type;el.textContent=msg;
-  document.getElementById('toast-container').appendChild(el);
-  setTimeout(function(){el.style.animation='toast-out .3s ease forwards';setTimeout(function(){el.remove();},300);},3200);
+/* ─────────────────────────────────────────────
+   TOAST
+───────────────────────────────────────────── */
+function toast(msg, type = 'info') {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => {
+    el.style.animation = 'toast-out 0.3s ease forwards';
+    setTimeout(() => el.remove(), 300);
+  }, 3200);
 }
 
-/* ── UTILITIES ── */
-function escHtml(s) {
-  if(!s) return '';
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+/* ─────────────────────────────────────────────
+   UTILITIES
+───────────────────────────────────────────── */
+function escHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+            .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
-document.addEventListener('keydown',function(e){
-  var tag=document.activeElement?document.activeElement.tagName:'';var typing=(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT');
-  if(e.key==='Escape'){closeAddModal();closeSettings();}
-  if(!typing&&state.tab==='watchlist'&&e.key==='n'){openAddModal();}
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeAddModal();
+    closeSettings();
+  }
+  // n to open add modal when on watchlist tab
+  if (e.key === 'n' && state.tab === 'watchlist' &&
+      !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) {
+    openAddModal();
+  }
 });
+
+// Show FAB if on watchlist tab on load
+document.addEventListener('DOMContentLoaded', () => {
+  // (Handled by switchTab on first load via default activeTab)
+  initIpoTab();
+});
+
+/* ═══════════════════════════════════════════════
+   IPO・TOB MODULE
+═══════════════════════════════════════════════ */
+const IPO_DATA = [
+  // ── 日本 IPO ──
+  {
+    cat: 'jp-ipo',
+    name: 'Traders Web IPOスケジュール',
+    role: 'main',
+    roleLabel: 'メイン',
+    desc: '国内IPOの申込期間・上場日・仮条件・公開価格を一覧で確認できる定番サイト。',
+    url:  'https://www.traders.co.jp/ipo/ipo_calendar.asp'
+  },
+  {
+    cat: 'jp-ipo',
+    name: 'JPX 新規上場会社情報',
+    role: 'official',
+    roleLabel: '公式確認',
+    desc: '東京証券取引所の公式サイト。上場承認・上場日・目論見書の一次情報を確認。',
+    url:  'https://www.jpx.co.jp/listing/stocks/new/'
+  },
+  {
+    cat: 'jp-ipo',
+    name: 'やさしいIPO株のはじめ方',
+    role: 'sub',
+    roleLabel: '補助',
+    desc: 'IPOスケジュール・主幹事・ブック状況・当選確率の補助確認に使うまとめサイト。',
+    url:  'https://ipokiso.com/schedule/'
+  },
+
+  // ── 日本 TOB ──
+  {
+    cat: 'jp-tob',
+    name: 'kabukiso TOB一覧',
+    role: 'main',
+    roleLabel: 'メイン',
+    desc: '進行中・完了済みのTOBを一覧で管理。買付期間・価格・応募状況を素早くチェック。',
+    url:  'https://kabukiso.com/apply/tob/toblist.html'
+  },
+  {
+    cat: 'jp-tob',
+    name: '株探 TOB・MBOニュース',
+    role: 'notify',
+    roleLabel: '通知',
+    desc: 'TOB・MBO関連ニュースをリアルタイムで確認。新規公表の発見に使う。',
+    url:  'https://kabutan.jp/news/marketnews/?category=7'
+  },
+  {
+    cat: 'jp-tob',
+    name: 'TDnet（適時開示情報閲覧サービス）',
+    role: 'official',
+    roleLabel: '公式確認',
+    desc: '上場企業の適時開示書類を検索・閲覧できる公式サービス。TOB公告・変更届の確認に必須。',
+    url:  'https://www.release.tdnet.info/inbs/I_main_00.html'
+  },
+  {
+    cat: 'jp-tob',
+    name: 'EDINET',
+    role: 'official',
+    roleLabel: '公式確認',
+    desc: '金融庁の電子開示システム。大量保有報告書・公開買付届出書など一次書類を確認。',
+    url:  'https://disclosure.edinet-fsa.go.jp/'
+  },
+
+  // ── 米国 IPO ──
+  {
+    cat: 'us-ipo',
+    name: 'Renaissance Capital IPO Calendar',
+    role: 'main',
+    roleLabel: 'メイン',
+    desc: '米国IPO全体を確認する中心サイト。NYSEとNasdaqのIPO予定をまとめて確認しやすい。',
+    url:  'https://www.renaissancecapital.com/IPO-Center/Calendar'
+  },
+  {
+    cat: 'us-ipo',
+    name: 'Nasdaq IPO Calendar',
+    role: 'official',
+    roleLabel: '公式確認',
+    desc: 'Nasdaq上場予定・最近上場したIPOを確認する公式寄りサイト。',
+    url:  'https://www.nasdaq.com/market-activity/ipos'
+  },
+  {
+    cat: 'us-ipo',
+    name: 'IPO Scoop',
+    role: 'sub',
+    roleLabel: '補助',
+    desc: '小型IPO、ユニットIPO、アップリスティング、短期的な注目度確認に使う補助サイト。',
+    url:  'https://www.iposcoop.com/ipo-calendar/'
+  },
+  {
+    cat: 'us-ipo',
+    name: 'SEC EDGAR（S-1 / F-1 / 424B4）',
+    role: 'official',
+    roleLabel: '公式確認',
+    desc: 'S-1・F-1・424B4などIPO関連の公式提出書類を確認するSECの一次情報源。',
+    url:  'https://www.sec.gov/edgar/search/'
+  },
+
+  // ── 米国 Tender Offer / M&A ──
+  {
+    cat: 'us-tender',
+    name: 'InsideArbitrage Tender Offers',
+    role: 'main',
+    roleLabel: 'メイン',
+    desc: 'Tender Offerの提出日・開始日・期限・オッドロット条項・潜在リターンを管理向けに確認。',
+    url:  'https://www.insidearbitrage.com/tender-offers'
+  },
+  {
+    cat: 'us-tender',
+    name: 'SEC EDGAR（SC TO-T / 14D9 / 13E-3）',
+    role: 'official',
+    roleLabel: '公式確認',
+    desc: 'SC TO-T・SC TO-I・SC TO-C・SC 14D9・13E-3などTender Offer関連書類の一次情報源。',
+    url:  'https://www.sec.gov/edgar/search/'
+  },
+  {
+    cat: 'us-tender',
+    name: 'OddLotArbitrage Tender Offer Tracker',
+    role: 'sub',
+    roleLabel: '補助',
+    desc: 'オッドロットTOBや小口投資家向けのTender Offer確認に便利。ミニマム条項の把握に使う。',
+    url:  'https://oddlotarbitrage.com/tender-offer-tracker/'
+  },
+  {
+    cat: 'us-tender',
+    name: 'Seeking Alpha M&A News',
+    role: 'notify',
+    roleLabel: '通知',
+    desc: 'M&Aニュースや保有・監視銘柄のニュース通知に使う。ポートフォリオ連携が便利。',
+    url:  'https://seekingalpha.com/market-news/m-a'
+  },
+  {
+    cat: 'us-tender',
+    name: 'Finviz',
+    role: 'sub',
+    roleLabel: '補助',
+    desc: '市場全体のニュース・スクリーナー・急騰銘柄・M&A関連ニュースの発見に使う。',
+    url:  'https://finviz.com/'
+  }
+];
+
+const IPO_SECTIONS = [
+  { cat: 'jp-ipo',    label: '日本 IPO',             flag: '🗾' },
+  { cat: 'jp-tob',    label: '日本 TOB',             flag: '🗾' },
+  { cat: 'us-ipo',    label: '米国 IPO',             flag: '🇺🇸' },
+  { cat: 'us-tender', label: '米国 Tender Offer / M&A', flag: '🇺🇸' }
+];
+
+const IPO_FAV_KEY = 'apex_ipo_favs_v1';
+let ipoFavs = new Set(JSON.parse(localStorage.getItem(IPO_FAV_KEY) || '[]'));
+let ipoActiveCat  = 'all';
+let ipoSearchQuery = '';
+
+function initIpoTab() {
+  // カテゴリタブ
+  document.getElementById('ipoCatTabs').addEventListener('click', e => {
+    const btn = e.target.closest('.ipo-cat-btn');
+    if (!btn) return;
+    document.querySelectorAll('.ipo-cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    ipoActiveCat = btn.dataset.cat;
+    renderIpoCards();
+  });
+
+  // 検索
+  document.getElementById('ipoSearch').addEventListener('input', e => {
+    ipoSearchQuery = e.target.value.toLowerCase().trim();
+    renderIpoCards();
+  });
+
+  renderIpoCards();
+}
+
+function renderIpoCards() {
+  const container = document.getElementById('ipoContent');
+  container.innerHTML = '';
+
+  const query   = ipoSearchQuery;
+  const catFilter = ipoActiveCat;
+
+  // フィルタリング
+  const filtered = IPO_DATA.filter(d => {
+    if (catFilter === 'fav') return ipoFavs.has(d.url);
+    if (catFilter !== 'all' && d.cat !== catFilter) return false;
+    if (query && !d.name.toLowerCase().includes(query) &&
+                 !d.desc.toLowerCase().includes(query) &&
+                 !d.roleLabel.includes(query)) return false;
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="ipo-card-grid"><div class="ipo-empty">◈ 該当するサイトが見つかりませんでした</div></div>`;
+    return;
+  }
+
+  // セクション別に描画
+  const sections = catFilter === 'all' || catFilter === 'fav'
+    ? IPO_SECTIONS
+    : IPO_SECTIONS.filter(s => s.cat === catFilter);
+
+  sections.forEach(sec => {
+    const items = filtered.filter(d => d.cat === sec.cat);
+    if (!items.length) return;
+
+    const section = document.createElement('div');
+    section.className = 'ipo-section';
+
+    section.innerHTML = `
+      <div class="ipo-section-title">
+        <span class="sec-flag">${sec.flag}</span>
+        ${sec.label}
+        <span class="ipo-section-count">${items.length}</span>
+      </div>
+      <div class="ipo-card-grid" id="sec-grid-${sec.cat}"></div>
+    `;
+    container.appendChild(section);
+
+    const grid = section.querySelector('.ipo-card-grid');
+    items.forEach(d => {
+      grid.appendChild(buildIpoCard(d));
+    });
+  });
+}
+
+function buildIpoCard(d) {
+  const isFav = ipoFavs.has(d.url);
+  const card  = document.createElement('div');
+  card.className = 'ipo-card' + (isFav ? ' is-fav' : '');
+  card.dataset.cat = d.cat;
+
+  card.innerHTML = `
+    <div class="ipo-card-top">
+      <span class="ipo-role ${d.role}">${d.roleLabel}</span>
+      <button class="fav-btn ${isFav ? 'active' : ''}"
+              title="${isFav ? 'お気に入り解除' : 'お気に入り登録'}"
+              data-url="${escHtml(d.url)}">⭐</button>
+    </div>
+    <div class="ipo-card-name">${escHtml(d.name)}</div>
+    <div class="ipo-card-desc">${escHtml(d.desc)}</div>
+    <div class="ipo-card-footer">
+      <a class="ipo-link-btn"
+         href="${escHtml(d.url)}"
+         target="_blank"
+         rel="noopener noreferrer">
+        開く ↗
+      </a>
+    </div>
+  `;
+
+  card.querySelector('.fav-btn').addEventListener('click', e => {
+    e.stopPropagation();
+    toggleIpoFav(d.url, card, e.currentTarget);
+  });
+
+  return card;
+}
+
+function toggleIpoFav(url, card, btn) {
+  if (ipoFavs.has(url)) {
+    ipoFavs.delete(url);
+    card.classList.remove('is-fav');
+    btn.classList.remove('active');
+    btn.title = 'お気に入り登録';
+  } else {
+    ipoFavs.add(url);
+    card.classList.add('is-fav');
+    btn.classList.add('active');
+    btn.title = 'お気に入り解除';
+  }
+  localStorage.setItem(IPO_FAV_KEY, JSON.stringify([...ipoFavs]));
+  // お気に入りタブ表示中は即リフレッシュ
+  if (ipoActiveCat === 'fav') renderIpoCards();
+}
+
+
 </script>
+
 </body>
 </html>
