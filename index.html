@@ -490,6 +490,119 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════
+   SCREENER HUB — link-only navigation
+═══════════════════════════════════════════════ */
+.screener-hub {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 16px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-dim) transparent;
+}
+.screener-hub::-webkit-scrollbar { width: 4px; }
+.screener-hub::-webkit-scrollbar-thumb { background: var(--border-dim); border-radius: 2px; }
+
+.scr-group {}
+
+.scr-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-left: 3px solid var(--green-bright);
+  background: rgba(0,230,118,0.04);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin-bottom: 8px;
+}
+.scr-group-header--amber  { border-color: var(--amber); background: rgba(255,179,0,0.04); }
+.scr-group-header--blue   { border-color: var(--blue-accent); background: rgba(2,136,209,0.04); }
+.scr-group-header--red    { border-color: var(--red); background: rgba(255,61,90,0.04); }
+.scr-group-header--purple { border-color: var(--purple-soft); background: rgba(124,77,255,0.04); }
+
+.scr-group-icon { font-size: 13px; }
+.scr-group-title {
+  font-family: var(--font-cond);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+.scr-group-desc {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-left: auto;
+  letter-spacing: 0.04em;
+}
+
+.scr-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding-left: 4px;
+}
+
+.scr-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--text-secondary);
+  font-family: var(--font-cond);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  transition: var(--transition);
+  min-width: 200px;
+  cursor: pointer;
+}
+.scr-card:hover {
+  border-color: var(--border-glow);
+  color: var(--green-bright);
+  background: var(--green-deep);
+  box-shadow: var(--glow-sm);
+  transform: translateX(4px);
+  text-decoration: none;
+}
+.scr-card--amber:hover {
+  border-color: rgba(255,179,0,0.5);
+  color: var(--amber);
+  background: rgba(255,179,0,0.06);
+  box-shadow: 0 0 8px rgba(255,179,0,0.25);
+}
+.scr-card--blue:hover {
+  border-color: rgba(2,136,209,0.5);
+  color: #4fc3f7;
+  background: rgba(2,136,209,0.06);
+  box-shadow: 0 0 8px rgba(2,136,209,0.25);
+}
+.scr-card--red:hover {
+  border-color: rgba(255,61,90,0.5);
+  color: var(--red);
+  background: rgba(255,61,90,0.06);
+  box-shadow: 0 0 8px rgba(255,61,90,0.25);
+}
+.scr-card--purple:hover {
+  border-color: rgba(124,77,255,0.5);
+  color: #b39dff;
+  background: rgba(124,77,255,0.06);
+  box-shadow: 0 0 8px rgba(124,77,255,0.25);
+}
+
+.scr-card-flag { font-size: 14px; }
+.scr-card-name { flex: 1; }
+.scr-card-arrow { font-size: 10px; opacity: 0.35; transition: var(--transition); }
+.scr-card:hover .scr-card-arrow { opacity: 1; }
+
+/* ═══════════════════════════════════════════════
    WIDGET CONTAINER (TradingView embeds)
 ═══════════════════════════════════════════════ */
 .widget-container {
@@ -1797,114 +1910,176 @@ body::after {
   <!-- Main content -->
   <main id="content">
 
-    <!-- ── TAB 1: SCREENER ── -->
+    <!-- ── TAB 1: SCREENER HUB ── -->
     <div class="tab-panel active" id="panel-breakout">
       <div class="panel-header">
-
-        <!-- ── 行1: スクリーナー ── -->
-        <div class="panel-header-row">
-          <div class="panel-title"><span>◈</span>高値ブレイク スクリーナー</div>
-          <div class="screener-shortcuts">
-            <a class="scr-link"
-               href="https://jp.tradingview.com/screener/V07CTgF3/"
-               target="_blank" rel="noopener"
-               title="日本株 先回り高値ブレイク候補">
-              <span class="scr-flag">🗾</span> JP 先回り <span class="scr-arrow">↗</span>
-            </a>
-            <a class="scr-link"
-               href="https://jp.tradingview.com/screener/6gsFcso2/"
-               target="_blank" rel="noopener"
-               title="米国株 先回り高値ブレイク候補">
-              <span class="scr-flag">🇺🇸</span> US 先回り <span class="scr-arrow">↗</span>
-            </a>
-            <span class="scr-divider"></span>
-            <a class="scr-link scr-link--cyclic"
-               href="https://jp.tradingview.com/screener/qxtSEtnR/"
-               target="_blank" rel="noopener"
-               title="日本 シクリカルバリュー スクリーナー">
-              <span class="scr-flag">🗾</span> JP シクリカル <span class="scr-arrow">↗</span>
-            </a>
-            <a class="scr-link scr-link--cyclic"
-               href="https://jp.tradingview.com/screener/rfyeTRe2/"
-               target="_blank" rel="noopener"
-               title="米国 シクリカルバリュー スクリーナー">
-              <span class="scr-flag">🇺🇸</span> US シクリカル <span class="scr-arrow">↗</span>
-            </a>
-          </div>
-          <div class="panel-meta" id="screener-ts">TradingView Screener Widget</div>
-        </div>
-
-        <!-- ── 行2: アクティビスト銘柄サーチ ── -->
-        <div class="panel-header-row panel-header-row--activist">
-          <div class="activist-label"><span>◈</span>アクティビスト銘柄サーチ</div>
-          <div class="activist-shortcuts">
-            <a class="scr-link scr-link--irbank"
-               href="https://irbank.net/share"
-               target="_blank" rel="noopener"
-               title="IR Bank — 大量保有報告書">
-              📋 IR Bank 大量保有 <span class="scr-arrow">↗</span>
-            </a>
-            <span class="scr-divider"></span>
-            <a class="scr-link scr-link--activist"
-               href="https://stracap.jp/"
-               target="_blank" rel="noopener"
-               title="ストラテジックキャピタル">
-              🎯 ストラテジック <span class="scr-arrow">↗</span>
-            </a>
-            <a class="scr-link scr-link--activist"
-               href="https://ja.oasiscm.com/press-releases/"
-               target="_blank" rel="noopener"
-               title="オアシス・マネジメント">
-              🌊 オアシス <span class="scr-arrow">↗</span>
-            </a>
-            <a class="scr-link scr-link--activist"
-               href="https://www.daltoninvestments.co.jp/"
-               target="_blank" rel="noopener"
-               title="ダルトン・インベストメンツ">
-              🏔️ ダルトン <span class="scr-arrow">↗</span>
-            </a>
-          </div>
-        </div>
-
+        <div class="panel-title"><span>◈</span>スクリーナー Hub</div>
+        <div class="panel-meta" id="screener-ts">クリックで TradingView へジャンプ</div>
       </div>
-      <div class="widget-container" id="screener-container">
-        <div class="widget-loading" id="screener-loading">
-          <div class="loader-ring"></div>
-          <div class="loader-text">Loading Screener...</div>
+
+      <div class="screener-hub">
+
+        <!-- ── Group 1: 先回りブレイク ── -->
+        <div class="scr-group">
+          <div class="scr-group-header">
+            <span class="scr-group-icon">🎯</span>
+            <span class="scr-group-title">先回りブレイク</span>
+            <span class="scr-group-desc">ROE優良 × 52週新高値 — 先行エントリー候補</span>
+          </div>
+          <div class="scr-cards">
+            <a class="scr-card" href="https://jp.tradingview.com/screener/V07CTgF3/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🗾</span>
+              <span class="scr-card-name">JP 先回りROE＋52週新高値</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card" href="https://jp.tradingview.com/screener/6gsFcso2/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🇺🇸</span>
+              <span class="scr-card-name">US 先回りROE＋52週新高値</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+          </div>
         </div>
-        <!-- TradingView Screener Widget BEGIN -->
-        <div class="tradingview-widget-container" style="height:100%;width:100%">
-          <div class="tradingview-widget-container__widget" style="height:calc(100%);width:100%"></div>
-          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>
-          {
-            "width": "100%",
-            "height": "100%",
-            "defaultColumn": "overview",
-            "defaultScreen": "top_gainers",
-            "market": "japan",
-            "showToolbar": true,
-            "colorTheme": "dark",
-            "locale": "ja",
-            "isTransparent": true,
-            "largeChartUrl": "https://jp.tradingview.com/chart/",
-            "displayCurrency": "JPY"
-          }
-          </script>
+
+        <!-- ── Group 2: 52週高値ブレイク ── -->
+        <div class="scr-group">
+          <div class="scr-group-header">
+            <span class="scr-group-icon">📈</span>
+            <span class="scr-group-title">52週高値ブレイク</span>
+            <span class="scr-group-desc">52週新高値更新 / ROE条件付き — 順張り</span>
+          </div>
+          <div class="scr-cards">
+            <a class="scr-card" href="https://jp.tradingview.com/screener/f4OK5E8a/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🗾</span>
+              <span class="scr-card-name">JP 52週新高値ブレイク</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card" href="https://jp.tradingview.com/screener/9fJDxaD6/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🇺🇸</span>
+              <span class="scr-card-name">US 52週新高値ブレイク</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card" href="https://jp.tradingview.com/screener/aeNdKhW3/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🗾</span>
+              <span class="scr-card-name">JP ROE＋52週ブレイク</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card" href="https://jp.tradingview.com/screener/5LVSUsK2/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🇺🇸</span>
+              <span class="scr-card-name">US ROE＋52週ブレイク</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+          </div>
         </div>
-        <!--
-          ╔══════════════════════════════════════════════════════════╗
-          ║  SCREENER CLICK → CHART URL LOGIC (how it works)        ║
-          ║                                                          ║
-          ║  When a ticker is clicked, TradingView widget fires:     ║
-          ║    1) postMessage  → caught by our window listener       ║
-          ║       → opens  https://jp.tradingview.com/chart/         ║
-          ║                    ?symbol=TSE:7011   (JP)               ║
-          ║                    ?symbol=NASDAQ:NVDA (US)              ║
-          ║    2) largeChartUrl fallback (if postMessage not fired)  ║
-          ║       → same URL, opened by TradingView widget itself    ║
-          ╚══════════════════════════════════════════════════════════╝
-        -->
-        <!-- TradingView Screener Widget END -->
+
+        <!-- ── Group 3: シクリカルバリュー ── -->
+        <div class="scr-group">
+          <div class="scr-group-header scr-group-header--amber">
+            <span class="scr-group-icon">🔄</span>
+            <span class="scr-group-title">シクリカルバリュー</span>
+            <span class="scr-group-desc">景気敏感 × 割安 — セクターローテーション</span>
+          </div>
+          <div class="scr-cards">
+            <a class="scr-card scr-card--amber" href="https://jp.tradingview.com/screener/qxtSEtnR/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🗾</span>
+              <span class="scr-card-name">JP シクリカルバリュー</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--amber" href="https://jp.tradingview.com/screener/rfyeTRe2/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🇺🇸</span>
+              <span class="scr-card-name">US シクリカルバリュー</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ── Group 4: バリュー株 ── -->
+        <div class="scr-group">
+          <div class="scr-group-header scr-group-header--blue">
+            <span class="scr-group-icon">💎</span>
+            <span class="scr-group-title">バリュー株</span>
+            <span class="scr-group-desc">収益・資産・高配当 — 割安優良株</span>
+          </div>
+          <div class="scr-cards">
+            <a class="scr-card scr-card--blue" href="https://jp.tradingview.com/screener/4ZJUwxBU/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🇺🇸</span>
+              <span class="scr-card-name">US 収益・インカムバリュー（財務鉄壁・高配当）</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--blue" href="https://jp.tradingview.com/screener/6AutlRjh/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🗾</span>
+              <span class="scr-card-name">JP 資産バリュー株</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--blue" href="https://jp.tradingview.com/screener/XdmvwO3T/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🗾</span>
+              <span class="scr-card-name">JP 収益バリュー株</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--blue" href="https://jp.tradingview.com/screener/fOfVvhUi/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🇺🇸</span>
+              <span class="scr-card-name">US 収益バリュー株（中小型）</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ── Group 5: 急落パニック ── -->
+        <div class="scr-group">
+          <div class="scr-group-header scr-group-header--red">
+            <span class="scr-group-icon">⚡</span>
+            <span class="scr-group-title">急落パニック</span>
+            <span class="scr-group-desc">過剰売られ — 逆張り底値拾いの候補</span>
+          </div>
+          <div class="scr-cards">
+            <a class="scr-card scr-card--red" href="https://jp.tradingview.com/screener/SOkTt546/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🗾</span>
+              <span class="scr-card-name">JP 急落パニック</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--red" href="https://jp.tradingview.com/screener/PAVxd178/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🇺🇸</span>
+              <span class="scr-card-name">US 急落パニック</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ── Group 6: アクティビスト・イベント ── -->
+        <div class="scr-group">
+          <div class="scr-group-header scr-group-header--purple">
+            <span class="scr-group-icon">🎯</span>
+            <span class="scr-group-title">アクティビスト・イベント</span>
+            <span class="scr-group-desc">大量保有・物言う株主・業務提携カタリスト</span>
+          </div>
+          <div class="scr-cards">
+            <a class="scr-card scr-card--purple" href="https://irbank.net/share" target="_blank" rel="noopener">
+              <span class="scr-card-flag">📋</span>
+              <span class="scr-card-name">IR Bank — 大量保有報告書</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--purple" href="https://shikiho.toyokeizai.net/search?query=%E6%A5%AD%E5%8B%99%E6%8F%90%E6%90%BA&tab=shikiho" target="_blank" rel="noopener">
+              <span class="scr-card-flag">📰</span>
+              <span class="scr-card-name">四季報 — 業務提携キーワード</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--purple" href="https://stracap.jp/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🎯</span>
+              <span class="scr-card-name">ストラテジックキャピタル</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--purple" href="https://ja.oasiscm.com/press-releases/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🌊</span>
+              <span class="scr-card-name">オアシス・マネジメント</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--purple" href="https://www.daltoninvestments.co.jp/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🏔️</span>
+              <span class="scr-card-name">ダルトン・インベストメンツ</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+          </div>
+        </div>
+
       </div>
     </div>
 
