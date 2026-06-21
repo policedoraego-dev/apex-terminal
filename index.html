@@ -523,6 +523,7 @@ body::after {
 .scr-group-header--purple { border-color: var(--purple-soft); background: rgba(124,77,255,0.04); }
 .scr-group-header--teal   { border-color: #00bcd4; background: rgba(0,188,212,0.04); }
 .scr-group-header--orange { border-color: #ff6d00; background: rgba(255,109,0,0.04); }
+.scr-group-header--lime   { border-color: #76ff03; background: rgba(118,255,3,0.04); }
 
 .scr-group-icon { font-size: 13px; }
 .scr-group-title {
@@ -609,6 +610,12 @@ body::after {
   color: #ff9e40;
   background: rgba(255,109,0,0.06);
   box-shadow: 0 0 8px rgba(255,109,0,0.25);
+}
+.scr-card--lime:hover {
+  border-color: rgba(118,255,3,0.5);
+  color: #b2ff59;
+  background: rgba(118,255,3,0.06);
+  box-shadow: 0 0 8px rgba(118,255,3,0.25);
 }
 
 .scr-card-flag { font-size: 14px; }
@@ -2177,7 +2184,38 @@ body::after {
           </div>
         </div>
 
-        <!-- ── Group 10: ウォッチリスト ── -->
+        <!-- ── Group 10: Event Driven (TOB・IPO) ── -->
+        <div class="scr-group">
+          <div class="scr-group-header scr-group-header--lime">
+            <span class="scr-group-icon">⚡</span>
+            <span class="scr-group-title">Event Driven — TOB・IPO</span>
+            <span class="scr-group-desc">週末5分で完結する情報収集 — 日米TOB / IPOカレンダー</span>
+          </div>
+          <div class="scr-cards">
+            <a class="scr-card scr-card--lime" href="https://kabukiso.com/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🗾</span>
+              <span class="scr-card-name">日本株 TOB / IPO（株基礎）</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--lime" href="https://www.renaissancecapital.com/IPO-Center/News" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🇺🇸</span>
+              <span class="scr-card-name">米国 IPOカレンダー（Renaissance Capital）</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--lime" href="https://www.insidearbitrage.com/merger-arbitrage/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🇺🇸</span>
+              <span class="scr-card-name">米国 TOBリスト（InsideArbitrage）</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--lime" href="https://oddlotarbitrage.com/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🇺🇸</span>
+              <span class="scr-card-name">米国 オッドロットTOB（OddLotArbitrage）</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ── Group 11: ウォッチリスト ── -->
         <div class="scr-group">
           <div class="scr-group-header scr-group-header--teal">
             <span class="scr-group-icon">👁️</span>
