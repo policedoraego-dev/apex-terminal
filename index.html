@@ -522,6 +522,7 @@ body::after {
 .scr-group-header--red    { border-color: var(--red); background: rgba(255,61,90,0.04); }
 .scr-group-header--purple { border-color: var(--purple-soft); background: rgba(124,77,255,0.04); }
 .scr-group-header--teal   { border-color: #00bcd4; background: rgba(0,188,212,0.04); }
+.scr-group-header--orange { border-color: #ff6d00; background: rgba(255,109,0,0.04); }
 
 .scr-group-icon { font-size: 13px; }
 .scr-group-title {
@@ -602,6 +603,12 @@ body::after {
   color: #00e5ff;
   background: rgba(0,188,212,0.06);
   box-shadow: 0 0 8px rgba(0,188,212,0.25);
+}
+.scr-card--orange:hover {
+  border-color: rgba(255,109,0,0.5);
+  color: #ff9e40;
+  background: rgba(255,109,0,0.06);
+  box-shadow: 0 0 8px rgba(255,109,0,0.25);
 }
 
 .scr-card-flag { font-size: 14px; }
@@ -2144,7 +2151,33 @@ body::after {
           </div>
         </div>
 
-        <!-- ── Group 9: ウォッチリスト ── -->
+        <!-- ── Group 9: News & Catalyst ── -->
+        <div class="scr-group">
+          <div class="scr-group-header scr-group-header--orange">
+            <span class="scr-group-icon">📰</span>
+            <span class="scr-group-title">News &amp; Catalyst</span>
+            <span class="scr-group-desc">材料・ニュース監視 — 適時開示・業務提携カタリスト</span>
+          </div>
+          <div class="scr-cards">
+            <a class="scr-card scr-card--orange" href="https://kabutan.jp/disclosures/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">📋</span>
+              <span class="scr-card-name">株探 — 適時開示・材料ニュース</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--orange" href="https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word=%E6%A5%AD%E5%8B%99%E6%8F%90%E6%90%BA%E3%80%80AI%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9" target="_blank" rel="noopener">
+              <span class="scr-card-flag">🤖</span>
+              <span class="scr-card-name">PR TIMES — AIインフラ × 業務提携</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--orange" href="https://prtimes.jp/main/action.php?run=html&page=searchkey&search_word=%E6%A5%AD%E5%8B%99%E6%8F%90%E6%90%BA%E3%80%80%E5%8D%8A%E5%B0%8E%E4%BD%93" target="_blank" rel="noopener">
+              <span class="scr-card-flag">💾</span>
+              <span class="scr-card-name">PR TIMES — 半導体 × 業務提携</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ── Group 10: ウォッチリスト ── -->
         <div class="scr-group">
           <div class="scr-group-header scr-group-header--teal">
             <span class="scr-group-icon">👁️</span>
