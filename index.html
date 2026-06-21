@@ -521,6 +521,7 @@ body::after {
 .scr-group-header--blue   { border-color: var(--blue-accent); background: rgba(2,136,209,0.04); }
 .scr-group-header--red    { border-color: var(--red); background: rgba(255,61,90,0.04); }
 .scr-group-header--purple { border-color: var(--purple-soft); background: rgba(124,77,255,0.04); }
+.scr-group-header--teal   { border-color: #00bcd4; background: rgba(0,188,212,0.04); }
 
 .scr-group-icon { font-size: 13px; }
 .scr-group-title {
@@ -595,6 +596,12 @@ body::after {
   color: #b39dff;
   background: rgba(124,77,255,0.06);
   box-shadow: 0 0 8px rgba(124,77,255,0.25);
+}
+.scr-card--teal:hover {
+  border-color: rgba(0,188,212,0.5);
+  color: #00e5ff;
+  background: rgba(0,188,212,0.06);
+  box-shadow: 0 0 8px rgba(0,188,212,0.25);
 }
 
 .scr-card-flag { font-size: 14px; }
@@ -2075,6 +2082,27 @@ body::after {
             <a class="scr-card scr-card--purple" href="https://www.daltoninvestments.co.jp/" target="_blank" rel="noopener">
               <span class="scr-card-flag">🏔️</span>
               <span class="scr-card-name">ダルトン・インベストメンツ</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- ── Group 7: ウォッチリスト ── -->
+        <div class="scr-group">
+          <div class="scr-group-header scr-group-header--teal">
+            <span class="scr-group-icon">👁️</span>
+            <span class="scr-group-title">ウォッチリスト</span>
+            <span class="scr-group-desc">TradingView 監視リスト — 厳選銘柄</span>
+          </div>
+          <div class="scr-cards">
+            <a class="scr-card scr-card--teal" href="https://jp.tradingview.com/watchlists/325902267/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">📉</span>
+              <span class="scr-card-name">下落狙い</span>
+              <span class="scr-card-arrow">↗</span>
+            </a>
+            <a class="scr-card scr-card--teal" href="https://jp.tradingview.com/watchlists/336387051/" target="_blank" rel="noopener">
+              <span class="scr-card-flag">⭐</span>
+              <span class="scr-card-name">おすすめ監視銘柄</span>
               <span class="scr-card-arrow">↗</span>
             </a>
           </div>
